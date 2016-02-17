@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#28666E</color>
+    <color name="colorPrimaryDark">#7C9885</color>
+    <color name="colorAccent">#7C9885</color>
+    <color name="timer">#866AB5</color>
+    <color name="notepad">#BF5B5B</color>
+    <color name="voice">#75C170</color>
+    <color name="camera">#C17005</color>
+</resources>
