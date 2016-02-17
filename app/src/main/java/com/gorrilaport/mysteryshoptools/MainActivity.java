@@ -8,6 +8,7 @@ import android.os.Build;
 import android.view.MenuInflater;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -22,8 +23,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mDrawerList = (ListView)findViewById(R.id.navList);
-        addDrawerItems();
+
 
 
 
@@ -39,14 +39,30 @@ public class MainActivity extends AppCompatActivity {
             });
         }
         //API >=21 set the List and Adapter in the activity
+        else {
+            mDrawerList = (ListView)findViewById(R.id.navList);
+            addDrawerItems();
+        }
 
     }
 
 
     private void addDrawerItems() {
-        String[] osArray = { "Android", "iOS", "Windows", "OS X", "Linux" };
-        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
+        String[] osArray = { "Timer", "Notepad", "Voice Recorder", "Camera" };
+        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, osArray);
         mDrawerList.setAdapter(mAdapter);
+
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                if (position == 0) {
+                    Intent intent = new Intent(MainActivity.this, Timer.class);
+                    MainActivity.this.startActivity(intent);
+                }
+            }
+
+        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
