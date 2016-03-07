@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">MysteryShopTools</string>
-    <string name="menu1">Timer</string>
-    <string name="menu2">Notepad</string>
+    <string name="note_taking_title">Notepad</string>
+    <string name="timer_title">Timer</string>
     <string name="menu3">Voice Recorder</string>
     <string name="menu4">Camera</string>
     <string name="title_activity_test">test</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
 </resources>
