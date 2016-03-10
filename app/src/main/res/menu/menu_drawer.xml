@@ -4,14 +4,14 @@
         <item
             android:id="@+id/note_taking_menu"
             android:title="@string/note_taking_title"
-            android:icon="@drawable/ic_notepad"/>
+            android:icon="@mipmap/ic_notepad"/>
         <item
             android:id="@+id/timer_menu"
             android:title="@string/timer_title"
-            android:icon="@drawable/ic_clock"/>
+            android:icon="@mipmap/ic_timer"/>
         <item android:id="@+id/camera_menu"
             android:title="Camera"
-            android:icon="@drawable/ic_menu_camera"/>
+            android:icon="@mipmap/ic_microphone"/>
     </group>
     <group android:checkableBehavior="single">
         <item

@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
+        mDrawer.setItemIconTintList(null);
+
         // Initiate Fragment Manager and create fragments
         Fragment fragment = fm.findFragmentById(R.id.fragment_container);
 
