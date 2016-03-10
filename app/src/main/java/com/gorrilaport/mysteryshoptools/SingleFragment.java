@@ -1,7 +1,9 @@
 package com.gorrilaport.mysteryshoptools;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ public class SingleFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        //Find the fragment key to find which layout to use
         mBundle = getArguments();
         mLayoutId = mBundle.getInt(MainActivity.getFragmentKey());
     }

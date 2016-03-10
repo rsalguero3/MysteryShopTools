@@ -1,6 +1,8 @@
 package com.gorrilaport.mysteryshoptools;
 
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -114,20 +116,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Fragment fragment = fm.findFragmentById(R.id.fragment_container);
             fragment = new NotepadFragment();
             createFragment(NOTE_TAKING_FRAGMENT, R.layout.fragment_notepad, R.id.fragment_container, fragment);
-
             return true;
-        } else if (item.getItemId() == R.id.timer_menu) {
+        }
+        else if (item.getItemId() == R.id.timer_menu) {
             Fragment fragment = fm.findFragmentById(R.id.fragment_container);
             fragment = new TimerFragment();
             createFragment(TIMER_FRAGMENT, R.layout.fragment_timer, R.id.fragment_container, fragment);
             return true;
-        } else if (item.getItemId() == R.id.camera_menu) {
+        }
+        else if (item.getItemId() == R.id.camera_menu) {
             Fragment fragment = fm.findFragmentById(R.id.fragment_container);
             fragment = new CameraFragment();
+            createFragment(CAMERA_FRAGMENT, R.layout.fragment_camera, R.id.fragment_container, fragment);
             return true;
 
-
-        }else return false;
+        }
+        else return false;
     }
     // Creates fragment do ensure fragment key can be received by SingleFragment class
     private void createFragment(String fragmentKey, int layout, int container, Fragment fragment ){

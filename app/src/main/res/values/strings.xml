@@ -5,6 +5,8 @@
     <string name="menu3">Voice Recorder</string>
     <string name="menu4">Camera</string>
     <string name="title_activity_test">test</string>
+    <string name="camera_fragment_receipt">Generate a pdf of receipt</string>
+    <string name="camera_fragment_image">Take a picture</string>
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>

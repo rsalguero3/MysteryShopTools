@@ -1,55 +1,35 @@
 package com.gorrilaport.mysteryshoptools;
 
 
-import android.content.Context;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.hardware.Camera;
+import android.provider.MediaStore;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 /**
  * Created by Ricardo on 3/6/2016.
  */
 public class CameraFragment extends SingleFragment {
-    CameraManager manager;
+    private Button mReceiptButton, mCameraButton;
+    private ImageView mImageView;
+    private final static int RECEIPT_RESULT_ID = 0;
 
-    public void CameraManager() {
-        try {
-            manager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
-            String[] camIds = manager.getCameraIdList();
-        } catch (Exception e) {
-            Context context = MainActivity.getApplicationContext();
-            Toast.makeText(MainActivity.getApplicationContext(), "", Toast.LENGTH_SHORT).show();
+    @Override
+    public void onActivityCreated() {
+        mReceiptButton = (Button)getView().findViewById(R.id.camera_fragment_receipt_button);
+        mCameraButton = (Button) getView().findViewById(R.id.camera_fragment_image_button);
+        mImageView = (ImageView)getView().findViewById(R.id.imageView);
 
-        }
-
-        android.os.Handler handler = new android.os.Handler();
-
-        CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
-
+        mReceiptButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onOpened(CameraDevice camera) {
-
+            public void onClick(View v) {
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivity(cameraIntent);
             }
-
-            @Override
-            public void onDisconnected(CameraDevice camera) {
-
-            }
-
-            @Override
-            public void onError(CameraDevice camera, int error) {
-
-            }
-        };
-
-        try {
-            manager.openCamera("1", mStateCallback, handler);
-        } catch (CameraAccessException e) {
-
-        } catch (SecurityException e) {
-
-        }
-
+        });
     }
 }
