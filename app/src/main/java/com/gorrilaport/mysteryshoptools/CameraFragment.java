@@ -6,6 +6,9 @@ import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,9 +18,10 @@ import android.widget.Toast;
  * Created by Ricardo on 3/6/2016.
  */
 public class CameraFragment extends SingleFragment implements View.OnClickListener{
+    private Toolbar mToolbar;
     private Button mReceiptButton, mCameraButton;
     private ImageView mImageView;
-    private final static int RECEIPT_RESULT_ID = 0;
+    private final static int RECEIPT_REQUEST_ID = 0;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -29,6 +33,8 @@ public class CameraFragment extends SingleFragment implements View.OnClickListen
 
         mReceiptButton.setOnClickListener(this);
         mCameraButton.setOnClickListener(this);
+
+        setHasOptionsMenu(true);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -36,6 +42,7 @@ public class CameraFragment extends SingleFragment implements View.OnClickListen
             Bundle extras = data.getExtras();
             Bitmap bp = (Bitmap) extras.get("data");
             mImageView.setImageBitmap(bp);
+
         }
         else if(resultCode == 0){
             Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
@@ -49,11 +56,18 @@ public class CameraFragment extends SingleFragment implements View.OnClickListen
     public void onClick(View v) {
         if (v.getId() == R.id.camera_fragment_receipt_button){
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, RECEIPT_RESULT_ID);
+            startActivityForResult(cameraIntent, RECEIPT_REQUEST_ID);
         }
         else {
             Toast.makeText(getContext(), "meow", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_drawer, menu);
+        inflater.inflate(R.menu.camera_fragment_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }

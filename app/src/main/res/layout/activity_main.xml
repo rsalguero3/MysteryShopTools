@@ -19,7 +19,6 @@
             android:background="@color/colorPrimary"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-
     </LinearLayout>
 
 
@@ -34,5 +33,7 @@
         app:menu="@menu/menu_drawer">
 
     </android.support.design.widget.NavigationView>
+
+
 
 </android.support.v4.widget.DrawerLayout>
