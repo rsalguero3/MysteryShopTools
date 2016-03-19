@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Build;
 import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -149,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fm.popBackStackImmediate();
         fm.beginTransaction().replace(container, fragment).commit();
     }
+
 }
 
 

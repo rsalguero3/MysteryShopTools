@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:title="Share"
-        android:id="@+id/add_notes_share_action"
-        android:icon="@android:drawable/ic_menu_share"/>
+        android:title="Add Note"
+        android:id="@+id/add_notes_action_button"
+        android:icon="@android:drawable/ic_input_add"
+        app:showAsAction="always"/>
 
 
 

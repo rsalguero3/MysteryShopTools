@@ -15,27 +15,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/app_bar_add_notes">
     </android.support.v7.widget.Toolbar>
-    <EditText
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/add_note_edit_text_title"
-        android:background="@android:color/transparent"
-        android:hint="@string/add_notes_title_hint"
-        tools:text="test"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:id="@+id/add_note_edit_text_note"
-        tools:text="test"
-        android:hint="@string/add_notes_note_hint"
-        android:singleLine="true" />
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/add_note_more_button" />
+        android:layout_height="match_parent"
+        android:id="@+id/activity_add_notes_recyclerView"
+        android:scrollbars="vertical">
+    </android.support.v7.widget.RecyclerView>
+
 
 
 </LinearLayout>

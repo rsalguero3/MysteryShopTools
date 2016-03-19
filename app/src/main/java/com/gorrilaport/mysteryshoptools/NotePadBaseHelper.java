@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 
+import com.gorrilaport.mysteryshoptools.NotePadDbSchema.NotesTable;
+
 /**
  * Created by Ricardo on 3/13/2016.
  */
@@ -18,6 +20,11 @@ public class NotePadBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db){
+        db.execSQL("create table " + NotesTable.NAME + "(" + " _id integer primary key autoincrement, " + NotesTable.Cols.UUID + ", " +
+                NotesTable.Cols.TITLE + ", " +
+                NotesTable.Cols.DATE + ", " +
+                NotesTable.Cols.TEXTINPUT + ")"
+        );
 
     }
 

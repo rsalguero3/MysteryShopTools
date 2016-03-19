@@ -1,29 +1,34 @@
 package com.gorrilaport.mysteryshoptools;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AddNotes extends AppCompatActivity {
     private Toolbar mToolbar;
-    private EditText mEditTextTitle, mEditTextNote;
-    private Button mButtonAddNote;
     private int layoutIndexCount = 2;
     private int editTextId = 0;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
+    private EditTextNoteAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,22 +37,13 @@ public class AddNotes extends AppCompatActivity {
         mToolbar = (Toolbar)findViewById(R.id.app_bar_add_notes);
         setSupportActionBar(mToolbar);
 
-        mEditTextTitle = (EditText)findViewById(R.id.add_note_edit_text_title);
-        mEditTextNote = (EditText)findViewById(R.id.add_note_edit_text_note);
-        mButtonAddNote = (Button)findViewById(R.id.add_note_more_button);
+        mRecyclerView = (RecyclerView)findViewById(R.id.activity_add_notes_recyclerView);
+        mLayoutManager = new LinearLayoutManager(this);
 
-        mButtonAddNote.setOnClickListener(new View.OnClickListener() {
-            /*layoutIndexCount makes sures that the first edit text is added after the second child view and
-            other views created are appended to the previous created */
-            @Override
-            public void onClick(View v) {
-                LinearLayout linearLayout = (LinearLayout)findViewById(R.id.linear_layout_add_notes);
-                layoutIndexCount = layoutIndexCount + 1;
-                linearLayout.addView(createEditText(), layoutIndexCount);
 
-            }
-        });
-
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter = new EditTextNoteAdapter();
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -56,42 +52,90 @@ public class AddNotes extends AppCompatActivity {
         inflater.inflate(R.menu.menu_add_notes, menu);
         return true;
     }
-//Create a new EditText field and set it an id of 1, after it will be 1 + n times
-    public EditText createEditText(){
-        EditText editText = new EditText(this);
-        editTextId =+ 1;
-        editText.setId(editTextId);
-        editText.setHint(R.string.add_notes_note_hint);
-        editText.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        return editText;
-    }
-    private class EditTextViewHolder extends RecyclerView.ViewHolder{
-        private EditText mEditText;
 
-        public EditTextViewHolder(View itemView){
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+
+        if (id == R.id.add_notes_action_button){
+            mAdapter.numOfView += 1;
+            mAdapter.notifyItemInserted(mAdapter.numOfView - 1);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed(){
+        Intent data = new Intent();
+        int numOfViews = mLayoutManager.getChildCount();
+        View title = mRecyclerView.getChildAt(0);
+        EditText editTitle = (EditText)title.findViewById(R.id.add_note_edit_text_title);
+        String textTitle = editTitle.getText().toString();
+        data.putExtra("title_input", textTitle);
+        ArrayList<String> extrasList = new ArrayList<>();
+        for (int i = 1; i < numOfViews; i++){
+            View v = mRecyclerView.getChildAt(i);
+            EditText editText = (EditText)v.findViewById(R.id.create_new_edit_text);
+            String text = editText.getText().toString();
+            extrasList.add(text);
+        }
+        data.putStringArrayListExtra("add_notes_extras", extrasList);
+        data.putExtra("jason", "jason");
+        setResult(RESULT_OK, data);
+        super.onBackPressed();
+    }
+
+
+    private class ViewHolder extends RecyclerView.ViewHolder {
+        public EditText mEditText, EditTextTitle;
+
+        public ViewHolder(View itemView) {
             super(itemView);
-            mEditText = (EditText)findViewById(R.id.create_new_edit_text);
+            mEditText = (EditText) itemView.findViewById(R.id.create_new_edit_text);
+            EditTextTitle = (EditText) itemView.findViewById(R.id.add_note_edit_text_title);
         }
+
     }
-    private class EditTextNoteAdapter extends RecyclerView.Adapter<EditTextViewHolder>{
-        private List<EditText> editTextList = new ArrayList<>();
-        public EditTextNoteAdapter(List<EditText> list){
-            editTextList = list;
-        }
 
-        @Override
-        public EditTextViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return null;
-        }
+        private class EditTextNoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+            //default view will add 2 viewHolders one with type TYPE_TITLE other TYPE_DEFAULT
+            public int numOfView = 2;
+            private static final int TYPE_TITLE = 0;
+            private static final int TYPE_DEFAULT = 1;
 
-        @Override
-        public void onBindViewHolder(EditTextViewHolder holder, int position) {
+            public EditTextNoteAdapter() {
 
-        }
+            }
 
-        @Override
-        public int getItemCount() {
-            return 0;
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                LayoutInflater inflater = getLayoutInflater();
+                if (viewType == TYPE_TITLE) {
+                    View v = inflater.inflate(R.layout.edit_title_add_notes, parent, false);
+                    return new ViewHolder(v);
+                } else {
+                    View v = inflater.inflate(R.layout.edit_text_add_notes, parent, false);
+                    return new ViewHolder(v);
+                }
+            }
+
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+                }
+
+            @Override
+            public int getItemCount() {
+                return numOfView;
+            }
+
+            @Override
+            public int getItemViewType(int position) {
+                if (position == 0) {
+                    return TYPE_TITLE;
+                } else {
+                    return TYPE_DEFAULT;
+                }
+            }
         }
-    }
 }

@@ -10,6 +10,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,7 @@ public class NotepadFragment extends SingleFragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private NoteAdapter mAdapter;
 
-    private static final int REQUEST_CODE_FAB = 0;
+    public static final int REQUEST_CODE_NOTEPAD_FRAG = 0;
 
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
@@ -42,21 +43,12 @@ public class NotepadFragment extends SingleFragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), AddNotes.class);
-                startActivityForResult(intent, REQUEST_CODE_FAB);
+                startActivityForResult(intent, REQUEST_CODE_NOTEPAD_FRAG);
             }
         });
-        Notes mNotes1, mNotes2, mNotes3;
-        mNotes1 = new Notes();
-        mNotes2 = new Notes();
-        mNotes3 = new Notes();
-        mNotes1.setTitle("lol");
-        mNotes1.setTextInput("meow");
-        mNotes2.setTitle("lol");
-        mNotes2.setTextInput("meow");
+
+        mDatabase = new NotePadBaseHelper(getContext().getApplicationContext()).getWritableDatabase();
         List<Notes> nNotesList = new ArrayList<>();
-        nNotesList.add(mNotes1);
-        nNotesList.add(mNotes2);
-        nNotesList.add(mNotes3);
 
         //Initialize recyclerView, setting adapter
         mRecyclerView = (RecyclerView)getActivity().findViewById(R.id.fragment_recyclerView);
@@ -65,6 +57,21 @@ public class NotepadFragment extends SingleFragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
     }
+
+    //Get results back from AddNotes Class
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        Log.d("being called", "fragment result called");
+        if(data.getStringExtra("title_input").length() == 0){
+            Log.d("being called" , "string is equal to zero" );
+        }
+
+            ArrayList<String> extrasArray = data.getStringArrayListExtra("add_notes_extras");
+        int num = extrasArray.size();
+        for (int i = 0; i < num; i++)
+            Log.d("key", extrasArray.get(i));
+
+    }
+
 // Implementation of a recyclerView Adapter holding Notes objects
     private class NoteListHolder extends RecyclerView.ViewHolder{
         public TextView mTitle, mTextInput;
@@ -98,7 +105,6 @@ public class NotepadFragment extends SingleFragment {
             Notes notes = mNotes.get(position);
             holder.mTitle.setText(notes.getTitle());
             holder.mTextInput.setText(notes.getTextInput());
-
         }
 
         @Override
@@ -107,12 +113,7 @@ public class NotepadFragment extends SingleFragment {
         }
     }
 
-    //Get results back from AddNotes Class
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if (requestCode == REQUEST_CODE_FAB && resultCode == -1){
 
-        }
-    }
 }
 
 
