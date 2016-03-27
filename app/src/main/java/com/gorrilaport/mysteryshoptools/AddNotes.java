@@ -1,26 +1,22 @@
 package com.gorrilaport.mysteryshoptools;
 
-import android.app.Activity;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.transition.Fade;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.Window;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Toast;
-
 import java.util.ArrayList;
-import java.util.List;
 
 public class AddNotes extends AppCompatActivity {
     private Toolbar mToolbar;
@@ -34,8 +30,10 @@ public class AddNotes extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_notes);
+        setupWindowAnimations();
         mToolbar = (Toolbar)findViewById(R.id.app_bar_add_notes);
         setSupportActionBar(mToolbar);
+
 
         mRecyclerView = (RecyclerView)findViewById(R.id.activity_add_notes_recyclerView);
         mLayoutManager = new LinearLayoutManager(this);
@@ -81,9 +79,14 @@ public class AddNotes extends AppCompatActivity {
             extrasList.add(text);
         }
         data.putStringArrayListExtra("add_notes_extras", extrasList);
-        data.putExtra("jason", "jason");
         setResult(RESULT_OK, data);
         super.onBackPressed();
+    }
+    @TargetApi(21)
+    private void setupWindowAnimations(){
+        Fade fade = new Fade();
+        fade.setDuration(1000);
+        getWindow().setEnterTransition(fade);
     }
 
 

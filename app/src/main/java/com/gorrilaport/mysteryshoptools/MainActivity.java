@@ -1,11 +1,14 @@
 package com.gorrilaport.mysteryshoptools;
 
+import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,11 +17,13 @@ import android.os.Bundle;
 import android.os.Build;
 import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.Toolbar;
+import android.transition.Slide;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-
+import android.view.Window;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -44,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setupWindowAnimations();
         mToolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(mToolbar);
         mDrawer = (NavigationView) findViewById(R.id.navList);
@@ -55,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawerToggle.syncState();
 
         mDrawer.setItemIconTintList(null);
+
+
 
         // Initiate Fragment Manager and create fragments
         Fragment fragment = fm.findFragmentById(R.id.fragment_container);
@@ -147,8 +155,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setFragment(int container, Fragment fragment){
-        fm.popBackStackImmediate();
-        fm.beginTransaction().replace(container, fragment).commit();
+        //fm.popBackStackImmediate();
+        fm.beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).replace(container, fragment).commit();
+    }
+    @TargetApi(21)
+    private void setupWindowAnimations(){
+        Slide slide = new Slide();
+        slide.setDuration(1000);
+        getWindow().setExitTransition(slide);
     }
 
 }

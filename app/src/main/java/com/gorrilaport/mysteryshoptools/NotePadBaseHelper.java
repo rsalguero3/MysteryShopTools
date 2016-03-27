@@ -3,8 +3,6 @@ package com.gorrilaport.mysteryshoptools;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
-
 import com.gorrilaport.mysteryshoptools.NotePadDbSchema.NotesTable;
 
 /**

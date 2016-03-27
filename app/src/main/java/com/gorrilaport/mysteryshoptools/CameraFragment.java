@@ -1,6 +1,9 @@
 package com.gorrilaport.mysteryshoptools;
 
 
+import android.app.Activity;
+import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
@@ -22,6 +25,13 @@ public class CameraFragment extends SingleFragment implements View.OnClickListen
     private Button mReceiptButton, mCameraButton;
     private ImageView mImageView;
     private final static int RECEIPT_REQUEST_ID = 0;
+    public Activity mActivity;
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        mActivity = (Activity) context;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -56,7 +66,7 @@ public class CameraFragment extends SingleFragment implements View.OnClickListen
     public void onClick(View v) {
         if (v.getId() == R.id.camera_fragment_receipt_button){
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, RECEIPT_REQUEST_ID);
+            startActivityForResult(cameraIntent, RECEIPT_REQUEST_ID, ActivityOptions.makeSceneTransitionAnimation(mActivity).toBundle());
         }
         else {
             Toast.makeText(getContext(), "meow", Toast.LENGTH_SHORT).show();

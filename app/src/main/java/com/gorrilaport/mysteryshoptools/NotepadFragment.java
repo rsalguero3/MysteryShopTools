@@ -1,15 +1,16 @@
 package com.gorrilaport.mysteryshoptools;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Explode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +18,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
+
 
 /**
  * Created by Ricardo on 3/6/2016.
@@ -34,6 +33,13 @@ public class NotepadFragment extends SingleFragment {
     private NoteAdapter mAdapter;
 
     public static final int REQUEST_CODE_NOTEPAD_FRAG = 0;
+    public Activity mActivity;
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        mActivity = (Activity)context;
+    }
 
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
@@ -43,10 +49,10 @@ public class NotepadFragment extends SingleFragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), AddNotes.class);
-                startActivityForResult(intent, REQUEST_CODE_NOTEPAD_FRAG);
+                startActivityForResult(intent, REQUEST_CODE_NOTEPAD_FRAG, ActivityOptions.makeSceneTransitionAnimation(mActivity).toBundle());
             }
         });
-
+        //Database initialization
         mDatabase = new NotePadBaseHelper(getContext().getApplicationContext()).getWritableDatabase();
         List<Notes> nNotesList = new ArrayList<>();
 
@@ -58,18 +64,22 @@ public class NotepadFragment extends SingleFragment {
         mRecyclerView.setAdapter(mAdapter);
     }
 
+
     //Get results back from AddNotes Class
     public void onActivityResult(int requestCode, int resultCode, Intent data){
-        Log.d("being called", "fragment result called");
+        ArrayList<String> extrasArray = data.getStringArrayListExtra("add_notes_extras");
         if(data.getStringExtra("title_input").length() == 0){
-            Log.d("being called" , "string is equal to zero" );
+            //do nothing if both the title and the following views are empty.
+            if(extrasArray.isEmpty()){
+
+            }
+            else {
+                int num = extrasArray.size();
+                for (int i = 0; i < num; i++);
+
+            }
+
         }
-
-            ArrayList<String> extrasArray = data.getStringArrayListExtra("add_notes_extras");
-        int num = extrasArray.size();
-        for (int i = 0; i < num; i++)
-            Log.d("key", extrasArray.get(i));
-
     }
 
 // Implementation of a recyclerView Adapter holding Notes objects
