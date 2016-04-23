@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
@@ -7,22 +8,32 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/camera_fragment_receipt_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/camera_fragment_receipt"
-        android:textSize="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_gravity="center" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/camera_fragment_image_button"
-        android:text="@string/camera_fragment_image"
-        android:textSize="20dp"
-        android:layout_marginTop="50dp"
-        android:layout_gravity="center"/>
+        <info.hoang8f.widget.FButton
+            android:id="@+id/camera_fragment_receipt_button"
+            fbutton:buttonColor="@color/fbutton_color_concrete"
+            fbutton:shadowColor="@color/fbutton_color_asbestos"
+            fbutton:shadowEnabled="true"
+            fbutton:shadowHeight="5dp"
+            fbutton:cornerRadius="5dp"
+            android:text="@string/camera_fragment_receipt"
+            android:textSize="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"/>
+        <info.hoang8f.widget.FButton
+            fbutton:buttonColor="@color/fbutton_color_concrete"
+            fbutton:shadowColor="@color/fbutton_color_asbestos"
+            fbutton:shadowEnabled="true"
+            fbutton:shadowHeight="5dp"
+            fbutton:cornerRadius="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/camera_fragment_image_button"
+            android:text="@string/camera_fragment_image"
+            android:textSize="20dp"
+            android:layout_marginTop="50dp"
+            android:layout_gravity="center"/>
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="100dp"

@@ -22,6 +22,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddNotes"></activity>
+
+        <provider
+            android:authorities="com.gorillaport.mysteryshoptools.noteprovider"
+            android:name=".NoteProvider"
+            android:exported="false" />
     </application>
 
 </manifest>

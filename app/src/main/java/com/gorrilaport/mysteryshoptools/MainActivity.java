@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.Window;
 
 
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private Toolbar mToolbar;
     private Bundle mFragmentBundle;
@@ -55,10 +56,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawer = (NavigationView) findViewById(R.id.navList);
         mDrawer.setNavigationItemSelectedListener(this);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.fbutton_color_pumpkin));
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close);
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
+
 
         mDrawer.setItemIconTintList(null);
 

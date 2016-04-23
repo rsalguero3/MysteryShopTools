@@ -64,12 +64,12 @@ public class CameraFragment extends SingleFragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.camera_fragment_receipt_button){
+        if (v.getId() == R.id.camera_fragment_image_button){
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(cameraIntent, RECEIPT_REQUEST_ID, ActivityOptions.makeSceneTransitionAnimation(mActivity).toBundle());
         }
         else {
-            Toast.makeText(getContext(), "meow", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Generating PDF", Toast.LENGTH_SHORT).show();
         }
 
     }
