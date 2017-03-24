@@ -21,12 +21,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddNotes"></activity>
+        <activity android:name=".AddNotes" />
 
         <provider
-            android:authorities="com.gorillaport.mysteryshoptools.noteprovider"
             android:name=".NoteProvider"
+            android:authorities="com.gorillaport.mysteryshoptools.noteprovider"
             android:exported="false" />
+
+        <activity android:name=".NoteEditorActivity"></activity>
     </application>
 
 </manifest>

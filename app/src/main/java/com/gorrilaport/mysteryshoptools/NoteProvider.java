@@ -43,16 +43,11 @@ public class NoteProvider extends ContentProvider {
         Cursor cursor = null;
         switch (mUri){
             case NOTES:
-                cursor = database.query(NotePadDbSchema.NotesTable.NAME, NotePadBaseHelper.NOTES_ALL_COLUMNS,
+                cursor = database.query(NotePadDbSchema.NotesTable.NAME, NotePadDbSchema.NotesTable.COLUMNS,
                         selection, null, null, null, NotePadDbSchema.NotesTable.Cols.TIME_CREATED + " DESC");
                 Log.d("cursor", "NOTES CALLED");
                 break;
             case NOTES_ID:
-                break;
-            case TITLE:
-                cursor = database.query(NotePadDbSchema.TitleTable.NAME, NotePadBaseHelper.TITLE_ALL_COLUMNS,
-                        selection, null, null, null, NotePadDbSchema.TitleTable.Cols.TITLE_ID);
-                Log.d("cursor", "TITLE CALLED");
                 break;
             default:
                 cursor = null;
@@ -76,10 +71,6 @@ public class NoteProvider extends ContentProvider {
         switch (mUri){
             case NOTES:
                 id = database.insert(NotePadDbSchema.NotesTable.NAME, null, values);
-                uri1 = Uri.parse(BASE_PATH + "/" + id);
-                break;
-            case TITLE:
-                id = database.insert(NotePadDbSchema.TitleTable.NAME, null, values);
                 uri1 = Uri.parse(BASE_PATH + "/" + id);
                 break;
             default:

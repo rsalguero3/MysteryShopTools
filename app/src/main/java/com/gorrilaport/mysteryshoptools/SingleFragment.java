@@ -1,5 +1,6 @@
 package com.gorrilaport.mysteryshoptools;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 public class SingleFragment extends Fragment {
     private int mLayoutId;
     private Bundle mBundle;
+    private View mrootView;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -25,8 +27,13 @@ public class SingleFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState ){
-        View v = inflater.inflate(mLayoutId, container, false);
-        return v;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState ) {
+        //save the reference of layout
+        mrootView = inflater.inflate(mLayoutId, container, false);
+        return mrootView;
+    }
+
+    public View getRootView(){
+        return mrootView;
     }
 }

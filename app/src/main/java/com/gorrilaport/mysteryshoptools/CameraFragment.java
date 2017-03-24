@@ -66,6 +66,7 @@ public class CameraFragment extends SingleFragment implements View.OnClickListen
     public void onClick(View v) {
         if (v.getId() == R.id.camera_fragment_image_button){
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            //noinspection unchecked,unchecked
             startActivityForResult(cameraIntent, RECEIPT_REQUEST_ID, ActivityOptions.makeSceneTransitionAnimation(mActivity).toBundle());
         }
         else {

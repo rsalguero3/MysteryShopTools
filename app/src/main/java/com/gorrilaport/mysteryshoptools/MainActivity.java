@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setupWindowAnimations();
+        //setupWindowAnimations();
         mToolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(mToolbar);
         mDrawer = (NavigationView) findViewById(R.id.navList);
@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (item.getItemId() == R.id.note_taking_menu) {
             Fragment fragment = fm.findFragmentById(R.id.fragment_container);
             fragment = new NotepadFragment();
-            createFragment(NOTE_TAKING_FRAGMENT, R.layout.fragment_notepad, R.id.fragment_container, fragment);
+            openFragment(fragment, "Note List");
             return true;
         }
         else if (item.getItemId() == R.id.timer_menu) {
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else return false;
     }
     // Creates fragment do ensure fragment key can be received by SingleFragment class
-    private void createFragment(String fragmentKey, int layout, int container, Fragment fragment ){
+    public void createFragment(String fragmentKey, int layout, int container, Fragment fragment ){
         mDrawerLayout.closeDrawer(GravityCompat.START);
         mFragmentBundle = new Bundle();
         mFragmentKey = fragmentKey;
@@ -157,9 +157,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setFragment(container, fragment);
     }
 
-    private void setFragment(int container, Fragment fragment){
+    public void setFragment(int container, Fragment fragment){
         //fm.popBackStackImmediate();
         fm.beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).replace(container, fragment).commit();
+    }
+
+    private void openFragment(final Fragment fragment, String title){
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
+        getSupportActionBar().setTitle(title);
     }
     @TargetApi(21)
     private void setupWindowAnimations(){

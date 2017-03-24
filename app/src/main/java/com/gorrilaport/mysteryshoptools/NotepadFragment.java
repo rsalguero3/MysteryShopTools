@@ -1,48 +1,64 @@
 package com.gorrilaport.mysteryshoptools;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.CardView;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.Explode;
-import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
-
-import java.util.ArrayList;
 import java.util.List;
+
+import static android.R.attr.fragment;
 
 
 /**
  * Created by Ricardo on 3/6/2016.
  */
-public class NotepadFragment extends SingleFragment {
+public class NotepadFragment extends Fragment {
     private FloatingActionButton mAddNoteAction;
     private Context mContext;
     private SQLiteDatabase mDatabase;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private NoteAdapter mAdapter;
+    private NoteListAdapter mAdapter;
+    private List<Note> mNotes;
 
     public static final int REQUEST_CODE_NOTEPAD_FRAG = 0;
     public Activity mActivity;
 
     public Cursor titleCursor;
     public Cursor textCursor;
+    private View mRootView;
+    private FloatingActionButton mFab;
+
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState ) {
+        //save the reference of layout
+        mRootView = inflater.inflate(R.layout.fragment_notepad, container, false);
+        mFab = (FloatingActionButton)mRootView.findViewById(R.id.fab_notepad);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), NoteEditorActivity.class));
+            }
+        });
+        setupList();
+
+        return mRootView;
+    }
 
     @Override
     public void onAttach(Context context){
@@ -50,110 +66,51 @@ public class NotepadFragment extends SingleFragment {
         mActivity = (Activity)context;
     }
 
-    public void onActivityCreated(Bundle savedInstanceState){
-        super.onActivityCreated(savedInstanceState);
-
-        //Direct floating action button to new Activity
-        mAddNoteAction = (FloatingActionButton)getActivity().findViewById(R.id.fab_notepad);
-        mAddNoteAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), AddNotes.class);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    startActivityForResult(intent, REQUEST_CODE_NOTEPAD_FRAG,
-                            ActivityOptions.makeSceneTransitionAnimation(mActivity).toBundle());
-                }
-                else {
-                    startActivityForResult(intent, REQUEST_CODE_NOTEPAD_FRAG);
-                }
-            }
-        });
-        //Database query initialization
-        textCursor = getContext().getContentResolver().query(Uri.parse(NoteProvider.CONTENT_URI + "notes"),
-                NotePadBaseHelper.NOTES_ALL_COLUMNS, null, null, null, null);
-        titleCursor = getContext().getContentResolver().query(
-                Uri.parse(NoteProvider.CONTENT_URI + "title"),
-                NotePadBaseHelper.TITLE_ALL_COLUMNS, null, null, null, null);
-
-
-        //Initialize recyclerView, setting adapter
-        mRecyclerView = (RecyclerView)getActivity().findViewById(R.id.fragment_recyclerView);
-        mAdapter = new NoteAdapter(getContext(), textCursor);
+    public void setupList(){
+        mRecyclerView = (RecyclerView)mRootView.findViewById(R.id.fragment_recyclerView);
+        mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        final GestureDetector mGestureDectector =
+                new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener(){
+                    @Override
+                    public boolean onSingleTapUp(MotionEvent e){
+                        return true;
+                    }
+                });
+
+        mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener(){
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent){
+                View child = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
+
+                if (child != null && mGestureDectector.onTouchEvent(motionEvent)){
+                    int positon = recyclerView.getChildLayoutPosition(child);
+                    Note selectedNote = mNotes.get(positon);
+                    EditNoteFragment editFragment = new EditNoteFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putLong("id",selectedNote.getId());
+                    editFragment.setArguments(bundle);
+                }
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e){
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
+
+        mNotes = NoteManager.newInstance(getActivity()).getAllNotes();
+        mAdapter = new NoteListAdapter(mNotes, getActivity());
         mRecyclerView.setAdapter(mAdapter);
     }
-
-
-    //Get results back from AddNotes Class
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        ArrayList<String> extrasArray = data.getStringArrayListExtra("add_notes_extras");
-        String text;
-        Log.d("activity called", "yes");
-        if(data.getStringExtra("title_input").length() == 0){
-            //do nothing if both the title and the following views are empty.
-            if(extrasArray.isEmpty()){
-
-            }
-            else {
-                ContentValues values1 = new ContentValues();
-                values1.put(NotePadDbSchema.TitleTable.Cols.TITLE, "");
-                getContext().getContentResolver().insert(Uri.parse(NoteProvider.CONTENT_URI + "title"), values1);
-                Log.d("values1 = ", Uri.parse(NoteProvider.CONTENT_URI + "title").toString());
-
-                StringBuilder builder = new StringBuilder();
-                for (String s : extrasArray){
-                    builder.append(s);
-                }
-
-                ContentValues values = new ContentValues();
-                values.put(NotePadDbSchema.NotesTable.Cols.TEXT, builder.toString());
-                getContext().getContentResolver().insert(Uri.parse(NoteProvider.CONTENT_URI + "notes"), values);
-                Log.d("values = ", NoteProvider.CONTENT_URI.toString());
-
-                textCursor = getContext().getContentResolver().query(Uri.parse(NoteProvider.CONTENT_URI + "notes"),
-                        NotePadBaseHelper.NOTES_ALL_COLUMNS, null, null, null, null);
-                titleCursor = getContext().getContentResolver().query(
-                        Uri.parse(NoteProvider.CONTENT_URI + "title"),
-                        NotePadBaseHelper.TITLE_ALL_COLUMNS, null, null, null, null);
-                //mAdapter.changeCursor(titleCursor);
-            }
-        }
-    }
-
-    public class NoteAdapter extends CursorRecyclerViewAdapter<NoteAdapter.NoteListHolder>{
-
-        public NoteAdapter(Context context, Cursor cursor){
-            super(context, cursor);
-        }
-
-        // Implementation of a recyclerView Adapter holding Notes objects
-        public class NoteListHolder extends RecyclerView.ViewHolder{
-            public TextView mTitle, mTextInput;
-            public CardView mCardView;
-
-            public NoteListHolder(View itemView){
-                super(itemView);
-                mCardView = (CardView)itemView.findViewById(R.id.cv);
-                mTitle = (TextView)itemView.findViewById(R.id.title);
-                mTextInput = (TextView) itemView.findViewById(R.id.text_input);
-            }
-        }
-
-        @Override
-        public NoteListHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater layoutinflater = LayoutInflater.from(getActivity());
-            View view = layoutinflater.inflate(R.layout.notes_list_view, parent, false);
-            return new NoteListHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(NoteListHolder viewHolder, Cursor cursor) {
-            viewHolder.mTextInput.setText(cursor.getString(2));
-        }
-    }
-
-
 }
 
 
