@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="25dp"
+    android:paddingRight="25dp">
+    <RelativeLayout android:id="@+id/record_layout" android:layout_width="fill_parent"
+        android:layout_height="@dimen/list_item_height" style="@style/record_layout">
+        <TextView android:id="@+id/lap_order" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true" style="@style/list_font"/>
+        <TextView android:id="@+id/time_text" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/lap_order" style="@style/list_font"
+            android:layout_centerInParent="true" android:paddingRight="20dp"/>
+        <Button android:id="@+id/delta" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/lap_order" android:layout_alignTop="@id/lap_order"
+            android:text="Place holder" android:textSize="10sp" android:textColor="@color/dark_gray"
+            android:layout_alignParentRight="true" android:background="@drawable/round_btn_shape"/>
+    </RelativeLayout>
+    <View android:layout_width="fill_parent" android:layout_height="0.5dp" style="@style/splitter"/>
+</LinearLayout>

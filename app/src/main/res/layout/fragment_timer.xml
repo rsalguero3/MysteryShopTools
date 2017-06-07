@@ -1,11 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <LinearLayout android:id="@+id/up_half_layout" android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="timer"/>
-
+        android:background="@color/up_half_background_color"
+        android:orientation="vertical">
+        <com.gorrilaport.mysteryshoptools.ui.timer.StopwatchView
+            android:id="@+id/stopwatch"
+            android:layout_width="fill_parent" android:layout_height="fill_parent"/>
+    </LinearLayout>
+    <RelativeLayout android:id="@+id/down_half_layout" android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/down_half_background_color">
+        <ListView android:id="@+id/resultList" android:layout_width="fill_parent" android:scrollbars="none"
+            android:layout_height="fill_parent" android:background="@android:color/transparent">
+        </ListView>
+        <LinearLayout android:id="@+id/init_btn_bar" style="@style/btn_bar_style" android:layout_width="fill_parent"
+            android:layout_height="@dimen/btn_bar_height" android:orientation="horizontal"
+            android:layout_alignParentBottom="true">
+            <Button android:id="@+id/init_start_btn" style="@style/btn_bar_btn_style" android:layout_width="fill_parent"
+                android:text="Start" android:layout_height="fill_parent"
+                android:background="@drawable/round_btn_bg"/>
+        </LinearLayout>
+        <LinearLayout android:id="@+id/run_btn_bar" style="@style/btn_bar_style" android:layout_width="fill_parent"
+            android:layout_height="@dimen/btn_bar_height" android:orientation="horizontal"
+            android:layout_alignParentBottom="true">
+            <Button android:id="@+id/run_pause_btn" style="@style/btn_bar_btn_style" android:layout_width="0dp"
+                android:layout_weight="1" android:layout_height="fill_parent" android:text="Pause"
+                android:background="@drawable/left_round_btn_bg"/>
+            <Button android:id="@+id/run_lap_btn" style="@style/btn_bar_btn_style" android:layout_width="0dp"
+                android:layout_weight="1" android:text="Lap" android:layout_height="fill_parent"
+                android:background="@drawable/right_round_btn_bg"/>
+        </LinearLayout>
+        <LinearLayout android:id="@+id/paused_btn_bar" style="@style/btn_bar_style" android:layout_width="fill_parent"
+            android:layout_height="@dimen/btn_bar_height" android:orientation="horizontal"
+            android:layout_alignParentBottom="true">
+            <Button android:id="@+id/paused_start_btn" style="@style/btn_bar_btn_style" android:layout_width="0dp"
+                android:layout_weight="1" android:layout_height="fill_parent" android:text="Start"
+                android:background="@drawable/left_round_btn_bg"/>
+            <Button android:id="@+id/paused_reset_btn" style="@style/btn_bar_btn_style" android:layout_width="0dp"
+                android:layout_weight="1" android:text="Reset" android:layout_height="fill_parent"
+                android:background="@drawable/right_round_btn_bg"/>
+        </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>
+
