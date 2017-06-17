@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Toast;
 
+import com.gorrilaport.mysteryshoptools.ui.addnote.NoteEditorFragment;
 import com.gorrilaport.mysteryshoptools.ui.camera.CameraFragment;
 import com.gorrilaport.mysteryshoptools.ui.timer.TimerFragment;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
@@ -45,7 +49,6 @@ public class NoteListActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setupNavigationDrawer(savedInstanceState);
-
 
         if (findViewById(R.id.note_detail_container) != null) {
             // The detail container view will be present only in the
@@ -85,7 +88,7 @@ public class NoteListActivity extends AppCompatActivity {
         //Create Navigation drawer Account Header
         headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
-                .withHeaderBackground(R.drawable.header_2)
+                .withHeaderBackground(R.drawable.header_3)
                 .build();
 
         drawer = new DrawerBuilder()
@@ -96,9 +99,9 @@ public class NoteListActivity extends AppCompatActivity {
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName("Notes").withIcon(FontAwesome.Icon.faw_sticky_note).withIdentifier(Constants.NOTE),
                         new PrimaryDrawerItem().withName("Categories").withIcon(FontAwesome.Icon.faw_folder).withIdentifier(Constants.CATEGORY),
-                        new PrimaryDrawerItem().withName("Camera").withIcon(FontAwesome.Icon.faw_folder).withIdentifier(Constants.CAMERA),
-                        new PrimaryDrawerItem().withName("Settings").withIcon(FontAwesome.Icon.faw_cog).withIdentifier(Constants.SETTINGS),
-                        new PrimaryDrawerItem().withName("Timer").withIcon(FontAwesome.Icon.faw_book).withIdentifier(Constants.TIMER)
+                        //new PrimaryDrawerItem().withName("Camera").withIcon(FontAwesome.Icon.faw_folder).withIdentifier(Constants.CAMERA),
+                        new PrimaryDrawerItem().withName("Settings").withIcon(FontAwesome.Icon.faw_cog).withIdentifier(Constants.SETTINGS)
+                        //new PrimaryDrawerItem().withName("Timer").withIcon(FontAwesome.Icon.faw_book).withIdentifier(Constants.TIMER)
                 )
                 .withOnDrawerItemClickListener(new com.mikepenz.materialdrawer.Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -173,4 +176,19 @@ public class NoteListActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed(){
+//        Toast toast = Toast.makeText(getApplicationContext(), "Saving",
+//                Toast.LENGTH_SHORT);
+//        toast.setGravity(Gravity.TOP|Gravity.LEFT, 0, 0);
+//        toast.show();
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        getSupportActionBar().setTitle("Notes");
+    }
 }

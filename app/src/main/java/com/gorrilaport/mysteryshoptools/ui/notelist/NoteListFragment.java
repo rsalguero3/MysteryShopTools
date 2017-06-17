@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -25,6 +24,7 @@ import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.addnote.AddNoteActivity;
 import com.gorrilaport.mysteryshoptools.ui.notedetail.NoteDetailActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
+import com.melnykov.fab.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -111,6 +111,7 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
         });
 
         mFab = (FloatingActionButton)getActivity().findViewById(R.id.fab);
+        mFab.attachToRecyclerView(mRecyclerView);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,7 +136,6 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
         super.onResume();
         mPresenter.loadNotes();
     }
-
 
     @Override
     public void showNotes(List<Note> notes) {
@@ -181,8 +181,6 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
             mPresenter.deleteNote(note);
         }
     }
-
-
 
     /**
      * Displays any message passed from the Presenter

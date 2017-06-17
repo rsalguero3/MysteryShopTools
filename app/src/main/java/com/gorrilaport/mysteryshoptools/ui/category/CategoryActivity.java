@@ -5,8 +5,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import com.gorrilaport.mysteryshoptools.R;
+import com.gorrilaport.mysteryshoptools.ui.addnote.NoteEditorFragment;
 
 public class CategoryActivity extends AppCompatActivity {
 
@@ -17,6 +20,7 @@ public class CategoryActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_action_goleft);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Categories");
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -33,4 +37,13 @@ public class CategoryActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(screenTitle);
     }
 
+    @Override
+    public void onBackPressed(){
+        Toast toast = Toast.makeText(getApplicationContext(), "Saving",
+                Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.TOP|Gravity.LEFT, 0, 0);
+        toast.show();
+        super.onBackPressed();
+        finish();
+    }
 }

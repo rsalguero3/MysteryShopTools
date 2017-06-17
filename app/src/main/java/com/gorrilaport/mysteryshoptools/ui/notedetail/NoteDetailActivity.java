@@ -7,12 +7,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import com.gorrilaport.mysteryshoptools.R;
 import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnEditNoteButtonClickedListener;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.addnote.AddNoteActivity;
+import com.gorrilaport.mysteryshoptools.ui.addnote.NoteEditorFragment;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListContract;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 
@@ -71,5 +74,15 @@ public class NoteDetailActivity extends AppCompatActivity {
         Intent intent = new Intent(context, NoteDetailActivity.class);
         intent.putExtra(Constants.NOTE_ID, noteId);
         return intent;
+    }
+
+    @Override
+    public void onBackPressed(){
+        Toast toast = Toast.makeText(getApplicationContext(), "Saving",
+                Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.TOP|Gravity.LEFT, 0, 0);
+        toast.show();
+        super.onBackPressed();
+        finish();
     }
 }

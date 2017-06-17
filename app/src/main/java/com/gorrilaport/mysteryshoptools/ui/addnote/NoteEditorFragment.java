@@ -223,15 +223,12 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             case android.R.id.home:
                 //The user clicked on back button, save the content only if
                 //It is not empty.
-               if (!TextUtils.isEmpty(mCategory.getText().toString())
-                       && !TextUtils.isEmpty(mContent.getText().toString())
-                       && !TextUtils.isEmpty(mTitle.getText().toString())){
-                   addNoteToDatabase("");
-               }
-
+               //set category to General if no category is chosen
+                if (!TextUtils.isEmpty(mContent.getText().toString())
+                        && !TextUtils.isEmpty(mTitle.getText().toString())) {
+                    validateAndSaveContent();
+                }
                 break;
-
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -265,8 +262,6 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             mLocalSketchPath = note.getLocalSketchImagePath();
            populateSketch(mLocalSketchPath);
         }
-
-
     }
 
     @Override
@@ -502,7 +497,7 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
 
 
 
-    private void validateAndSaveContent() {
+    public void validateAndSaveContent() {
         String category = mCategory.getText().toString();
         if (TextUtils.isEmpty(category)){
             mCategory.setText(Constants.DEFAULT_CATEGORY);

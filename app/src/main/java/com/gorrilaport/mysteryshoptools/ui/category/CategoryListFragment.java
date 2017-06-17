@@ -1,11 +1,9 @@
 package com.gorrilaport.mysteryshoptools.ui.category;
 
-
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -21,6 +19,7 @@ import com.gorrilaport.mysteryshoptools.R;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnCategoryAddedListener;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnCategorySelectedListener;
 import com.gorrilaport.mysteryshoptools.model.Category;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.List;
 import java.util.Map;
@@ -68,14 +67,13 @@ public class CategoryListFragment extends Fragment implements
         mPresenter = new CategoryListPresenter(this);
 
         FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        fab.attachToRecyclerView(mRecyclerView);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showAddNewCategoryDialog();
             }
         });
-
-
         return  mRootView;
     }
 
@@ -84,9 +82,6 @@ public class CategoryListFragment extends Fragment implements
         super.onResume();
         mPresenter.loadCategories();
     }
-
-
-
 
     @Override
     public void showAddNewCategoryDialog() {
@@ -98,7 +93,6 @@ public class CategoryListFragment extends Fragment implements
             }
         });
         addCategoryDialog.show(getActivity().getFragmentManager(), "Dialog");
-
     }
 
     @Override
@@ -131,9 +125,7 @@ public class CategoryListFragment extends Fragment implements
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new CategoryRecyclerViewAdapter(getContext(),categories, noteCount, this);
         mRecyclerView.setAdapter(mAdapter);
-
     }
-
 
     @Override
     public void showConfirmDeleteCategoryPrompt(Category category) {
@@ -144,7 +136,6 @@ public class CategoryListFragment extends Fragment implements
         } else {
             mPresenter.deleteCategory(category);
         }
-
     }
 
     @Override
@@ -181,11 +172,9 @@ public class CategoryListFragment extends Fragment implements
         snackbar.show();
     }
 
-
     public void promptForDelete(final Category category){
         String title = getString(R.string.delete_Category) + " ?";
         String message =  getString(R.string.action_delete) + " " + category.getTitle();
-
 
         android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getContext());
         LayoutInflater inflater = getActivity().getLayoutInflater();

@@ -5,6 +5,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import com.gorrilaport.mysteryshoptools.R;
 import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
@@ -17,8 +19,6 @@ public class AddNoteActivity extends AppCompatActivity {
 
     @Inject
     NoteListContract.Repository noteRepository;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +40,6 @@ public class AddNoteActivity extends AppCompatActivity {
         }else {
             openFragment(NoteEditorFragment.newInstance(0), "Note Editor");
         }
-
-
     }
 
 
@@ -55,4 +53,15 @@ public class AddNoteActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(screenTitle);
     }
 
+    @Override
+    public void onBackPressed(){
+        Toast toast = Toast.makeText(getApplicationContext(), "Saving",
+                Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.TOP|Gravity.LEFT, 0, 0);
+        toast.show();
+        NoteEditorFragment f = (NoteEditorFragment) getSupportFragmentManager().findFragmentById(R.id.container);
+        f.validateAndSaveContent();
+        super.onBackPressed();
+        finish();
+    }
 }
