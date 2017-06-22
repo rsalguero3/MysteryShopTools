@@ -514,6 +514,8 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             mContent.setError(getString(R.string.note_is_required));
             return;
         }
+
+
         addNoteToDatabase("");
     }
 
@@ -533,6 +535,9 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             mCurrentNote.setNoteType(Constants.NOTE_TYPE_IMAGE);
         } else if (mReminderTime != null){
 
+        }
+        else {
+            mCurrentNote.setNoteType("text");
         }
 
         mPresenter.onAddClick(mCurrentNote);

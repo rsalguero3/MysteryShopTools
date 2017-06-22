@@ -1,5 +1,6 @@
 package com.gorrilaport.mysteryshoptools.ui.addnote;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +13,7 @@ import com.gorrilaport.mysteryshoptools.R;
 import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListContract;
 import com.gorrilaport.mysteryshoptools.util.Constants;
+import com.muddzdev.styleabletoastlibrary.StyleableToast;
 
 import javax.inject.Inject;
 
@@ -55,10 +57,16 @@ public class AddNoteActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
-        Toast toast = Toast.makeText(getApplicationContext(), "Saving",
-                Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.TOP|Gravity.LEFT, 0, 0);
-        toast.show();
+        StyleableToast styleableToast = new StyleableToast
+                .Builder(this)
+                .duration(Toast.LENGTH_SHORT)
+                .icon(R.drawable.ic_autorenew_black_24dp)
+                .spinIcon()
+                .text("Saving your information")
+                .textColor(Color.WHITE)
+                .backgroundColor(Color.parseColor("#184c6d"))
+                .build();
+        styleableToast.show();
         NoteEditorFragment f = (NoteEditorFragment) getSupportFragmentManager().findFragmentById(R.id.container);
         f.validateAndSaveContent();
         super.onBackPressed();

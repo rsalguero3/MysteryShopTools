@@ -2,16 +2,16 @@ package com.gorrilaport.mysteryshoptools.util;
 
 public class Constants {
     public final static String SERIALIZED_CATEGORY = "serialized_category";
-    public static final String REALM_DATABASE = "pronto_notepad.realm";
-    public static final String SQLITE_DATABASE = "pronto_notepad.sqlite";
+    public static final String REALM_DATABASE = "mysteryshoptools.realm";
+    public static final String SQLITE_DATABASE = "mysteryshoptools.sqlite";
     public static final String FIRST_RUN = "first_run";
     public static final String PREFERRED_EDITOR = "preferred_editor";
     public final static int LINED_EDITOR = 1;
     public final static int PLAIN_EDITOR = 2;
     public static final String NOTE_ID = "NOTE_ID";
     public static final String DEFAULT_CATEGORY = "General";
-    public static final String APP_FOLDER = "ProntoNotepad";
-    public static final String BACKUP_FOLDER = "ProntoNotepad/Backups";
+    public static final String APP_FOLDER = "MysteryShopTools";
+    public static final String BACKUP_FOLDER = "MysteryShopTools/Backups";
     public static final String REALM_EXPORT_FILE_NAME = "realm_export";
     public static final String REALM_IMPORT_FILE_NAME = "realm_import";
     public static final String REALM_EXPORT_FILE_PATH = "realm_export_path";
