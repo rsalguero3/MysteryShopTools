@@ -1,11 +1,15 @@
 package com.gorrilaport.mysteryshoptools.ui.addnote;
 
+import android.annotation.TargetApi;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
+import android.transition.Fade;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -26,6 +30,9 @@ public class AddNoteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
+        if (Build.VERSION.SDK_INT >= 21){
+            setupWindowAnimations();
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_action_goleft);
         setSupportActionBar(toolbar);
@@ -42,6 +49,8 @@ public class AddNoteActivity extends AppCompatActivity {
         }else {
             openFragment(NoteEditorFragment.newInstance(0), "Note Editor");
         }
+
+
     }
 
 
@@ -70,6 +79,20 @@ public class AddNoteActivity extends AppCompatActivity {
         NoteEditorFragment f = (NoteEditorFragment) getSupportFragmentManager().findFragmentById(R.id.container);
         f.validateAndSaveContent();
         super.onBackPressed();
-        finish();
+        if (Build.VERSION.SDK_INT >= 21){
+            finishAfterTransition();
+        }
+        else {
+            finish();
+        }
+    }
+
+    @TargetApi(21)
+    private void setupWindowAnimations() {
+        Fade fade = new Fade();
+        fade.setDuration(1000);
+        Explode explode = new Explode();
+        explode.setDuration(1000);
+        getWindow().setEnterTransition(explode);
     }
 }

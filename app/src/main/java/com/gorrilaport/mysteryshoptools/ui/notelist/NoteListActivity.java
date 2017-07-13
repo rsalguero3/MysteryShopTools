@@ -1,18 +1,16 @@
 package com.gorrilaport.mysteryshoptools.ui.notelist;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
+import android.transition.Slide;
 import android.view.View;
-import android.widget.Toast;
 
-import com.gorrilaport.mysteryshoptools.ui.addnote.NoteEditorFragment;
 import com.gorrilaport.mysteryshoptools.ui.camera.CameraFragment;
 import com.gorrilaport.mysteryshoptools.ui.timer.TimerFragment;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
@@ -46,6 +44,9 @@ public class NoteListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notes);
+        if (Build.VERSION.SDK_INT >= 21){
+            setupWindowAnimations();
+        }
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setupNavigationDrawer(savedInstanceState);
@@ -60,6 +61,8 @@ public class NoteListActivity extends AppCompatActivity {
         }
 
         openFragment(NoteListFragment.newInstance(mTwoPane), "Notes");
+
+
 
     }
 
@@ -190,5 +193,12 @@ public class NoteListActivity extends AppCompatActivity {
     public void onResume(){
         super.onResume();
         getSupportActionBar().setTitle("Notes");
+    }
+
+    @TargetApi(21)
+    private void setupWindowAnimations() {
+        Slide slide = new Slide();
+        slide.setDuration(1000);
+        getWindow().setExitTransition(slide);
     }
 }

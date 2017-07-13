@@ -4,6 +4,7 @@ package com.gorrilaport.mysteryshoptools.ui.notedetail;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -90,6 +92,9 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         }
 
         ButterKnife.bind(this, mRootView);
+        if (Build.VERSION.SDK_INT >= 21){
+            mContent.setTransitionName("Jason");
+        }
 
         displayReadOnlyViews();
         return mRootView;
@@ -199,6 +204,9 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         mCategory.setFocusable(false);
         mTitle.setFocusable(false);
         mContent.setFocusable(false);
+        mCategory.setOnTouchListener(this.onTouchListener());
+        mTitle.setOnTouchListener(this.onTouchListener());
+        mContent.setOnTouchListener(this.onTouchListener());
     }
 
     @Override
@@ -270,5 +278,15 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
                 .into(mSketchAttachment);
     }
 
+private View.OnTouchListener onTouchListener(){
+    View.OnTouchListener listener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            mListener.onEditNote(mPresenter.getCurrentNote());
+            return false;
+        }
+    };
+    return listener;
+}
 
 }

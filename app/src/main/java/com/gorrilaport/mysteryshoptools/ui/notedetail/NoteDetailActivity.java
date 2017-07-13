@@ -1,12 +1,16 @@
 package com.gorrilaport.mysteryshoptools.ui.notedetail;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
+import android.transition.Fade;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -30,6 +34,9 @@ public class NoteDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_detail);
+        if (Build.VERSION.SDK_INT >= 21){
+            setupWindowAnimations();
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -49,6 +56,12 @@ public class NoteDetailActivity extends AppCompatActivity {
                     Intent editNoteIntent = new Intent(NoteDetailActivity.this, AddNoteActivity.class);
                     editNoteIntent.putExtra(Constants.NOTE_ID, clickedNote.getId());
                     startActivity(editNoteIntent);
+                    if (Build.VERSION.SDK_INT >= 21){
+                        finishAfterTransition();
+                    }
+                    else {
+                        finish();
+                    }
                 }
             });
 
@@ -62,7 +75,7 @@ public class NoteDetailActivity extends AppCompatActivity {
     private void openFragment(Fragment fragment, String screenTitle){
         getSupportFragmentManager()
                 .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.container, fragment)
                 .addToBackStack(null)
                 .commit();
@@ -83,6 +96,21 @@ public class NoteDetailActivity extends AppCompatActivity {
         toast.setGravity(Gravity.TOP|Gravity.LEFT, 0, 0);
         toast.show();
         super.onBackPressed();
-        finish();
+        if (Build.VERSION.SDK_INT >= 21){
+            finishAfterTransition();
+        }
+        else {
+            finish();
+        }
+    }
+
+    @TargetApi(21)
+    private void setupWindowAnimations() {
+        Fade fade = new Fade();
+        fade.setDuration(1000);
+        Explode explode = new Explode();
+        explode.setDuration(1000);
+        getWindow().setEnterTransition(fade);
+        getWindow().setExitTransition(explode);
     }
 }

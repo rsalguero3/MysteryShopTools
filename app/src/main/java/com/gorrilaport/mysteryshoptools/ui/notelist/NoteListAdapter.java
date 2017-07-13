@@ -16,13 +16,14 @@ import com.gorrilaport.mysteryshoptools.core.listeners.NoteItemListener;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 import com.gorrilaport.mysteryshoptools.util.TimeUtils;
+import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.ViewHolder> {
+public class NoteListAdapter extends UltimateViewAdapter {
     private List<Note> mNotes;
     private final Context mContext;
     private NoteItemListener mItemListener;
@@ -43,21 +44,36 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public RecyclerView.ViewHolder newFooterHolder(View view) {
+        return null;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder newHeaderHolder(View view) {
+        return null;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent) {
+        return null;
+    }
+
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         final Note note = mNotes.get(position);
 
-        holder.title.setText(note.getTitle());
-        holder.noteDate.setText(TimeUtils.getTimeAgo(note.getDateModified()));
+        ((ViewHolder)holder).title.setText(note.getTitle());
+        ((ViewHolder)holder).noteDate.setText(TimeUtils.getTimeAgo(note.getDateModified()));
 
 
-        holder.title.setOnClickListener(new View.OnClickListener() {
+        ((ViewHolder)holder).title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mItemListener.onNoteClick(note);
             }
         });
 
-        holder.delete.setOnClickListener(new View.OnClickListener() {
+        ((ViewHolder)holder).delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mItemListener.onDeleteButtonClicked(note);
@@ -66,9 +82,9 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.ViewHo
 
         try {
             if (note.getNoteType().equals(Constants.NOTE_TYPE_AUDIO)){
-                Glide.with(mContext).load(R.drawable.headphone_button).into(holder.noteCircleIcon);
+                Glide.with(mContext).load(R.drawable.headphone_button).into(((ViewHolder)holder).noteCircleIcon);
             }else if (note.getNoteType().equals(Constants.NOTE_TYPE_REMINDER)){
-                Glide.with(mContext).load(R.drawable.appointment_reminder).into(holder.noteCircleIcon);
+                Glide.with(mContext).load(R.drawable.appointment_reminder).into(((ViewHolder)holder).noteCircleIcon);
             } else if (note.getNoteType().equals(Constants.NOTE_TYPE_IMAGE)){
                 //Show the image
             }else {                   //Show TextView Image
@@ -77,12 +93,12 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.ViewHo
                 ColorGenerator generator = ColorGenerator.MATERIAL;
                 int color = generator.getRandomColor();
 
-                holder.noteCircleIcon.setVisibility(View.GONE);
-                holder.noteIcon.setVisibility(View.VISIBLE);
+                ((ViewHolder)holder).noteCircleIcon.setVisibility(View.GONE);
+                ((ViewHolder)holder).noteIcon.setVisibility(View.VISIBLE);
 
                 TextDrawable drawable = TextDrawable.builder()
                         .buildRound(firstLetter, color);
-                holder.noteIcon.setImageDrawable(drawable);
+                ((ViewHolder)holder).noteIcon.setImageDrawable(drawable);
 
             }
         } catch (Exception e) {
@@ -92,8 +108,28 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.ViewHo
     }
 
     @Override
+    public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
+        return null;
+    }
+
+    @Override
+    public void onBindHeaderViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+    }
+
+    @Override
     public int getItemCount() {
         return mNotes.size();
+    }
+
+    @Override
+    public int getAdapterItemCount() {
+        return 0;
+    }
+
+    @Override
+    public long generateHeaderId(int position) {
+        return 0;
     }
 
     public Note getItem(int position) {
@@ -146,7 +182,30 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.ViewHo
         }
     }
 
-
+    protected static int convertToOriginalPosition(int position, int dragInitial, int dragCurrent) {
+        if (dragInitial < 0 || dragCurrent < 0) {
+            // not dragging
+            return position;
+        } else {
+            if ((dragInitial == dragCurrent) ||
+                    ((position < dragInitial) && (position < dragCurrent)) ||
+                    (position > dragInitial) && (position > dragCurrent)) {
+                return position;
+            } else if (dragCurrent < dragInitial) {
+                if (position == dragCurrent) {
+                    return dragInitial;
+                } else {
+                    return position - 1;
+                }
+            } else { // if (dragCurrent > dragInitial)
+                if (position == dragCurrent) {
+                    return dragInitial;
+                } else {
+                    return position + 1;
+                }
+            }
+        }
+    }
 
 
 

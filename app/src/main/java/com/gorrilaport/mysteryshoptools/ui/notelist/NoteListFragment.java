@@ -1,10 +1,12 @@
 package com.gorrilaport.mysteryshoptools.ui.notelist;
 
 
+import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
@@ -12,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +26,10 @@ import com.gorrilaport.mysteryshoptools.core.listeners.NoteItemListener;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.addnote.AddNoteActivity;
 import com.gorrilaport.mysteryshoptools.ui.notedetail.NoteDetailActivity;
+import com.gorrilaport.mysteryshoptools.ui.notedetail.NoteDetailFragment;
 import com.gorrilaport.mysteryshoptools.util.Constants;
+import com.marshalchen.ultimaterecyclerview.SwipeDismissTouchListener;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.melnykov.fab.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,6 +40,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,7 +57,7 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
     @Inject
     SharedPreferences mSharedPreference;
 
-    private RecyclerView mRecyclerView;
+    private UltimateRecyclerView mRecyclerView;
     private TextView mEmptyText;
 
     private View mRootView;
@@ -84,7 +91,8 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mRootView = inflater.inflate(R.layout.fragment_note_list, container, false);
-        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.note_recycler_view);
+        mRecyclerView = (UltimateRecyclerView) mRootView.findViewById(R.id.note_recycler_view);
+        mRecyclerView.setItemAnimator(new SlideInLeftAnimator());
         mEmptyText = (TextView) mRootView.findViewById(R.id.empty_text);
 
         ButterKnife.bind(this, mRootView);
@@ -93,9 +101,12 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
 
         mPresenter = new NotesListPresenter(this);
         mListAdapter = new NoteListAdapter(new ArrayList<Note>(), getContext());
-        mRecyclerView.setAdapter(mListAdapter);
+        //mRecyclerView.setEmptyView(R.layout.empty_view, R.id.no_image);
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setLayoutManager((new LinearLayoutManager(getContext())));
+        mRecyclerView.setAdapter(mListAdapter);
+        mRecyclerView.set
+
 
 
         mListAdapter.setNoteItemListener(new NoteItemListener() {
@@ -111,7 +122,7 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
         });
 
         mFab = (FloatingActionButton)getActivity().findViewById(R.id.fab);
-        mFab.attachToRecyclerView(mRecyclerView);
+        //mFab.attachToRecyclerView(mRecyclerView);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,13 +155,25 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
 
     @Override
     public void showAddNote() {
-        startActivity(new Intent(getActivity(), AddNoteActivity.class));
+        if (Build.VERSION.SDK_INT >= 21) {
+            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle();
+            startActivity(new Intent(getActivity(), AddNoteActivity.class), bundle);
+        }
+        else {
+            startActivity(new Intent(getActivity(), AddNoteActivity.class));
+        }
     }
 
 
     @Override
     public void showSingleDetailUi(long noteId) {
-        startActivity(NoteDetailActivity.getStartIntent(getContext(), noteId));
+        if (Build.VERSION.SDK_INT >= 21) {
+            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle();
+            startActivity(NoteDetailActivity.getStartIntent(getContext(), noteId), bundle);
+        }
+        else {
+            startActivity(NoteDetailActivity.getStartIntent(getContext(), noteId));
+        }
     }
 
     @Override
@@ -231,4 +254,5 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
         tv.setTextColor(Color.WHITE);
         snackbar.show();
     }
+
 }

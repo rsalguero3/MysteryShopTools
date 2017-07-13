@@ -36,6 +36,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -53,6 +54,7 @@ import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity;
 import com.gorrilaport.mysteryshoptools.ui.sketch.SketchActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 import com.gorrilaport.mysteryshoptools.util.FileUtils;
+import com.marshalchen.ultimaterecyclerview.ui.swipe.SwipeableRecyclerViewTouchListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -226,7 +228,18 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
                //set category to General if no category is chosen
                 if (!TextUtils.isEmpty(mContent.getText().toString())
                         && !TextUtils.isEmpty(mTitle.getText().toString())) {
-                    validateAndSaveContent();
+
+                    if (Build.VERSION.SDK_INT >= 21){
+                        getActivity().onBackPressed();
+                    }
+                    else {
+                        validateAndSaveContent();
+                    }
+                }
+                else {
+                    if (Build.VERSION.SDK_INT >= 21){
+                        getActivity().onBackPressed();
+                    }
                 }
                 break;
         }
@@ -841,6 +854,14 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             targetFragment.mReminderTime.set(Calendar.MINUTE, minute);
             targetFragment.setAlarm();
         }
+
+    }
+
+    @Override
+    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+            Animation a = new Animation() {};
+            a.setDuration(0);
+            return a;
 
     }
 
