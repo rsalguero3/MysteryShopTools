@@ -283,7 +283,7 @@ private View.OnTouchListener onTouchListener(){
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             mListener.onEditNote(mPresenter.getCurrentNote());
-            return false;
+            return true;
         }
     };
     return listener;

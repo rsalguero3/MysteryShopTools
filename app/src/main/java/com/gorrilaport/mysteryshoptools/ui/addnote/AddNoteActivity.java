@@ -94,5 +94,6 @@ public class AddNoteActivity extends AppCompatActivity {
         Explode explode = new Explode();
         explode.setDuration(1000);
         getWindow().setEnterTransition(explode);
+        getWindow().setExitTransition(fade);
     }
 }

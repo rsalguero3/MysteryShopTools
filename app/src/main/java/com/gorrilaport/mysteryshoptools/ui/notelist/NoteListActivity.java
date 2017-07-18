@@ -9,6 +9,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.gorrilaport.mysteryshoptools.ui.camera.CameraFragment;
@@ -29,8 +32,8 @@ import com.gorrilaport.mysteryshoptools.ui.notedetail.NoteDetailFragment;
 import com.gorrilaport.mysteryshoptools.ui.settings.SettingsActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 
-public class NoteListActivity extends AppCompatActivity {
-    private Toolbar toolbar;
+public class NoteListActivity extends AppCompatActivity implements ActionMode.Callback {
+    public Toolbar toolbar;
     private AccountHeader headerResult;
     private Drawer drawer;
 
@@ -200,5 +203,29 @@ public class NoteListActivity extends AppCompatActivity {
         Slide slide = new Slide();
         slide.setDuration(1000);
         getWindow().setExitTransition(slide);
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode actionMode) {
+
+    }
+
+    public int getScreenHeight() {
+        return findViewById(android.R.id.content).getHeight();
     }
 }

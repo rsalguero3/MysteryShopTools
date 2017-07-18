@@ -56,12 +56,12 @@ public class NoteDetailActivity extends AppCompatActivity {
                     Intent editNoteIntent = new Intent(NoteDetailActivity.this, AddNoteActivity.class);
                     editNoteIntent.putExtra(Constants.NOTE_ID, clickedNote.getId());
                     startActivity(editNoteIntent);
-                    if (Build.VERSION.SDK_INT >= 21){
-                        finishAfterTransition();
-                    }
-                    else {
-                        finish();
-                    }
+//                    if (Build.VERSION.SDK_INT >= 21){
+//                        finishAfterTransition();
+//                    }
+//                    else {
+//                        finish();
+//                    }
                 }
             });
 

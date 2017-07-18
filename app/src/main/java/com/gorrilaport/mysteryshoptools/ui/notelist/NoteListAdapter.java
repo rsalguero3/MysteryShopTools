@@ -16,7 +16,13 @@ import com.gorrilaport.mysteryshoptools.core.listeners.NoteItemListener;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 import com.gorrilaport.mysteryshoptools.util.TimeUtils;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
+
+import com.marshalchen.ultimaterecyclerview.URLogs;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
+import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
+import com.marshalchen.ultimaterecyclerview.itemTouchHelper.ItemTouchHelperViewHolder;
 
 import java.util.List;
 
@@ -35,6 +41,11 @@ public class NoteListAdapter extends UltimateViewAdapter {
         this.mContext = mContext;
     }
 
+    public void remove(int position) {
+        mNotes.remove(position);
+        notifyItemRemoved(position);
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
@@ -44,18 +55,22 @@ public class NoteListAdapter extends UltimateViewAdapter {
     }
 
     @Override
-    public RecyclerView.ViewHolder newFooterHolder(View view) {
+    public UltimateRecyclerviewViewHolder newFooterHolder(View view) {
         return null;
     }
 
     @Override
-    public RecyclerView.ViewHolder newHeaderHolder(View view) {
-        return null;
+    public UltimateRecyclerviewViewHolder newHeaderHolder(View view) {
+        return new UltimateRecyclerviewViewHolder<>(view);
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent) {
-        return null;
+    public UltimateRecyclerviewViewHolder onCreateViewHolder(ViewGroup parent) {
+        Context context = parent.getContext();
+        LayoutInflater inflater = LayoutInflater.from(context);
+        noteView = inflater.inflate(R.layout.custom_row_note_list, parent, false);
+        ViewHolder vh = new ViewHolder(noteView);
+        return vh;
     }
 
     @Override
@@ -149,8 +164,13 @@ public class NoteListAdapter extends UltimateViewAdapter {
         mItemListener = listener;
     }
 
+    public void setOnDragStartListener(OnStartDragListener dragStartListener) {
+        mDragStartListener = dragStartListener;
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    }
+
+
+    public class ViewHolder extends UltimateRecyclerviewViewHolder implements View.OnClickListener{
 
         @BindView(R.id.text_view_note_title)
         TextView title;
