@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/disclaimer"
+        tools:layout_editor_absoluteX="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="28dp" />
+
+    <ImageView
+        android:id="@+id/a_closer_look"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/a_closer_look_logo"
+        app:layout_goneMarginLeft="32dp"
+        android:layout_marginTop="17dp"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <ImageView
+        android:id="@+id/marketforce"
+        android:layout_width="332dp"
+        android:layout_height="106dp"
+        app:srcCompat="@drawable/marketforce_logo"
+        tools:layout_editor_absoluteX="26dp"
+        android:layout_marginTop="19dp"
+        app:layout_constraintTop_toBottomOf="@+id/a_closer_look" />
+
+    <ImageView
+        android:id="@+id/alta"
+        android:layout_width="334dp"
+        android:layout_height="136dp"
+        app:srcCompat="@drawable/alta_logo"
+        tools:layout_editor_absoluteX="25dp"
+        android:layout_marginTop="14dp"
+        app:layout_constraintTop_toBottomOf="@+id/marketforce" />
+
+</android.support.constraint.ConstraintLayout>

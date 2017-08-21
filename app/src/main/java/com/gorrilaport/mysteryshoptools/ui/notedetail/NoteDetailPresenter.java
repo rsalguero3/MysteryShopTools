@@ -35,7 +35,8 @@ public class NoteDetailPresenter implements NoteDetailContract.Action, OnDatabas
 
     @Override
     public void onDeleteNoteButtonClicked() {
-        mView.showDeleteConfirmation(mRepository.getNoteById(noteId));
+        //mView.showDeleteConfirmation(mRepository.getNoteById(noteId));
+        mView.promptForDelete(mRepository.getNoteById(noteId));
     }
 
     @Override

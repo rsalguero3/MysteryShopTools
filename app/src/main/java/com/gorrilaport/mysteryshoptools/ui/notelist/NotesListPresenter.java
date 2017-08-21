@@ -18,16 +18,12 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
     private final NoteListContract.View mView;
     private boolean isDualScreen = false;
 
-
     @Inject NoteListContract.Repository mRepository;
     @Inject SharedPreferences mSharedPreference;
-
-
 
     public NotesListPresenter(NoteListContract.View notesView){
         mView = notesView;
         MysteryShopTools.getInstance().getAppComponent().inject(this);
-
     }
 
     @Override
@@ -45,18 +41,13 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
             mView.showEmptyText(true);
             mView.showNotes(new ArrayList<Note>());
         }
-
-
     }
 
 
     @Override
     public void onAddNewNoteButtonClicked() {
         mView.showAddNote();
-
     }
-
-
 
     @Override
     public void openNoteDetails(@NonNull long noteId) {
@@ -72,7 +63,6 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
         return mRepository.getAllNotes(sortColumn, sortOrder);
     }
 
-
     @Override
     public void onDeleteNoteButtonClicked(Note note) {
         mView.showDeleteConfirmation(note);
@@ -81,7 +71,7 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
     @Override
     public void deleteNote(Note note) {
         mRepository.deleteAsync(note, this);
-        loadNotes();
+        //loadNotes();
     }
 
     @Override
@@ -115,7 +105,6 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
     public void onUpdateOperationCompleted(String message) {
         mView.showMessage(message);
         loadNotes();
-
     }
 
     @Override

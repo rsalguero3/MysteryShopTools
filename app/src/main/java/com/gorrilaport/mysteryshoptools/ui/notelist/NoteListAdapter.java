@@ -16,13 +16,10 @@ import com.gorrilaport.mysteryshoptools.core.listeners.NoteItemListener;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 import com.gorrilaport.mysteryshoptools.util.TimeUtils;
-import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
 
-import com.marshalchen.ultimaterecyclerview.URLogs;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
-import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
-import com.marshalchen.ultimaterecyclerview.itemTouchHelper.ItemTouchHelperViewHolder;
+
 
 import java.util.List;
 
@@ -36,12 +33,18 @@ public class NoteListAdapter extends UltimateViewAdapter {
     private View noteView;
 
 
-    public NoteListAdapter(List<Note> notes, Context mContext){
+    public NoteListAdapter(List<Note> notes, Context mContext) {
         mNotes = notes;
         this.mContext = mContext;
     }
 
     public void remove(int position) {
+        mNotes.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
         mNotes.remove(position);
         notifyItemRemoved(position);
     }
@@ -77,18 +80,18 @@ public class NoteListAdapter extends UltimateViewAdapter {
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         final Note note = mNotes.get(position);
 
-        ((ViewHolder)holder).title.setText(note.getTitle());
-        ((ViewHolder)holder).noteDate.setText(TimeUtils.getTimeAgo(note.getDateModified()));
+        ((ViewHolder) holder).title.setText(note.getTitle());
+        ((ViewHolder) holder).noteDate.setText(TimeUtils.getTimeAgo(note.getDateModified()));
 
 
-        ((ViewHolder)holder).title.setOnClickListener(new View.OnClickListener() {
+        ((ViewHolder) holder).title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mItemListener.onNoteClick(note);
             }
         });
 
-        ((ViewHolder)holder).delete.setOnClickListener(new View.OnClickListener() {
+        ((ViewHolder) holder).delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mItemListener.onDeleteButtonClicked(note);
@@ -96,24 +99,24 @@ public class NoteListAdapter extends UltimateViewAdapter {
         });
 
         try {
-            if (note.getNoteType().equals(Constants.NOTE_TYPE_AUDIO)){
-                Glide.with(mContext).load(R.drawable.headphone_button).into(((ViewHolder)holder).noteCircleIcon);
-            }else if (note.getNoteType().equals(Constants.NOTE_TYPE_REMINDER)){
-                Glide.with(mContext).load(R.drawable.appointment_reminder).into(((ViewHolder)holder).noteCircleIcon);
-            } else if (note.getNoteType().equals(Constants.NOTE_TYPE_IMAGE)){
+            if (note.getNoteType().equals(Constants.NOTE_TYPE_AUDIO)) {
+                Glide.with(mContext).load(R.drawable.headphone_button).into(((ViewHolder) holder).noteCircleIcon);
+            } else if (note.getNoteType().equals(Constants.NOTE_TYPE_REMINDER)) {
+                Glide.with(mContext).load(R.drawable.appointment_reminder).into(((ViewHolder) holder).noteCircleIcon);
+            } else if (note.getNoteType().equals(Constants.NOTE_TYPE_IMAGE)) {
                 //Show the image
-            }else {                   //Show TextView Image
+            } else {                   //Show TextView Image
 
                 String firstLetter = note.getTitle().substring(0, 1);
                 ColorGenerator generator = ColorGenerator.MATERIAL;
                 int color = generator.getRandomColor();
 
-                ((ViewHolder)holder).noteCircleIcon.setVisibility(View.GONE);
-                ((ViewHolder)holder).noteIcon.setVisibility(View.VISIBLE);
+                ((ViewHolder) holder).noteCircleIcon.setVisibility(View.GONE);
+                ((ViewHolder) holder).noteIcon.setVisibility(View.VISIBLE);
 
                 TextDrawable drawable = TextDrawable.builder()
                         .buildRound(firstLetter, color);
-                ((ViewHolder)holder).noteIcon.setImageDrawable(drawable);
+                ((ViewHolder) holder).noteIcon.setImageDrawable(drawable);
 
             }
         } catch (Exception e) {
@@ -160,7 +163,7 @@ public class NoteListAdapter extends UltimateViewAdapter {
         mNotes = notes;
     }
 
-    public void setNoteItemListener(NoteItemListener listener){
+    public void setNoteItemListener(NoteItemListener listener) {
         mItemListener = listener;
     }
 
@@ -170,7 +173,7 @@ public class NoteListAdapter extends UltimateViewAdapter {
     }
 
 
-    public class ViewHolder extends UltimateRecyclerviewViewHolder implements View.OnClickListener{
+    public class ViewHolder extends UltimateRecyclerviewViewHolder implements View.OnClickListener {
 
         @BindView(R.id.text_view_note_title)
         TextView title;
@@ -198,37 +201,11 @@ public class NoteListAdapter extends UltimateViewAdapter {
             int position = getAdapterPosition();
             Note note = getItem(position);
             mItemListener.onNoteClick(note);
+        }
 
+        public Note getNote() {
+            return getItem(getAdapterPosition());
         }
     }
-
-    protected static int convertToOriginalPosition(int position, int dragInitial, int dragCurrent) {
-        if (dragInitial < 0 || dragCurrent < 0) {
-            // not dragging
-            return position;
-        } else {
-            if ((dragInitial == dragCurrent) ||
-                    ((position < dragInitial) && (position < dragCurrent)) ||
-                    (position > dragInitial) && (position > dragCurrent)) {
-                return position;
-            } else if (dragCurrent < dragInitial) {
-                if (position == dragCurrent) {
-                    return dragInitial;
-                } else {
-                    return position - 1;
-                }
-            } else { // if (dragCurrent > dragInitial)
-                if (position == dragCurrent) {
-                    return dragInitial;
-                } else {
-                    return position + 1;
-                }
-            }
-        }
-    }
-
-
-
-
-
 }
+

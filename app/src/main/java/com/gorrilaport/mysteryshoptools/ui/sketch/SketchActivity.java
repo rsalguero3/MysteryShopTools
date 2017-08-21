@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -63,11 +64,18 @@ public class SketchActivity extends Activity {
 
     private void saveThisDrawing() {
 
-        sketchDirectory = new File(Environment.getExternalStorageDirectory(), Constants.ATTACHMENTS_FOLDER);
+        //sketchDirectory = new File(Environment.getExternalStorageDirectory(), Constants.ATTACHMENTS_FOLDER);
+        sketchDirectory = new File(getFilesDir(), Constants.ATTACHMENTS_FOLDER);
+        System.out.println(sketchDirectory.getAbsolutePath());
         if (!sketchDirectory.exists()) {
-            sketchDirectory.mkdir();
+            sketchDirectory.mkdirs();
+            System.out.println(sketchDirectory.exists());
+        }
+        if(sketchDirectory.exists()){
+            System.out.println("sketck dir exists");
         }
         customView.setDrawingCacheEnabled(true);
+
 
         try {
             String imTitle = "Sketch" + "_" + TimeUtils.getDatetimeSuffix(System.currentTimeMillis())+ Constants.MIME_TYPE_SKETCH_EXT;
@@ -85,16 +93,20 @@ public class SketchActivity extends Activity {
 
         } catch (FileNotFoundException e) {
             Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            System.out.println(sketchDirectory.getAbsolutePath());
+            System.out.println(sketchFile.getAbsolutePath());
             setResult(RESULT_CANCELED);
             finish();
 
         } catch (IOException e) {
             Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            System.out.println(sketchDirectory.getAbsolutePath());
+            System.out.println(sketchFile.getAbsolutePath());
             setResult(RESULT_CANCELED);
             finish();
         }
 
-        String signatureFilePath = sketchFile.getPath();
+        String signatureFilePath = sketchFile.getAbsolutePath();
         Intent data = new Intent();
         data.setData(Uri.parse(signatureFilePath));
         setResult(RESULT_OK, data);

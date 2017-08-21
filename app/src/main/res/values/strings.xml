@@ -72,14 +72,15 @@
     <string name="erase">Erase</string>
     <string name="note_editor">Note Editor</string>
     <string name="column_title">title</string>
-    <string name="column_date_created">dateCreated</string>
-    <string name="column_date_modified">dateModified</string>
+    <string name="column_date_created">created_time</string>
+    <string name="column_date_modified">modified_time</string>
     <string name="sort_order">sort_order</string>
     <string name="sort_order_ascending">ascending</string>
     <string name="sort_order_descending">descending</string>
 
     <string name="negative_duration">\u2212<xliff:g id="time" example="1:14">%1$s</xliff:g></string>
     <string name="Timer_Fragment">Timer Fragement</string>
+    <string name="disclaimer">Mystery Shop Companies to start off. *We are not affiliated, associated, authorized, endorsed by, or in any way officially connected with any of the companies below or any of its subsidiaries or its affiliates.</string>
 
 
     <string-array name="sortOptionsEntries">
@@ -90,7 +91,7 @@
 
     <string-array name="sortOptionsValues">
         <item>@string/column_title</item>
-        <item>@string/column_date_modified</item>
+        <item>@string/column_date_created</item>
         <item>@string/column_date_modified</item>
     </string-array>
 

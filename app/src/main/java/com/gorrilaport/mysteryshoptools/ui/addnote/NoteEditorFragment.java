@@ -18,6 +18,7 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -26,7 +27,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -54,7 +57,8 @@ import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity;
 import com.gorrilaport.mysteryshoptools.ui.sketch.SketchActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 import com.gorrilaport.mysteryshoptools.util.FileUtils;
-import com.marshalchen.ultimaterecyclerview.ui.swipe.SwipeableRecyclerViewTouchListener;
+import com.gorrilaport.mysteryshoptools.util.TimeUtils;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -64,6 +68,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.gorrilaport.mysteryshoptools.util.FileUtils.createImageFile;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -116,7 +122,13 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         showLinedEditor = PreferenceManager
                 .getDefaultSharedPreferences(getContext()).getBoolean("default_editor", false);
         Log.d(LOG_TAG, "Line Editor Enabled ?: " + showLinedEditor);
+        createBottomToolbar();
     }
+
+
+
+
+
 
     public static NoteEditorFragment newInstance(long noteId){
         NoteEditorFragment fragment = new NoteEditorFragment();
@@ -228,13 +240,7 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
                //set category to General if no category is chosen
                 if (!TextUtils.isEmpty(mContent.getText().toString())
                         && !TextUtils.isEmpty(mTitle.getText().toString())) {
-
-                    if (Build.VERSION.SDK_INT >= 21){
                         getActivity().onBackPressed();
-                    }
-                    else {
-                        validateAndSaveContent();
-                    }
                 }
                 else {
                     if (Build.VERSION.SDK_INT >= 21){
@@ -269,7 +275,7 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         }
         if (!TextUtils.isEmpty(note.getLocalImagePath())){
             mLocalImagePath = note.getLocalImagePath();
-            populateImage(mLocalImagePath);
+            //populateImage(mLocalImagePath);
         }
         if (!TextUtils.isEmpty(note.getLocalSketchImagePath())){
             mLocalSketchPath = note.getLocalSketchImagePath();
@@ -755,6 +761,10 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
     private void addPhotoToGallery(String path) {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(path);
+        if (f.exists())System.out.println("it works");
+                else{
+            System.out.println("didnt work");
+        };
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         this.getActivity().sendBroadcast(mediaScanIntent);
@@ -765,39 +775,35 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File photoFile = null;
         try {
-            photoFile = FileUtils.createImageFile();
-            mLocalImagePath = photoFile.getAbsolutePath();
+            photoFile = createImageFiles();
         } catch (IOException ex) {
             // Error occurred while creating the File
             makeToast("There was a problem saving the photo...");
         }
         // Continue only if the File was successfully created
         if (photoFile != null) {
-            Uri fileUri = Uri.fromFile(photoFile);
-            mImageURI = fileUri;
-            mLocalImagePath = fileUri.getPath();
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageURI);
-            startActivityForResult(takePictureIntent, IMAGE_CAPTURE_REQUEST);
+            Uri photoURI = FileProvider.getUriForFile(getActivity(),
+                    "com.gorrilaport.mysteryshoptools.provider",
+                    photoFile);
+            mImageURI = photoURI;
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, IMAGE_CAPTURE_REQUEST);
         };
     }
 
 
     private void populateImage(String profileImagePath) {
         mImageAttachment.setVisibility(View.VISIBLE);
-        Glide.with(getContext())
+        Glide.with(getActivity())
                 .load(profileImagePath)
-                .placeholder(R.drawable.person_icon)
-                .centerCrop()
                 .into(mImageAttachment);
 
     }
 
     private void populateSketch(String sketchImagePath) {
         mSketchAttachment.setVisibility(View.VISIBLE);
-        Glide.with(getContext())
+        Glide.with(getActivity())
                 .load(sketchImagePath)
-                .placeholder(R.drawable.person_icon)
-                .centerCrop()
                 .into(mSketchAttachment);
     }
 
@@ -865,9 +871,76 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
 
     }
 
+    public File createImageFiles() throws IOException {
+        // Create an image file name
+        String timeStamp = TimeUtils.getDatetimeSuffix(System.currentTimeMillis());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
 
+        // Save a file: path for use with ACTION_VIEW intents
+        mLocalImagePath = image.getAbsolutePath();
+        return image;
+    }
 
+    private void createBottomToolbar(){
+        Toolbar bottomToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_bottom);
+        if (bottomToolbar != null) {
+            bottomToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    PackageManager packageManager = getActivity().getPackageManager();
+                    switch (item.getItemId()) {
+                        case R.id.action_camera:
+                            //Handle taking picture
+                            if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                                if (isStoragePermissionGrantedForImage()) {
+                                    takePhoto();
+                                }
+                            }
+                            break;
+                        case R.id.action_record:
+                            if (packageManager.hasSystemFeature(PackageManager.FEATURE_MICROPHONE)) {
+                                if (isStoragePermissionGranted()) {
+                                    if (isRecordPermissionGranted()) {
+                                        promptToStartRecording();
+                                    }
+                                }
 
+                            } else {
+                                makeToast(getString(R.string.error_no_mic));
+                            }
+                            break;
+                        case R.id.action_play:
+                            if (mLocalAudioFilePath == null) {
+                                makeToast("No Recording found");
+                            } else {
+                                startPlaying();
+                            }
+                            break;
+                        case R.id.action_sketch:
+                            if (isStoragePermissionGrantedForSketch()) {
+                                Intent sketchIntent = new Intent(getActivity(), SketchActivity.class);
+                                startActivityForResult(sketchIntent, SKETCH_CAPTURE_REQUEST);
+                            }
+                            break;
+                        case R.id.action_reminder:
+                            if (mCurrentNote != null && mCurrentNote.getId() > 0) {
+                                showReminderDate();
+                            } else {
+                                makeToast("Save note before adding a reminder");
+                            }
+                            break;
+                    }
 
-
+                    return NoteEditorFragment.super.onOptionsItemSelected(item);
+                }
+            });
+            bottomToolbar.inflateMenu(R.menu.menu_note_editor_bottom);
+        }
+    }
 }

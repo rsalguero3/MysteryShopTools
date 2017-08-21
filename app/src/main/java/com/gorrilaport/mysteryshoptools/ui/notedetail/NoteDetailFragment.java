@@ -4,6 +4,7 @@ package com.gorrilaport.mysteryshoptools.ui.notedetail;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -51,10 +51,7 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
     private NoteDetailPresenter mPresenter;
     private OnEditNoteButtonClickedListener mListener;
 
-
-
     private boolean showLinedEditor = false;
-
 
     public NoteDetailFragment() {
         // Required empty public constructor
@@ -62,12 +59,10 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
 
     public static NoteDetailFragment newInstance(long noteId){
         NoteDetailFragment fragment = new NoteDetailFragment();
-
         Bundle args = new Bundle();
         args.putLong(Constants.NOTE_ID, noteId);
         fragment.setArguments(args);
         return fragment;
-
     }
 
     @Override
@@ -76,10 +71,7 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         setHasOptionsMenu(true);
         showLinedEditor = PreferenceManager
                 .getDefaultSharedPreferences(getContext()).getBoolean("default_editor", false);
-
     }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -95,10 +87,8 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         if (Build.VERSION.SDK_INT >= 21){
             mContent.setTransitionName("Jason");
         }
-
         displayReadOnlyViews();
         return mRootView;
-
     }
 
     @Override
@@ -108,7 +98,6 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
             long noteId = getArguments().getLong(Constants.NOTE_ID, 0);
             mPresenter = new NoteDetailPresenter(this, noteId);
         }
-
     }
 
     @Override
@@ -129,7 +118,6 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
         switch (id){
             case R.id.action_edit:
@@ -144,7 +132,6 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
             case R.id.action_play:
                 mPresenter.onPlayAudioButtonClicked();
                 break;
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -156,7 +143,6 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         mContent.setText(note.getContent());
         mTitle.setText(note.getTitle());
 
-
         if (!TextUtils.isEmpty(note.getLocalImagePath())){
             populateImage(note.getLocalImagePath());
         }
@@ -164,7 +150,6 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         if (!TextUtils.isEmpty(note.getLocalSketchImagePath())){
              populateSketch(note.getLocalSketchImagePath());
         }
-
     }
 
     @Override
@@ -184,19 +169,15 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         sharingIntent.putExtra(Intent.EXTRA_SUBJECT, mTitle.getText().toString());
         sharingIntent.putExtra(Intent.EXTRA_TEXT, mContent.getText().toString());
         startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.share_using)));
-
-
     }
     @Override
     public void displayPreviousActivity() {
-
-
+        getActivity().onBackPressed();
     }
 
     @Override
     public void showMessage(String message) {
         makeToast(message);
-
     }
 
     @Override
@@ -204,9 +185,10 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         mCategory.setFocusable(false);
         mTitle.setFocusable(false);
         mContent.setFocusable(false);
-        mCategory.setOnTouchListener(this.onTouchListener());
-        mTitle.setOnTouchListener(this.onTouchListener());
-        mContent.setOnTouchListener(this.onTouchListener());
+        mCategory.setOnClickListener(this.onClickListener());
+        mTitle.setOnClickListener(this.onClickListener());
+        mContent.setOnClickListener(this.onClickListener());
+        mImageAttachment.setOnClickListener(this.onClickListenerImage());
     }
 
     @Override
@@ -245,7 +227,6 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
 
     private void makeToast(String message){
         Snackbar snackbar = Snackbar.make(mRootView, message, Snackbar.LENGTH_LONG);
-
         View snackBarView = snackbar.getView();
         snackBarView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
         TextView tv = (TextView)snackBarView.findViewById(android.support.design.R.id.snackbar_text);
@@ -253,40 +234,50 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         snackbar.show();
     }
 
-
-
     public void setListener(OnEditNoteButtonClickedListener mListener) {
         this.mListener = mListener;
     }
 
     private void populateImage(String profileImagePath) {
         mImageAttachment.setVisibility(View.VISIBLE);
-        Glide.with(getContext())
+        Glide.with(getActivity())
                 .load(profileImagePath)
-                .placeholder(R.drawable.person_icon)
-                .centerCrop()
                 .into(mImageAttachment);
-
     }
 
     private void populateSketch(String sketchImagePath) {
         mSketchAttachment.setVisibility(View.VISIBLE);
         Glide.with(getContext())
                 .load(sketchImagePath)
-                .placeholder(R.drawable.person_icon)
-                .centerCrop()
                 .into(mSketchAttachment);
     }
 
-private View.OnTouchListener onTouchListener(){
-    View.OnTouchListener listener = new View.OnTouchListener() {
+    private View.OnClickListener onClickListener() {
+        View.OnClickListener listener = new View.OnClickListener() {
         @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
+        public void onClick(View v) {
             mListener.onEditNote(mPresenter.getCurrentNote());
-            return true;
         }
     };
-    return listener;
+        return listener;
 }
 
+
+    private View.OnClickListener onClickListenerImage() {
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v.getId() == R.id.image_attachment) {
+                    if (mImageAttachment.isShown()) {
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_PICK);
+                        //intent.setType("image/*");
+                        intent.setDataAndType(Uri.parse(mPresenter.getCurrentNote().getLocalImagePath()), "image/*");
+                        startActivity(intent);
+                    }
+                }
+            }
+        };
+        return listener;
+    }
 }

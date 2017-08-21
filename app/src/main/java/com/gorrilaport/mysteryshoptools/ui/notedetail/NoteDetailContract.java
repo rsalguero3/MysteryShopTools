@@ -14,6 +14,7 @@ public interface NoteDetailContract{
       void showMessage(String message);
       void displayReadOnlyViews();
       void finish();
+      void promptForDelete(Note note);
 
    }
 

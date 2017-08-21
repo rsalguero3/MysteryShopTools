@@ -30,9 +30,7 @@ public class AddNoteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
-        if (Build.VERSION.SDK_INT >= 21){
-            setupWindowAnimations();
-        }
+        setupWindowAnimations();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_action_goleft);
         setSupportActionBar(toolbar);
@@ -49,10 +47,7 @@ public class AddNoteActivity extends AppCompatActivity {
         }else {
             openFragment(NoteEditorFragment.newInstance(0), "Note Editor");
         }
-
-
     }
-
 
     private void openFragment(Fragment fragment, String screenTitle){
         getSupportFragmentManager()
@@ -90,9 +85,9 @@ public class AddNoteActivity extends AppCompatActivity {
     @TargetApi(21)
     private void setupWindowAnimations() {
         Fade fade = new Fade();
-        fade.setDuration(1000);
+        fade.setDuration(2000);
         Explode explode = new Explode();
-        explode.setDuration(1000);
+        explode.setDuration(500);
         getWindow().setEnterTransition(explode);
         getWindow().setExitTransition(fade);
     }

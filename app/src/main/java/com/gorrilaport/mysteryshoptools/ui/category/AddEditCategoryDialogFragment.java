@@ -29,9 +29,6 @@ public class AddEditCategoryDialogFragment extends DialogFragment {
     private boolean mInEditMode = false;
     private OnCategoryAddedListener mListener;
 
-
-
-
     public AddEditCategoryDialogFragment() {
         // Required empty public constructor
     }
@@ -39,13 +36,11 @@ public class AddEditCategoryDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     public void setListener(OnCategoryAddedListener mListener) {
         this.mListener = mListener;
     }
-
 
     public static AddEditCategoryDialogFragment newInstance(String content){
         AddEditCategoryDialogFragment dialogFragment = new AddEditCategoryDialogFragment();

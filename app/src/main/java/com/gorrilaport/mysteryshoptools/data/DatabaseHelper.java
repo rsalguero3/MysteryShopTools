@@ -14,10 +14,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     private static DatabaseHelper mDatabaseInstance = null;
     private Context mContext;
 
-
-
-
-
     public static DatabaseHelper newInstance(Context context) {
         //first check to see if the database helper
         //member data is null
@@ -32,7 +28,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return mDatabaseInstance;
     }
 
-
     //make the constructor private so it cannot be
     //instantiated outside of this class
     private DatabaseHelper(Context context) {
@@ -40,7 +35,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         this.mContext = context;
 
     }
-
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -78,17 +72,4 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                     + Constants.COLUMN_TITLE + " TEXT NOT NULL, "
                     + Constants.COLUMN_CREATED_TIME + " BIGINT, "
                     + Constants.COLUMN_MODIFIED_TIME + " BIGINT " + ")";
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

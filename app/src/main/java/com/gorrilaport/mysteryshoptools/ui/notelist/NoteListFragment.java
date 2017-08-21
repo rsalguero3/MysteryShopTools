@@ -2,6 +2,7 @@ package com.gorrilaport.mysteryshoptools.ui.notelist;
 
 
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +10,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -18,6 +20,8 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 
 import com.gorrilaport.mysteryshoptools.R;
@@ -27,54 +31,44 @@ import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.addnote.AddNoteActivity;
 import com.gorrilaport.mysteryshoptools.ui.notedetail.NoteDetailActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
-import com.marshalchen.ultimaterecyclerview.ObservableScrollState;
-import com.marshalchen.ultimaterecyclerview.ObservableScrollViewCallbacks;
-import com.marshalchen.ultimaterecyclerview.URLogs;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
-import com.marshalchen.ultimaterecyclerview.itemTouchHelper.SimpleItemTouchHelperCallback;
-
-import com.melnykov.fab.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
-
-import static com.gorrilaport.mysteryshoptools.R.id.toolbar;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class NoteListFragment extends Fragment implements NoteListContract.View {
 
-
     private NoteListContract.Actions mPresenter;
     private NoteListAdapter mListAdapter;
-
 
     @Inject
     EventBus mBus;
     @Inject
     SharedPreferences mSharedPreference;
 
-    private UltimateRecyclerView mRecyclerView;
-    private TextView mEmptyText;
+    @BindView(R.id.note_recycler_view)
+    UltimateRecyclerView mRecyclerView;
+    @BindView(R.id.empty_text)
+    TextView mEmptyText;
 
     private View mRootView;
     private FloatingActionButton mFab;
 
-
-
     public NoteListFragment() {
         // Required empty public constructor
     }
-
 
     public static NoteListFragment newInstance(boolean dualScreen){
         NoteListFragment fragment = new NoteListFragment();
@@ -88,31 +82,24 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mRootView = inflater.inflate(R.layout.fragment_note_list, container, false);
-        mRecyclerView = (UltimateRecyclerView) mRootView.findViewById(R.id.note_recycler_view);
-        mRecyclerView.setItemAnimator(new SlideInLeftAnimator());
-        mEmptyText = (TextView) mRootView.findViewById(R.id.empty_text);
-
         ButterKnife.bind(this, mRootView);
         MysteryShopTools.getInstance().getAppComponent().inject(this);
 //        mBus.register(this);
 
         mPresenter = new NotesListPresenter(this);
         mListAdapter = new NoteListAdapter(new ArrayList<Note>(), getContext());
-        //mRecyclerView.setEmptyView(R.layout.empty_view, R.id.no_image);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager((new LinearLayoutManager(getContext())));
 
         //Adds the ability to rearranges notes by dragging
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mListAdapter);
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(mListAdapter, mPresenter);
         final ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView.mRecyclerView);
 
@@ -120,43 +107,9 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
             @Override
             public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
                 mItemTouchHelper.startDrag(viewHolder);
+                System.out.println("dragging");
             }
         });
-
-        mRecyclerView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
-            @Override
-            public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-
-            }
-
-            @Override
-            public void onDownMotionEvent() {
-
-            }
-
-            @Override
-            public void onUpOrCancelMotionEvent(ObservableScrollState observableScrollState) {
-                if (observableScrollState == ObservableScrollState.DOWN) {
-                    mRecyclerView.showToolbar(((NoteListActivity)getActivity()).toolbar, mRecyclerView, ((NoteListActivity)getActivity()).getScreenHeight());
-                    mRecyclerView.showFloatingActionMenu();
-                } else if (observableScrollState == ObservableScrollState.UP) {
-                    mRecyclerView.hideToolbar(((NoteListActivity)getActivity()).toolbar, mRecyclerView, ((NoteListActivity)getActivity()).getScreenHeight());
-                    mRecyclerView.hideFloatingActionMenu();
-                } else if (observableScrollState == ObservableScrollState.STOP) {
-                }
-                URLogs.d("onUpOrCancelMotionEvent");
-                if (observableScrollState == ObservableScrollState.UP) {
-                    mRecyclerView.hideToolbar(((NoteListActivity)getActivity()).toolbar, mRecyclerView, ((NoteListActivity)getActivity()).getScreenHeight());
-                    mRecyclerView.hideFloatingActionMenu();
-                } else if (observableScrollState == ObservableScrollState.DOWN) {
-                    mRecyclerView.showToolbar(((NoteListActivity)getActivity()).toolbar, mRecyclerView, ((NoteListActivity)getActivity()).getScreenHeight());
-                    mRecyclerView.showFloatingActionMenu();
-                }
-            }
-        });
-
-
-
         mListAdapter.setNoteItemListener(new NoteItemListener() {
             @Override
             public void onNoteClick(Note clickedNote) {
@@ -168,7 +121,6 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
                 mPresenter.onDeleteNoteButtonClicked(clickedNote);
             }
         });
-
         mFab = (FloatingActionButton)getActivity().findViewById(R.id.fab);
         //mFab.attachToRecyclerView(mRecyclerView);
         mFab.setOnClickListener(new View.OnClickListener() {
@@ -177,8 +129,29 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
                 mPresenter.onAddNewNoteButtonClicked();
             }
         });
-
         mRecyclerView.setAdapter(mListAdapter);
+//        int resId = R.anim.layout_animation_fall_down;
+//        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(mRecyclerView.getContext(), resId);
+//        mRecyclerView.setLayoutAnimation(animation);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                if (dy > 0)
+                    mFab.hide();
+                else if (dy < 0)
+                    mFab.show();
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+
+                if (newState == 0){
+                    //mFab.show();
+                }
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
+        mFab.show();
         return mRootView;
     }
 
@@ -264,13 +237,10 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
         makeToast(message);
     }
 
-
-
     public void promptForDelete(final Note note){
         String title = "Delete " + note.getTitle();
         String content = note.getContent();
         String message =  "Delete " + content.substring(0, Math.min(content.length(), 50)) + "  ... ?";
-
 
         android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getContext());
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -297,12 +267,26 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
 
     private void makeToast(String message){
         Snackbar snackbar = Snackbar.make(mRootView, message, Snackbar.LENGTH_LONG);
-
         View snackBarView = snackbar.getView();
         snackBarView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
         TextView tv = (TextView)snackBarView.findViewById(android.support.design.R.id.snackbar_text);
         tv.setTextColor(Color.WHITE);
         snackbar.show();
+    }
+
+    private void runLayoutAnimation(final UltimateRecyclerView recyclerView) {
+        final Context context = recyclerView.getContext();
+        final LayoutAnimationController controller =
+                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
+
+        recyclerView.setLayoutAnimation(controller);
+        recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
+    }
+
+    @Subscribe
+    public void onEvent(Note note){
+
     }
 
 }

@@ -17,33 +17,21 @@ import javax.inject.Inject;
 public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOperationCompleteListener {
 
     private final AddNoteContract.View mView;
-    @Inject
-    CategoryListContract.Repository mCategoryRepository;
+    @Inject CategoryListContract.Repository mCategoryRepository;
     @Inject NoteListContract.Repository mNoteRepository;
-
-
     @Inject NoteListContract.Repository mRepository;
-    @Inject
-    SharedPreferences mSharedPreference;
+    @Inject SharedPreferences mSharedPreference;
     private boolean mEditMode = false;
     private Note mCurrentNote = null;
-
-
-
 
     public AddNotePresenter(AddNoteContract.View addNoteView, long noteId) {
         MysteryShopTools.getInstance().getAppComponent().inject(this);
         mView = addNoteView;
-
-
         if (noteId > 0){
             mCurrentNote = mNoteRepository.getNoteById(noteId);
             mEditMode = true;
         }
-
-
     }
-
 
     @Override
     public void onAddClick(Note note) {
@@ -52,9 +40,7 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
         }else {
             mNoteRepository.addAsync(note, this);
         }
-
     }
-
 
     @Override
     public void checkStatus() {
@@ -73,7 +59,6 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
         }else {
             mView.displayDiscardConfirmation();
         }
-
     }
 
     @Override
@@ -82,8 +67,6 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
             mNoteRepository.deleteAsync(mCurrentNote, this);
         }
     }
-
-
 
     @Override
     public void saveOnExit(Note note) {
@@ -100,7 +83,6 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
         List<Category> mCategories = mCategoryRepository.getAllCategories(sortColumn, sortOrder);
         mView.displayChooseCategoryDialog(mCategories);
     }
-
 
     @Override
     public void onSaveOperationFailed(String error) {

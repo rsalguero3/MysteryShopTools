@@ -29,7 +29,6 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
         database = databaseHelper.getWritableDatabase();
     }
 
-
     @Override
     public void addAsync(Note note, OnDatabaseOperationCompleteListener listener) {
         ContentValues values = new ContentValues();
@@ -94,10 +93,7 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
             } else {
                 listener.onDeleteOperationCompleted("Unable to Delete Note");
             }
-
         }
-
-
     }
 
 
@@ -107,7 +103,13 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
         List<Note> notes = new ArrayList<>();
 
         //sql command to select all Notes;
-        String selectQuery = "SELECT * FROM " + Constants.NOTES_TABLE;
+        String selectQuery;
+        if(sortOrder) {
+            selectQuery = "SELECT * FROM " + Constants.NOTES_TABLE + " ORDER BY " + sortOption + " ASC";
+        }
+        else {
+            selectQuery = "SELECT * FROM " + Constants.NOTES_TABLE + " ORDER BY " + sortOption + " DESC";
+        }
 
         //make sure the database is not empty
         if (database != null) {

@@ -89,9 +89,6 @@ public class AddSampleDateIntentService extends IntentService {
             noteSQLiteRepository.addAsync(note, mListener );
 
         }
-
-
-
         //When the data is added, restart the Notelist
         //Activity. The default data will be displayed
         Intent restartIntent = new Intent(this, NoteListActivity.class);

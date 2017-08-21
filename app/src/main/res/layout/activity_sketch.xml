@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.okason.prontonotepadrealm.ui.sketch.CustomView
+    <com.gorrilaport.mysteryshoptools.ui.sketch.CustomView
         android:id="@+id/custom_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

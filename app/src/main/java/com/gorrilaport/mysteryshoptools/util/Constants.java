@@ -24,6 +24,8 @@ public class Constants {
     public static final int CAMERA = 3;
     public final static int SETTINGS = 4;
     public final static int TIMER = 5;
+    public static final int COMPANIES = 6;
+    public static final int ABOUT = 7;
 
 
     public final static int SORT_TITLE = 1;
@@ -77,11 +79,11 @@ public class Constants {
     public final static String MIME_TYPE_SKETCH = "image/png";
 
 
-    public final static String MIME_TYPE_IMAGE_EXT = ".jpeg";
+    public final static String MIME_TYPE_IMAGE_EXT = ".jpg";
     public final static String MIME_TYPE_AUDIO_EXT = ".amr";
     public final static String MIME_TYPE_SKETCH_EXT = ".png";
 
-    public static final String ATTACHMENTS_FOLDER = "ProntoNote/Attachments";
+    public static final String ATTACHMENTS_FOLDER = "Attachments";
     public static final String SERIALIZED_NOTE = "serialized_note";
 
     public static final String COLUMN_NEXT_REMINDER = "next_reminder";
@@ -112,5 +114,4 @@ public class Constants {
             Constants.COLUMN_MODIFIED_TIME
 
     };
-
 }

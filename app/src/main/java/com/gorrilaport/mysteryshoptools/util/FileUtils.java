@@ -26,8 +26,7 @@ public class FileUtils {
         // Create an image file name
         String timeStamp = TimeUtils.getDatetimeSuffix(System.currentTimeMillis());
         String imageFileName = "Image_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 Constants.MIME_TYPE_IMAGE_EXT,         /* suffix */

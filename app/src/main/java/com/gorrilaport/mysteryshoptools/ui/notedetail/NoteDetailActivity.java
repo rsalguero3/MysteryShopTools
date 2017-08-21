@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
@@ -19,7 +18,6 @@ import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnEditNoteButtonClickedListener;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.addnote.AddNoteActivity;
-import com.gorrilaport.mysteryshoptools.ui.addnote.NoteEditorFragment;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListContract;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 
@@ -43,8 +41,6 @@ public class NoteDetailActivity extends AppCompatActivity {
 
         MysteryShopTools.getInstance().getAppComponent().inject(this);
 
-
-
         if (getIntent() != null && getIntent().hasExtra(Constants.NOTE_ID)){
             long noteId = getIntent().getLongExtra(Constants.NOTE_ID, 0);
             Note passedInNote = noteRepository.getNoteById(noteId);
@@ -56,15 +52,14 @@ public class NoteDetailActivity extends AppCompatActivity {
                     Intent editNoteIntent = new Intent(NoteDetailActivity.this, AddNoteActivity.class);
                     editNoteIntent.putExtra(Constants.NOTE_ID, clickedNote.getId());
                     startActivity(editNoteIntent);
-//                    if (Build.VERSION.SDK_INT >= 21){
-//                        finishAfterTransition();
-//                    }
-//                    else {
-//                        finish();
-//                    }
+                    if (Build.VERSION.SDK_INT >= 21){
+                        finishAfterTransition();
+                    }
+                    else {
+                        finish();
+                    }
                 }
             });
-
             openFragment(fragment, title);
         }else {
             finish();

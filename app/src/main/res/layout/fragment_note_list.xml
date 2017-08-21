@@ -13,7 +13,7 @@
         android:background="@color/transparent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:recyclerviewEmptyView="@layout/empty_view"/>/>
+        app:recyclerviewEmptyView="@layout/empty_view" />
 
     <TextView
         android:id="@+id/empty_text"

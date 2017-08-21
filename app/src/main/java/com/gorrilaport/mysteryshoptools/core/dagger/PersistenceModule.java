@@ -20,15 +20,9 @@ public class PersistenceModule {
         return new NoteSQLiteRepository(context);
     }
 
-
     @Provides
     @Singleton
     public CategoryListContract.Repository providesCategoryManager(Context context){
         return new CategorySQLiteRepository(context);
     }
-
-
-
-
-
 }

@@ -16,8 +16,8 @@ public class SampleData{
         List<Note> notes = new ArrayList<>();
         //create the dummy note
         Note note1 = new Note();
-        note1.setTitle("DisneyLand Trip");
-        note1.setContent("We went to Disneyland today and the kids had lots of fun!");
+        note1.setTitle("Bank Shop");
+        note1.setContent("Open a checking account and ask about interest rates");
         Calendar calendar1 = GregorianCalendar.getInstance();
         note1.setDateModified(calendar1.getTimeInMillis());
         note1.setNoteType(Constants.NOTE_TYPE_AUDIO);
@@ -27,7 +27,7 @@ public class SampleData{
         //create the dummy note
         Note note2 = new Note();
         note2.setTitle("Gym Work Out");
-        note2.setContent("I went to the Gym today and I got a lot of exercises");
+        note2.setContent("Ask about Gym specials and trainers packages");
 
         //change the date to random time
         Calendar calendar2 = GregorianCalendar.getInstance();
@@ -40,8 +40,8 @@ public class SampleData{
 
         //create the dummy note
         Note note3 = new Note();
-        note3.setTitle("Blog Post Idea");
-        note3.setContent("I will like to write a blog post about how to make money online");
+        note3.setTitle("Pizza Shop");
+        note3.setContent("Order 2 entrees and one drink");
 
 
         //change the date to random time
@@ -55,8 +55,8 @@ public class SampleData{
 
         //create the dummy note
         Note note4 = new Note();
-        note4.setTitle("Cupcake Recipe");
-        note4.setContent("Today I found a recipe to make cup cake from www.google.");
+        note4.setTitle("Cupcake Shop");
+        note4.setContent("Ask about Vanilla Pumpkin Cupcakes");
 
         //pad the date with random number of days and minute
         //so all the notes do not have the same time stamp
@@ -70,8 +70,8 @@ public class SampleData{
 
         //create the dummy note
         Note note5 = new Note();
-        note5.setTitle("Notes from Networking Event");
-        note5.setContent("Today I attended a developer's networking event and it was great");
+        note5.setTitle("Notes from Tavern");
+        note5.setContent("Bartender forgot to bring out menu when I was seated");
 
         //pad the date with two days
         //pad the date with random number of days and minute
@@ -85,7 +85,4 @@ public class SampleData{
 
         return notes;
     }
-
-
-
 }

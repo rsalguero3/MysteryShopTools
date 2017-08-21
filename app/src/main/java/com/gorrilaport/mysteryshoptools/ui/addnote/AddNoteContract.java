@@ -21,8 +21,6 @@ public interface AddNoteContract {
         void displayChooseCategoryDialog(List<Category> categories);
         Context getContext();
         void finish();
-
-
     }
 
     interface Action{
@@ -33,7 +31,4 @@ public interface AddNoteContract {
         void saveOnExit(Note note);
         void onSelectCategory();
     }
-
-
-
 }
