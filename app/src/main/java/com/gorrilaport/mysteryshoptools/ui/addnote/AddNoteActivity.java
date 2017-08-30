@@ -84,11 +84,8 @@ public class AddNoteActivity extends AppCompatActivity {
 
     @TargetApi(21)
     private void setupWindowAnimations() {
-        Fade fade = new Fade();
-        fade.setDuration(2000);
         Explode explode = new Explode();
         explode.setDuration(500);
         getWindow().setEnterTransition(explode);
-        getWindow().setExitTransition(fade);
     }
 }

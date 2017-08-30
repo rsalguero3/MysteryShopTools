@@ -146,7 +146,6 @@ public class CategoryListFragment extends Fragment implements
 
     @Override
     public void onCategorySelected(Category selectedCategory) {
-
     }
 
     @Override

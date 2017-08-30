@@ -1,29 +1,29 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">MysteryShopTools</string>
+    <string name="app_name" translatable="false">MysteryShopTools</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_notes">Mystery Shop Tools</string>
+    <string name="title_activity_notes" translatable="false">Mystery Shop Tools</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_category">CategoryActivity</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="title_activity_category" translatable="false">CategoryActivity</string>
     <string name="dialog_title">Title</string>
     <string name="hint_enter_category">Enter Category</string>
-    <string name="edit_category">Edit Category</string>
+    <string name="edit_category" translatable="false">Edit Category</string>
     <string name="add_category">Add Category</string>
     <string name="name_is_required">Name is Required</string>
     <string name="no_category_found">No Category Found</string>
-    <string name="delete_Category">Delete Category</string>
+    <string name="delete_Category" translatable="false">Delete Category</string>
     <string name="action_delete">Delete</string>
     <string name="action_yes">Yes</string>
     <string name="action_cancel">Cancel</string>
     <string name="no_notes_found">No Note found</string>
     <string name="title_activity_add_note">Add Note</string>
     <string name="title">Title</string>
-    <string name="date_last_modified">Date Last Modified</string>
+    <string name="date_last_modified" translatable="false">Date Last Modified</string>
     <string name="color">Color</string>
-    <string name="sort_by_category">Category</string>
-    <string name="sort_title">Sort By</string>
-    <string name="title_activity_note_detail">Note Detail</string>
+    <string name="sort_by_category" translatable="false">Category</string>
+    <string name="sort_title" translatable="false">Sort By</string>
+    <string name="title_activity_note_detail" translatable="false">Note Detail</string>
     <string name="category">Category</string>
     <string name="placeholder_note_text">Enter note</string>
     <string name="choose_color">Choose Color</string>
@@ -31,31 +31,31 @@
 
     <string name="action_edit">Edit</string>
     <string name="action_save">Save</string>
-    <string name="title_activity_search">Search Activity</string>
+    <string name="title_activity_search" translatable="false">Search Activity</string>
     <string name="action_sort">Sort</string>
     <string name="no_category">No Category found</string>
-    <string name="action_send">Share</string>
+    <string name="action_send" translatable="false">Share</string>
     <string name="action_change_color">Choose Color</string>
-    <string name="edit_title">Edit Title</string>
-    <string name="edit_note">Edit Note</string>
+    <string name="edit_title" translatable="false">Edit Title</string>
+    <string name="edit_note" translatable="false">Edit Note</string>
     <string name="share_using">Share Using</string>
     <string name="title_is_required">Title is required</string>
     <string name="note_is_required">Note is required</string>
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_backup">Backups</string>
-    <string name="title_item_list">Items</string>
-    <string name="title_item_detail">Item Detail</string>
+    <string name="title_item_list" translatable="false">Items</string>
+    <string name="title_item_detail" translatable="false">Item Detail</string>
     <string name="backup_options">Backup Options</string>
     <string name="restore">Restore from SD Card</string>
     <string name="backup">Backup to SD Card</string>
     <string name="select_category">Select Category</string>
     <string name="placeholder_note_title">Enter Title</string>
-    <string name="image_attachment">Image</string>
-    <string name="title_activity_category_list">CategoryListActivity</string>
+    <string name="image_attachment" translatable="false">Image</string>
+    <string name="title_activity_category_list" translatable="false">CategoryListActivity</string>
 
     <string name="action_play">Play</string>
-    <string name="note_detail">Note Detail</string>
-    <string name="action_nfc">NFC Beam</string>
+    <string name="note_detail" translatable="false">Note Detail</string>
+    <string name="action_nfc" translatable="false">NFC Beam</string>
     <string name="action_record">Record</string>
     <string name="action_camera">Picture</string>
     <string name="action_sketch">Sketch</string>
@@ -71,15 +71,15 @@
     <string name="save">Save</string>
     <string name="erase">Erase</string>
     <string name="note_editor">Note Editor</string>
-    <string name="column_title">title</string>
-    <string name="column_date_created">created_time</string>
-    <string name="column_date_modified">modified_time</string>
-    <string name="sort_order">sort_order</string>
-    <string name="sort_order_ascending">ascending</string>
-    <string name="sort_order_descending">descending</string>
+    <string name="column_title" translatable="false">title</string>
+    <string name="column_date_created" translatable="false">created_time</string>
+    <string name="column_date_modified" translatable="false">modified_time</string>
+    <string name="sort_order" translatable="false">sort_order</string>
+    <string name="sort_order_ascending" translatable="false">ascending</string>
+    <string name="sort_order_descending" translatable="false">descending</string>
 
-    <string name="negative_duration">\u2212<xliff:g id="time" example="1:14">%1$s</xliff:g></string>
-    <string name="Timer_Fragment">Timer Fragement</string>
+    <string name="negative_duration" translatable="false">\u2212<xliff:g id="time" example="1:14">%1$s</xliff:g></string>
+    <string name="Timer_Fragment" translatable="false">Timer Fragement</string>
     <string name="disclaimer">Mystery Shop Companies to start off. *We are not affiliated, associated, authorized, endorsed by, or in any way officially connected with any of the companies below or any of its subsidiaries or its affiliates.</string>
 
 

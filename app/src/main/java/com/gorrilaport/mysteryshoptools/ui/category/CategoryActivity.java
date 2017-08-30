@@ -39,10 +39,6 @@ public class CategoryActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
-        Toast toast = Toast.makeText(getApplicationContext(), "Saving",
-                Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.TOP|Gravity.LEFT, 0, 0);
-        toast.show();
         super.onBackPressed();
         finish();
     }

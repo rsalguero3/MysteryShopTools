@@ -34,7 +34,6 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:paddingRight="@dimen/margin_padding_tiny"
-        android:background="@color/primary"
         android:layout_marginBottom="@dimen/margin_padding_small"
         android:orientation="horizontal">
 

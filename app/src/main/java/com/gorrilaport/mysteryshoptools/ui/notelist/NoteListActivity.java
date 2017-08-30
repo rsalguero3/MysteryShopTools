@@ -213,9 +213,6 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
     private void setupWindowAnimations() {
         Slide slide = new Slide();
         slide.setDuration(500);
-        Explode explode = new Explode();
-        explode.setDuration(500);
-        getWindow().setEnterTransition(explode);
         getWindow().setExitTransition(slide);
     }
 

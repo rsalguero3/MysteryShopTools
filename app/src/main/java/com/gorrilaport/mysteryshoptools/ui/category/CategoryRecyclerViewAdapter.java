@@ -98,7 +98,6 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryRe
                     mListener.onDeleteCategoryButtonClicked(categoryToBeEdited);
                 }
             });
-
         }
     }
 }

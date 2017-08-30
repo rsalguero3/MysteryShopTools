@@ -67,7 +67,7 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
         values.put(Constants.COLUMN_CATEGORY_NAME, note.getCategoryName());
         values.put(Constants.COLUMNS_CATEGORY_ID, categorySQLiteRepository.createOrGetCategoryId(note.getCategoryName()));
         values.put(Constants.COLUMNS_NOTE_TYPE, note.getNoteType());
-        values.put(Constants.COLUMN_CREATED_TIME, System.currentTimeMillis());
+        //values.put(Constants.COLUMN_CREATED_TIME, System.currentTimeMillis());
         values.put(Constants.COLUMN_MODIFIED_TIME, System.currentTimeMillis());
         //Now update the this row with the information supplied
 

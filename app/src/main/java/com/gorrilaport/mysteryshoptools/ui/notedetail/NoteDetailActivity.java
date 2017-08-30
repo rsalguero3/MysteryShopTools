@@ -86,10 +86,6 @@ public class NoteDetailActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
-        Toast toast = Toast.makeText(getApplicationContext(), "Saving",
-                Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.TOP|Gravity.LEFT, 0, 0);
-        toast.show();
         super.onBackPressed();
         if (Build.VERSION.SDK_INT >= 21){
             finishAfterTransition();
@@ -103,9 +99,7 @@ public class NoteDetailActivity extends AppCompatActivity {
     private void setupWindowAnimations() {
         Fade fade = new Fade();
         fade.setDuration(1000);
-        Explode explode = new Explode();
-        explode.setDuration(1000);
         getWindow().setEnterTransition(fade);
-        getWindow().setExitTransition(explode);
+
     }
 }

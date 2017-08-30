@@ -30,6 +30,7 @@ import com.gorrilaport.mysteryshoptools.core.listeners.OnEditNoteButtonClickedLi
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
+import com.gorrilaport.mysteryshoptools.util.TimeUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,13 +41,12 @@ import butterknife.ButterKnife;
 public class NoteDetailFragment extends Fragment implements NoteDetailContract.View {
 
     private View mRootView;
-    @BindView(R.id.edit_text_title)
-    EditText mTitle;
+    @BindView(R.id.edit_text_title) EditText mTitle;
     @BindView(R.id.edit_text_note) EditText mContent;
     @BindView(R.id.edit_text_category) EditText mCategory;
-    @BindView(R.id.image_attachment)
-    ImageView mImageAttachment;
+    @BindView(R.id.image_attachment) ImageView mImageAttachment;
     @BindView(R.id.sketch_attachment) ImageView mSketchAttachment;
+    @BindView(R.id.time_stamp) TextView mTimeStamp;
 
     private NoteDetailPresenter mPresenter;
     private OnEditNoteButtonClickedListener mListener;
@@ -142,6 +142,8 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         mCategory.setText(note.getCategoryName());
         mContent.setText(note.getContent());
         mTitle.setText(note.getTitle());
+        mTimeStamp.setText("Date Created: " + TimeUtils.getReadableModifiedDate(note.getDateCreated())
+        + "\n" + "Date Modified: " + TimeUtils.getReadableModifiedDate(note.getDateModified()));
 
         if (!TextUtils.isEmpty(note.getLocalImagePath())){
             populateImage(note.getLocalImagePath());
@@ -189,6 +191,7 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         mTitle.setOnClickListener(this.onClickListener());
         mContent.setOnClickListener(this.onClickListener());
         mImageAttachment.setOnClickListener(this.onClickListenerImage());
+        mTimeStamp.setFocusable(false);
     }
 
     @Override

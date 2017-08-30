@@ -89,8 +89,6 @@ public class CategoryListPresenter implements
         } else {
             mView.showEmptyText();
         }
-
-
     }
 
     @Override
