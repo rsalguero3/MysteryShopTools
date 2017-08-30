@@ -1,10 +1,15 @@
 package com.gorrilaport.mysteryshoptools.ui.notedetail;
 
 
+import android.media.MediaPlayer;
+import android.util.Log;
+
 import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnDatabaseOperationCompleteListener;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListContract;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -15,6 +20,7 @@ public class NoteDetailPresenter implements NoteDetailContract.Action, OnDatabas
     NoteListContract.Repository mRepository;
     private final NoteDetailContract.View mView;
     private long noteId;
+    private final static String LOG_TAG = "NoteDetailPresenter";
 
     public NoteDetailPresenter(NoteDetailContract.View mView, long noteId) {
         this.mView = mView;
@@ -46,6 +52,20 @@ public class NoteDetailPresenter implements NoteDetailContract.Action, OnDatabas
 
     @Override
     public void onPlayAudioButtonClicked() {
+        Note note = mRepository.getNoteById(noteId);
+        if (note.getLocalAudioPath() == null) {
+
+        }
+        else {
+            MediaPlayer mPlayer = new MediaPlayer();
+            try {
+                mPlayer.setDataSource(note.getLocalAudioPath());
+                mPlayer.prepare();
+                mPlayer.start();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "prepare() failed");
+            }
+        }
 
     }
 

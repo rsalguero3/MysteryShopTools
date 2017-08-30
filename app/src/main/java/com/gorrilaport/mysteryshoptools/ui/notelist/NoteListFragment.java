@@ -203,7 +203,6 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
     public void showDualDetailUi(Note note) {
         NoteListActivity activity = (NoteListActivity)getActivity();
         activity.showTwoPane(note);
-
     }
 
     @Override

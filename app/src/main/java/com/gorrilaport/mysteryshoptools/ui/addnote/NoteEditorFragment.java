@@ -125,11 +125,6 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         createBottomToolbar();
     }
 
-
-
-
-
-
     public static NoteEditorFragment newInstance(long noteId){
         NoteEditorFragment fragment = new NoteEditorFragment();
 
@@ -304,9 +299,7 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             mPresenter.deleteNote();
             displayPreviousActivity();
         }
-
     }
-
 
     private void promptForDelete(Note note){
         String title = "Delete " + note.getTitle();
@@ -350,7 +343,6 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
     @Override
     public void displayMessage(String message) {
         makeToast(message);
-
     }
 
     @Override
@@ -376,28 +368,23 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             }
         });
         selectCategoryDialog.show(getActivity().getFragmentManager(), "Dialog");
-
-
     }
 
     @Override
     public void finish() {
         startActivity(new Intent(getActivity(), NoteListActivity.class));
-
     }
 
     public void showReminderDate() {
         DialogFragment reminderDatePicker = new ReminderDatePickerDialogFragment();
         reminderDatePicker.setTargetFragment(NoteEditorFragment.this, 0);
         reminderDatePicker.show(getFragmentManager(), "reminderDatePicker");
-
     }
 
     public void showReminderTime() {
         DialogFragment reminderTimePicker = new ReminderTimePickerDialogFragment();
         reminderTimePicker.setTargetFragment(NoteEditorFragment.this, 0);
         reminderTimePicker.show(getFragmentManager(), "reminderTimePicker");
-
     }
 
     private void setAlarm(){
@@ -414,8 +401,6 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         mCurrentNote.setNoteType(Constants.NOTE_TYPE_REMINDER);
         mCurrentNote.setNextReminder(mReminderTime.getTimeInMillis());
         addNoteToDatabase("Reminder set");
-
-
     }
 
 
@@ -513,9 +498,6 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         alertDialog.show();
     }
 
-
-
-
     public void validateAndSaveContent() {
         String category = mCategory.getText().toString();
         if (TextUtils.isEmpty(category)){
@@ -533,8 +515,6 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             mContent.setError(getString(R.string.note_is_required));
             return;
         }
-
-
         addNoteToDatabase("");
     }
 
@@ -558,12 +538,8 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         else {
             mCurrentNote.setNoteType("text");
         }
-
         mPresenter.onAddClick(mCurrentNote);
-
     }
-
-
 
     private void makeToast(String message){
         Snackbar snackbar = Snackbar.make(mRootView, message, Snackbar.LENGTH_LONG);
@@ -725,16 +701,8 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
                     makeToast("External storage access denied");
                 }
                 break;
-
-
         }
-
-
     }
-
-
-
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -830,14 +798,9 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
                 targetFragment.mReminderTime = Calendar.getInstance();
                 targetFragment.mReminderTime.set(year, monthOfYear, dayOfMonth);
                 targetFragment.showReminderTime();
-
             }
-
         }
-
     }
-
-
 
     public static class ReminderTimePickerDialogFragment extends DialogFragment
             implements TimePickerDialog.OnTimeSetListener{

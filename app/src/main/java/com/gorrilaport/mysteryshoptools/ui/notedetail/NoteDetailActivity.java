@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
 import android.transition.Fade;
+import android.transition.Slide;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -93,13 +94,17 @@ public class NoteDetailActivity extends AppCompatActivity {
         else {
             finish();
         }
+
     }
 
     @TargetApi(21)
     private void setupWindowAnimations() {
         Fade fade = new Fade();
-        fade.setDuration(1000);
+        fade.setDuration(500);
+        Slide slide = new Slide();
+        slide.setDuration(500);
         getWindow().setEnterTransition(fade);
+        getWindow().setReturnTransition(slide);
 
     }
 }

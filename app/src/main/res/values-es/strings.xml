@@ -36,7 +36,7 @@
     <string name="share_using">Compartir Usando</string>
     <string name="start">Comenzar</string>
     <string name="start_recording">Empezar a Grabar</string>
-    <string name="stop"></string>
+    <string name="stop">Parar</string>
     <string name="title_is_required">El título es obligatorio</string>
     <string name="title_activity_settings">Configuración</string>
     <string name="action_settings">Configuración</string>
@@ -47,4 +47,5 @@
     <string name="unable_to_get_image">Incapaz de capturar la imagen</string>
     <string name="dialog_title">Título</string>
     <string name="note_editor">Editor de Notas</string>
+    <string name="note_list_activity_actionbar_name">Notas</string>
 </resources>

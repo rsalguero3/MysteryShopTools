@@ -81,6 +81,7 @@
     <string name="negative_duration" translatable="false">\u2212<xliff:g id="time" example="1:14">%1$s</xliff:g></string>
     <string name="Timer_Fragment" translatable="false">Timer Fragement</string>
     <string name="disclaimer">Mystery Shop Companies to start off. *We are not affiliated, associated, authorized, endorsed by, or in any way officially connected with any of the companies below or any of its subsidiaries or its affiliates.</string>
+    <string name="note_list_activity_actionbar_name">Notes</string>
 
 
     <string-array name="sortOptionsEntries">

@@ -2,7 +2,6 @@ package com.gorrilaport.mysteryshoptools.ui.notelist;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,18 +9,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.transition.Explode;
 import android.transition.Slide;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.artitk.licensefragment.model.CustomUI;
+
 import com.artitk.licensefragment.model.License;
 import com.artitk.licensefragment.model.LicenseType;
 import com.artitk.licensefragment.support.v4.RecyclerViewLicenseFragment;
-import com.artitk.licensefragment.support.v4.ScrollViewLicenseFragment;
 import com.gorrilaport.mysteryshoptools.ui.camera.CameraFragment;
 import com.gorrilaport.mysteryshoptools.ui.timer.TimerFragment;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
@@ -39,11 +36,9 @@ import com.gorrilaport.mysteryshoptools.ui.category.CategoryActivity;
 import com.gorrilaport.mysteryshoptools.ui.notedetail.NoteDetailFragment;
 import com.gorrilaport.mysteryshoptools.ui.settings.SettingsActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
-import com.artitk.licensefragment.model.LicenseID;
 
 import java.util.ArrayList;
 
-import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -64,9 +59,6 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notes);
-        if (Build.VERSION.SDK_INT >= 21){
-            setupWindowAnimations();
-        }
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 //        new SlidingRootNavBuilder(this)
@@ -83,7 +75,7 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
     private void openFragment(Fragment fragment, String screenTitle){
         getSupportFragmentManager()
                 .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .replace(R.id.container, fragment)
                 .addToBackStack(null)
                 .commit();
@@ -206,14 +198,7 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
     @Override
     public void onResume(){
         super.onResume();
-        getSupportActionBar().setTitle("Notes");
-    }
-
-    @TargetApi(21)
-    private void setupWindowAnimations() {
-        Slide slide = new Slide();
-        slide.setDuration(500);
-        getWindow().setExitTransition(slide);
+        getSupportActionBar().setTitle(getString(R.string.note_list_activity_actionbar_name));
     }
 
     @Override
@@ -268,6 +253,6 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
             mTwoPane = true;
             findViewById(R.id.note_detail_container).setVisibility(View.GONE);
         }
-        openFragment(NoteListFragment.newInstance(mTwoPane), "Notes");
+        openFragment(NoteListFragment.newInstance(mTwoPane), getString(R.string.note_list_activity_actionbar_name));
     }
 }

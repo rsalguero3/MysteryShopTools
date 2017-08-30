@@ -84,9 +84,6 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         }
 
         ButterKnife.bind(this, mRootView);
-        if (Build.VERSION.SDK_INT >= 21){
-            mContent.setTransitionName("Jason");
-        }
         displayReadOnlyViews();
         return mRootView;
     }
