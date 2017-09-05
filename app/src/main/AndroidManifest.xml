@@ -46,7 +46,8 @@
             android:name=".ui.addnote.AddNoteActivity"
             android:label="@string/title_activity_add_note"
             android:parentActivityName=".ui.notelist.NoteListActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation|screenSize|keyboardHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity" />
@@ -92,6 +93,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="sensor"
             android:theme="@style/FinestWebViewTheme.Light" />
+        <activity android:name=".ui.notedetail.NoteImageView" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

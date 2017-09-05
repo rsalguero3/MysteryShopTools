@@ -28,6 +28,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -43,6 +44,7 @@ import android.view.animation.Animation;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -53,6 +55,7 @@ import com.gorrilaport.mysteryshoptools.core.listeners.OnCategorySelectedListene
 import com.gorrilaport.mysteryshoptools.model.Category;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.category.SelectCategoryDialogFragment;
+import com.gorrilaport.mysteryshoptools.ui.notedetail.ImagePageAdapter;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity;
 import com.gorrilaport.mysteryshoptools.ui.sketch.SketchActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
@@ -62,14 +65,13 @@ import com.gorrilaport.mysteryshoptools.util.TimeUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import static com.gorrilaport.mysteryshoptools.util.FileUtils.createImageFile;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -83,13 +85,12 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
     private final static String LOG_TAG = "NoteEditorFragment";
 
 
-    @BindView(R.id.edit_text_category)
-    EditText mCategory;
+    @BindView(R.id.edit_text_category) EditText mCategory;
     @BindView(R.id.edit_text_title) EditText mTitle;
     @BindView(R.id.edit_text_note) EditText mContent;
-    @BindView(R.id.image_attachment)
-    ImageView mImageAttachment;
     @BindView(R.id.sketch_attachment) ImageView mSketchAttachment;
+    @BindView(R.id.viewPager) ViewPager viewPager;
+    @BindView(R.id.scrollView) ScrollView mScrollView;
 
     private final int EXTERNAL_PERMISSION_REQUEST = 1;
     private final int RECORD_AUDIO_PERMISSION_REQUEST = 2;
@@ -104,11 +105,12 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
     private String mLocalSketchPath = null;
     private Calendar mReminderTime;
 
+    private ArrayList<String> mImagePathArray = new ArrayList<>();
+    private ArrayList<String> mImagePathArrayNewImages = new ArrayList<>();
+    private ImagePageAdapter mImagePageAdapter;
 
     private Uri mImageURI = null;
-
     private AddNotePresenter mPresenter;
-
 
 
     public NoteEditorFragment() {
@@ -123,6 +125,12 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
                 .getDefaultSharedPreferences(getContext()).getBoolean("default_editor", false);
         Log.d(LOG_TAG, "Line Editor Enabled ?: " + showLinedEditor);
         createBottomToolbar();
+        if (getArguments() != null && getArguments().containsKey(Constants.NOTE_ID)) {
+            long noteId = getArguments().getLong(Constants.NOTE_ID, 0);
+            mPresenter = new AddNotePresenter(this, noteId);
+        }else {
+            mPresenter = new AddNotePresenter(this, 0);
+        }
     }
 
     public static NoteEditorFragment newInstance(long noteId){
@@ -149,6 +157,9 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             mRootView = inflater.inflate(R.layout.fragment_plain_editor, container, false);
         }
         ButterKnife.bind(this, mRootView);
+        mImagePageAdapter = new ImagePageAdapter(getActivity(), mImagePathArray);
+        viewPager.setAdapter(mImagePageAdapter);
+        mPresenter.checkStatus();
 
         return mRootView;
 
@@ -157,20 +168,11 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
     @Override
     public void onStart() {
         super.onStart();
-        if (getArguments() != null && getArguments().containsKey(Constants.NOTE_ID)) {
-            long noteId = getArguments().getLong(Constants.NOTE_ID, 0);
-            mPresenter = new AddNotePresenter(this, noteId);
-        }else {
-            mPresenter = new AddNotePresenter(this, 0);
-        }
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mPresenter.checkStatus();
-
     }
 
     @Override
@@ -259,24 +261,36 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         mTitle.setHint(R.string.placeholder_note_title);
         mContent.setText(note.getContent());
         mContent.setHint(R.string.placeholder_note_text);
-        if (!TextUtils.isEmpty(note.getCategoryName())){
+        if (!TextUtils.isEmpty(note.getCategoryName())) {
             mCategory.setText(note.getCategoryName());
-        }else {
+        } else {
             mCategory.setText(Constants.DEFAULT_CATEGORY);
         }
 
-        if (!TextUtils.isEmpty(note.getLocalAudioPath())){
+        if (!TextUtils.isEmpty(note.getLocalAudioPath())) {
             mLocalAudioFilePath = note.getLocalAudioPath();
         }
-        if (!TextUtils.isEmpty(note.getLocalImagePath())){
-            mLocalImagePath = note.getLocalImagePath();
-            //populateImage(mLocalImagePath);
+
+        ArrayList<String> array = note.getImages();
+        mImagePathArray.clear();
+        mImagePageAdapter.notifyDataSetChanged();
+        if (!(array == null)) {
+            for (int i = 0; i < array.size(); i++) {
+                String path = array.get(i);
+                mImagePathArray.add(path);
+                mImagePageAdapter.notifyDataSetChanged();
+            }
         }
-        if (!TextUtils.isEmpty(note.getLocalSketchImagePath())){
+
+        if (!TextUtils.isEmpty(note.getLocalSketchImagePath())) {
             mLocalSketchPath = note.getLocalSketchImagePath();
-           populateSketch(mLocalSketchPath);
+            populateSketch(mLocalSketchPath);
+        }
+        else {
+            mSketchAttachment.setVisibility(View.GONE);
         }
     }
+
 
     @Override
     public void setCurrentNote(Note note) {
@@ -403,7 +417,6 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         addNoteToDatabase("Reminder set");
     }
 
-
     private void startRecording() {
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -422,10 +435,7 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             Log.e(LOG_TAG, "prepare() failed");
             makeToast("Unable to record " + e.getLocalizedMessage());
         }
-
-
     }
-
 
     private void stopRecording() {
         if (mRecorder != null) {
@@ -524,9 +534,9 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         mCurrentNote.setTitle(mTitle.getText().toString());
         mCurrentNote.setDateModified(System.currentTimeMillis());
         mCurrentNote.setLocalAudioPath(mLocalAudioFilePath);
-        mCurrentNote.setLocalImagePath(mLocalImagePath);
         mCurrentNote.setLocalSketchImagePath(mLocalSketchPath);
         mCurrentNote.setCategoryName(mCategory.getText().toString());
+        mCurrentNote.setImages(mImagePathArrayNewImages);
 
         if (!TextUtils.isEmpty(mLocalAudioFilePath)){
             mCurrentNote.setNoteType(Constants.NOTE_TYPE_AUDIO);
@@ -538,7 +548,10 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         else {
             mCurrentNote.setNoteType("text");
         }
-        mPresenter.onAddClick(mCurrentNote);
+        //Only add the new images to database
+        mPresenter.onAddClick(mCurrentNote, mImagePathArrayNewImages);
+        //reset the array to add only new images to database
+        mImagePathArrayNewImages.clear();
     }
 
     private void makeToast(String message){
@@ -710,7 +723,10 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             switch (requestCode){
                 case IMAGE_CAPTURE_REQUEST:
                     addPhotoToGallery(mLocalImagePath);
-                    populateImage(mLocalImagePath);
+                    mImagePathArray.add(mLocalImagePath);
+                    mImagePageAdapter.notifyDataSetChanged();
+                    mImagePathArrayNewImages.add(mLocalImagePath);
+
                     break;
                 case SKETCH_CAPTURE_REQUEST:
                     mLocalSketchPath = data.getData().toString();
@@ -729,10 +745,6 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
     private void addPhotoToGallery(String path) {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(path);
-        if (f.exists())System.out.println("it works");
-                else{
-            System.out.println("didnt work");
-        };
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         this.getActivity().sendBroadcast(mediaScanIntent);
@@ -757,15 +769,6 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, IMAGE_CAPTURE_REQUEST);
         };
-    }
-
-
-    private void populateImage(String profileImagePath) {
-        mImageAttachment.setVisibility(View.VISIBLE);
-        Glide.with(getActivity())
-                .load(profileImagePath)
-                .into(mImageAttachment);
-
     }
 
     private void populateSketch(String sketchImagePath) {

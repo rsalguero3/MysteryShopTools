@@ -82,6 +82,23 @@
     <string name="Timer_Fragment" translatable="false">Timer Fragement</string>
     <string name="disclaimer">Mystery Shop Companies to start off. *We are not affiliated, associated, authorized, endorsed by, or in any way officially connected with any of the companies below or any of its subsidiaries or its affiliates.</string>
     <string name="note_list_activity_actionbar_name">Notes</string>
+    <string name="SampleCategory1">Personal</string>
+    <string name="SampleCategory2">Work Related</string>
+    <string name="SampleCategory3">Restaurants</string>
+    <string name="SampleCategory4">Hotel</string>
+    <string name="SampleCategory5">Productivity</string>
+    <string name="SampleCategory6">General</string>
+    <string name="SampleCategory7">Social</string>
+    <string name="SampleTitle1">Bank Shop</string>
+    <string name="SampleContent1">Open a checking account and ask about interest rates</string>
+    <string name="SampleTitle2">Gym Work Out</string>
+    <string name="SampleContent2">Ask about Gym specials and trainers packages</string>
+    <string name="SampleTitle3">Pizza Shop</string>
+    <string name="SampleContent3">Order 2 entrees and one drink</string>
+    <string name="SampleTitle4">Cupcake Shop</string>
+    <string name="SampleContent4">Ask about Vanilla Pumpkin Cupcakes</string>
+    <string name="SampleTitle5">Notes from Tavern</string>
+    <string name="SampleContent5">Bartender forgot to bring out menu when I was seated</string>
 
 
     <string-array name="sortOptionsEntries">

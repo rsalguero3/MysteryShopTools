@@ -17,6 +17,7 @@ public class Constants {
     public static final String REALM_EXPORT_FILE_PATH = "realm_export_path";
     public static final String IS_DUAL_SCREEN = "is_dual_screen";
     public static final String SORT_PREFERENCE = "sort_PREFERENCE";
+    public static final String IMAGE_PATH = "IMAGE_PATH";
 
 
     public final static int NOTE = 1;
@@ -35,6 +36,7 @@ public class Constants {
 
     public static final String NOTES_TABLE = "note";
     public static final String CATEGORY_TABLE = "category";
+    public static final String IMAGE_TABLE = "image";
 
     //Async Query Ids
     public static final int INSERT_NOTE = 1;
@@ -63,6 +65,8 @@ public class Constants {
     public final static String PREFERENCE_FILE = "preference_file";
 
 
+    public static final String COLUMN_IMAGE_PATH = "image_path";
+    public static final String COLUMN_NOTE_ID = "note_id";
 
 
 
@@ -114,4 +118,5 @@ public class Constants {
             Constants.COLUMN_MODIFIED_TIME
 
     };
+    public static final String DETAIL_PRESENTER = "detail_presenter";
 }

@@ -1,5 +1,7 @@
 package com.gorrilaport.mysteryshoptools.ui.notedetail;
 
+import android.content.Intent;
+
 import com.gorrilaport.mysteryshoptools.model.Note;
 
 public interface NoteDetailContract{
@@ -15,6 +17,7 @@ public interface NoteDetailContract{
       void displayReadOnlyViews();
       void finish();
       void promptForDelete(Note note);
+      void displayFullImage(String imagePath);
 
    }
 

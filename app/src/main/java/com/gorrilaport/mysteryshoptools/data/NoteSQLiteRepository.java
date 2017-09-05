@@ -31,12 +31,12 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
 
     @Override
     public void addAsync(Note note, OnDatabaseOperationCompleteListener listener) {
+        Long noteId = null;
         ContentValues values = new ContentValues();
         values.put(Constants.COLUMN_TITLE, note.getTitle());
         values.put(Constants.COLUMN_CONTENT, note.getContent());
         values.put(Constants.COLUMN_NEXT_REMINDER, note.getNextReminder());
         values.put(Constants.COLUMN_LOCAL_AUDIO_PATH, note.getLocalAudioPath());
-        values.put(Constants.COLUMN_LOCAL_IMAGE_PATH, note.getLocalImagePath());
         values.put(Constants.COLUMN_LOCAL_SKETCH_PATH, note.getLocalSketchImagePath());
         values.put(Constants.COLUMN_CATEGORY_NAME, note.getCategoryName());
         values.put(Constants.COLUMNS_NOTE_TYPE, note.getNoteType());
@@ -49,20 +49,36 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
 
         try {
             long result = database.insertOrThrow(Constants.NOTES_TABLE, null, values);
-            listener.onSaveOperationSucceeded(result);
+            noteId = result;
+            //listener.onSaveOperationSucceeded(result);
         } catch (SQLiteException e){
             listener.onSaveOperationFailed(e.getLocalizedMessage());
         }
+
+        ContentValues imagesValues = new ContentValues();
+        ArrayList<String> images = note.getImages();
+        if (!(images == null)) {
+            for (String path : images) {
+                imagesValues.put(Constants.COLUMN_IMAGE_PATH, path);
+                imagesValues.put(Constants.COLUMN_NOTE_ID, noteId);
+                try {
+                    long result = database.insertOrThrow(Constants.IMAGE_TABLE, null, imagesValues);
+                    //listener.onSaveOperationSucceeded(noteId);
+                } catch (SQLiteException e) {
+                    listener.onSaveOperationFailed(e.getLocalizedMessage());
+                }
+            }
+        }
+        listener.onSaveOperationSucceeded(noteId);
     }
 
     @Override
-    public void updateAsync(Note note, OnDatabaseOperationCompleteListener listener) {
+    public void updateAsync(Note note, OnDatabaseOperationCompleteListener listener, ArrayList<String> newImages) {
         ContentValues values = new ContentValues();
         values.put(Constants.COLUMN_TITLE, note.getTitle());
         values.put(Constants.COLUMN_CONTENT, note.getContent());
         values.put(Constants.COLUMN_NEXT_REMINDER, note.getNextReminder());
         values.put(Constants.COLUMN_LOCAL_AUDIO_PATH, note.getLocalAudioPath());
-        values.put(Constants.COLUMN_LOCAL_IMAGE_PATH, note.getLocalImagePath());
         values.put(Constants.COLUMN_LOCAL_SKETCH_PATH, note.getLocalSketchImagePath());
         values.put(Constants.COLUMN_CATEGORY_NAME, note.getCategoryName());
         values.put(Constants.COLUMNS_CATEGORY_ID, categorySQLiteRepository.createOrGetCategoryId(note.getCategoryName()));
@@ -73,12 +89,26 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
 
         int result =  database.update(Constants.NOTES_TABLE, values,
                 Constants.COLUMN_ID + " = " + note.getId(), null);
+
+        ContentValues imagesValues = new ContentValues();
+        ArrayList<String> images = newImages;
+        if (!(images == null)) {
+            for (String path : images) {
+                imagesValues.put(Constants.COLUMN_IMAGE_PATH, path);
+                imagesValues.put(Constants.COLUMN_NOTE_ID, note.getId());
+                try {
+                    database.insertOrThrow(Constants.IMAGE_TABLE, null, imagesValues);
+                    //listener.onSaveOperationSucceeded(noteId);
+                } catch (SQLiteException e) {
+                    listener.onSaveOperationFailed(e.getLocalizedMessage());
+                }
+            }
+        }
         if (result == 1){
             listener.onUpdateOperationCompleted("Updated");
         }else{
             listener.onUpdateOperationFailed("Update Failed");
         }
-
     }
 
     @Override
@@ -93,6 +123,17 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
             } else {
                 listener.onDeleteOperationCompleted("Unable to Delete Note");
             }
+        }
+    }
+
+    @Override
+    public void deleteAsyncImage(String imagePath){
+
+        //ensure database exists.
+        if (database != null){
+           // int result = database.delete(Constants.IMAGE_TABLE, Constants.COLUMN_IMAGE_PATH + " = " + imagePath, null);
+            int result = database.delete(Constants.IMAGE_TABLE, Constants.COLUMN_IMAGE_PATH + "='" + imagePath + "'", null);
+            System.out.println(result);
         }
     }
 
@@ -119,13 +160,26 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     //get each note in the cursor
-                    notes.add(Note.fromCursor(cursor));
+                    Note note = Note.fromCursor(cursor);
+                    //Get the image path from cursor
+                    String query = "SELECT " + Constants.COLUMN_IMAGE_PATH + " FROM " + Constants.IMAGE_TABLE + " WHERE "
+                            + Constants.COLUMN_NOTE_ID + " = " + note.getId();
+                    Cursor image = database.rawQuery(query, null);
+                    ArrayList<String> imagesArray = new ArrayList<>();
+                    if (image.moveToFirst()){
+                        while(!image.isAfterLast()){
+                            imagesArray.add(image.getString(image.getColumnIndex(Constants.COLUMN_IMAGE_PATH)));
+                            image.moveToNext();
+                        }
+                    }
+                    image.close();
+                    note.setImages(imagesArray);
+                    notes.add(note);
                     cursor.moveToNext();
                 }
             }
             cursor.close();
         }
-
         return notes;
     }
 
@@ -139,6 +193,20 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
         Note note;
         if (cursor.moveToFirst()){
             note = Note.fromCursor(cursor);
+                    //Get the image path from cursor
+                    String query = "SELECT " + Constants.COLUMN_IMAGE_PATH + " FROM " + Constants.IMAGE_TABLE + " WHERE "
+                            + Constants.COLUMN_NOTE_ID + " = " + note.getId();
+                    Cursor image = database.rawQuery(query, null);
+                    ArrayList<String> imagesArray = new ArrayList<>();
+                    if (image.moveToFirst()){
+                        while(!image.isAfterLast()){
+                            imagesArray.add(image.getString(image.getColumnIndex(Constants.COLUMN_IMAGE_PATH)));
+                            image.moveToNext();
+                        }
+                        image.close();
+                        note.setImages(imagesArray);
+                    }
+
         }else {
             note = null;
         }

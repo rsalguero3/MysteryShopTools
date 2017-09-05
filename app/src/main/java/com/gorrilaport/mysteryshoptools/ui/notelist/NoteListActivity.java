@@ -173,6 +173,7 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
                 openFragment(CameraFragment.newInstance(), "Camera");
                 break;
             case Constants.COMPANIES:
+                mfab.hide();
                 openFragment(CompaniesFragment.newInstance(), "Companies");
                 break;
             case Constants.ABOUT:

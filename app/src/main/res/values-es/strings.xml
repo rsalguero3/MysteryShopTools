@@ -48,4 +48,21 @@
     <string name="dialog_title">Título</string>
     <string name="note_editor">Editor de Notas</string>
     <string name="note_list_activity_actionbar_name">Notas</string>
+    <string name="SampleCategory1">Personal</string>
+    <string name="SampleCategory2">Relacionado al Trabajo</string>
+    <string name="SampleCategory3">Restaurantes</string>
+    <string name="SampleCategory4">Hotel</string>
+    <string name="SampleCategory5">Productivity</string>
+    <string name="SampleCategory6">General</string>
+    <string name="SampleCategory7">Social</string>
+    <string name="SampleTitle1">Banco Shop</string>
+    <string name="SampleContent1">Abrir una cuenta corriente y preguntar acerca de las tasas de interés</string>
+    <string name="SampleTitle2">Entrenamiento en el Gimnasio</string>
+    <string name="SampleContent2">Pregunte por los paquetes especiales y entrenadores de Gimnasio</string>
+    <string name="SampleTitle3">Pizza Shop</string>
+    <string name="SampleContent3">Ordenar 2 entrantes y una bebida</string>
+    <string name="SampleTitle4">Magdalena Shop</string>
+    <string name="SampleContent4">Pregunte acerca de Cupcakes de calabaza de vainilla</string>
+    <string name="SampleTitle5">Notas de Tavern</string>
+    <string name="SampleContent5">El camarero se olvidó de llevar menú cuando estaba sentado</string>
 </resources>

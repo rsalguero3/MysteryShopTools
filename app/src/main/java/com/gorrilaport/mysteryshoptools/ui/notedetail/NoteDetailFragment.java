@@ -1,6 +1,7 @@
 package com.gorrilaport.mysteryshoptools.ui.notedetail;
 
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -32,8 +34,13 @@ import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 import com.gorrilaport.mysteryshoptools.util.TimeUtils;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.thefinestartist.utils.content.ContextUtil.startActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,10 +51,12 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
     @BindView(R.id.edit_text_title) EditText mTitle;
     @BindView(R.id.edit_text_note) EditText mContent;
     @BindView(R.id.edit_text_category) EditText mCategory;
-    @BindView(R.id.image_attachment) ImageView mImageAttachment;
     @BindView(R.id.sketch_attachment) ImageView mSketchAttachment;
     @BindView(R.id.time_stamp) TextView mTimeStamp;
+    @BindView(R.id.viewPager) ViewPager mViewPager;
 
+    private ImagePageAdapter mImagePageAdapter;
+    private ArrayList<String> mImagePathArray = new ArrayList<>();
     private NoteDetailPresenter mPresenter;
     private OnEditNoteButtonClickedListener mListener;
 
@@ -71,6 +80,10 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         setHasOptionsMenu(true);
         showLinedEditor = PreferenceManager
                 .getDefaultSharedPreferences(getContext()).getBoolean("default_editor", false);
+        if (getArguments() != null && getArguments().containsKey(Constants.NOTE_ID)) {
+            long noteId = getArguments().getLong(Constants.NOTE_ID, 0);
+            mPresenter = new NoteDetailPresenter(this, noteId);
+        }
     }
 
     @Override
@@ -84,6 +97,8 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         }
 
         ButterKnife.bind(this, mRootView);
+        mImagePageAdapter = new ImagePageAdapter(getActivity(), mImagePathArray, this);
+        mViewPager.setAdapter(mImagePageAdapter);
         displayReadOnlyViews();
         return mRootView;
     }
@@ -91,10 +106,7 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
     @Override
     public void onStart() {
         super.onStart();
-        if (getArguments() != null && getArguments().containsKey(Constants.NOTE_ID)) {
-            long noteId = getArguments().getLong(Constants.NOTE_ID, 0);
-            mPresenter = new NoteDetailPresenter(this, noteId);
-        }
+        mPresenter.showNoteDetails();
     }
 
     @Override
@@ -103,7 +115,6 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         getActivity().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
-        mPresenter.showNoteDetails();
     }
 
 
@@ -140,15 +151,22 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         mContent.setText(note.getContent());
         mTitle.setText(note.getTitle());
         mTimeStamp.setText("Date Created: " + TimeUtils.getReadableModifiedDate(note.getDateCreated())
-        + "\n" + "Date Modified: " + TimeUtils.getReadableModifiedDate(note.getDateModified()));
+                + "\n" + "Date Modified: " + TimeUtils.getReadableModifiedDate(note.getDateModified()));
 
-        if (!TextUtils.isEmpty(note.getLocalImagePath())){
-            populateImage(note.getLocalImagePath());
-        }
+            ArrayList<String> array = note.getImages();
+            mImagePathArray.clear();
+            mImagePageAdapter.notifyDataSetChanged();
+            if (!(array == null)) {
+                for (int i = 0; i < array.size(); i++) {
+                    String path = array.get(i);
+                    mImagePathArray.add(path);
+                    mImagePageAdapter.notifyDataSetChanged();
+                }
+            }
 
-        if (!TextUtils.isEmpty(note.getLocalSketchImagePath())){
-             populateSketch(note.getLocalSketchImagePath());
-        }
+            if (!TextUtils.isEmpty(note.getLocalSketchImagePath())) {
+                populateSketch(note.getLocalSketchImagePath());
+            }
     }
 
     @Override
@@ -187,7 +205,6 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         mCategory.setOnClickListener(this.onClickListener());
         mTitle.setOnClickListener(this.onClickListener());
         mContent.setOnClickListener(this.onClickListener());
-        mImageAttachment.setOnClickListener(this.onClickListenerImage());
         mTimeStamp.setFocusable(false);
     }
 
@@ -225,6 +242,13 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         alertDialog.show();
     }
 
+    @Override
+    public void displayFullImage(String imagePath) {
+        Intent intent = new Intent(getActivity(), NoteImageView.class);
+        intent.putExtra(Constants.IMAGE_PATH, imagePath);
+        startActivity(intent);
+    }
+
     private void makeToast(String message){
         Snackbar snackbar = Snackbar.make(mRootView, message, Snackbar.LENGTH_LONG);
         View snackBarView = snackbar.getView();
@@ -236,13 +260,6 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
 
     public void setListener(OnEditNoteButtonClickedListener mListener) {
         this.mListener = mListener;
-    }
-
-    private void populateImage(String profileImagePath) {
-        mImageAttachment.setVisibility(View.VISIBLE);
-        Glide.with(getActivity())
-                .load(profileImagePath)
-                .into(mImageAttachment);
     }
 
     private void populateSketch(String sketchImagePath) {
@@ -262,22 +279,4 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         return listener;
 }
 
-
-    private View.OnClickListener onClickListenerImage() {
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (v.getId() == R.id.image_attachment) {
-                    if (mImageAttachment.isShown()) {
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_PICK);
-                        //intent.setType("image/*");
-                        intent.setDataAndType(Uri.parse(mPresenter.getCurrentNote().getLocalImagePath()), "image/*");
-                        startActivity(intent);
-                    }
-                }
-            }
-        };
-        return listener;
-    }
 }

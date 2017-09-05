@@ -10,6 +10,7 @@ import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.category.CategoryListContract;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListContract;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -34,9 +35,9 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
     }
 
     @Override
-    public void onAddClick(Note note) {
+    public void onAddClick(Note note, ArrayList<String> images) {
         if (note != null && note.getId() > 0){
-            mNoteRepository.updateAsync(note, this);
+            mNoteRepository.updateAsync(note, this, images);
         }else {
             mNoteRepository.addAsync(note, this);
         }
@@ -70,7 +71,7 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
 
     @Override
     public void saveOnExit(Note note) {
-        onAddClick(note);
+        //onAddClick(note);
 
     }
 
@@ -92,6 +93,7 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
     @Override
     public void onSaveOperationSucceeded(long id) {
         mCurrentNote = mNoteRepository.getNoteById(id);
+        System.out.println(mCurrentNote.getId());
         mView.displayMessage("Saved");
         mEditMode = true;
         checkStatus();

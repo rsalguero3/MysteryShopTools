@@ -1,5 +1,8 @@
 package com.gorrilaport.mysteryshoptools.data;
 
+import android.content.res.Resources;
+
+import com.gorrilaport.mysteryshoptools.R;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 
@@ -7,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import static com.thefinestartist.utils.content.ResourcesUtil.getResourceName;
+import static com.thefinestartist.utils.content.ResourcesUtil.getString;
 
 public class SampleData{
 
@@ -16,18 +22,17 @@ public class SampleData{
         List<Note> notes = new ArrayList<>();
         //create the dummy note
         Note note1 = new Note();
-        note1.setTitle("Bank Shop");
-        note1.setContent("Open a checking account and ask about interest rates");
+        note1.setTitle(Resources.getSystem().getString(R.string.SampleCategory1));
+        note1.setContent(getString(R.string.SampleContent1));
         Calendar calendar1 = GregorianCalendar.getInstance();
         note1.setDateModified(calendar1.getTimeInMillis());
         note1.setNoteType(Constants.NOTE_TYPE_AUDIO);
         notes.add(note1);
 
-
         //create the dummy note
         Note note2 = new Note();
-        note2.setTitle("Gym Work Out");
-        note2.setContent("Ask about Gym specials and trainers packages");
+        note2.setTitle(getString(R.string.SampleTitle2));
+        note2.setContent(getString(R.string.SampleContent2));
 
         //change the date to random time
         Calendar calendar2 = GregorianCalendar.getInstance();
@@ -40,8 +45,8 @@ public class SampleData{
 
         //create the dummy note
         Note note3 = new Note();
-        note3.setTitle("Pizza Shop");
-        note3.setContent("Order 2 entrees and one drink");
+        note3.setTitle(getString(R.string.SampleTitle3));
+        note3.setContent(getString(R.string.SampleContent3));
 
 
         //change the date to random time
@@ -55,8 +60,8 @@ public class SampleData{
 
         //create the dummy note
         Note note4 = new Note();
-        note4.setTitle("Cupcake Shop");
-        note4.setContent("Ask about Vanilla Pumpkin Cupcakes");
+        note4.setTitle(getString(R.string.SampleTitle4));
+        note4.setContent(getString(R.string.SampleContent4));
 
         //pad the date with random number of days and minute
         //so all the notes do not have the same time stamp
@@ -70,8 +75,8 @@ public class SampleData{
 
         //create the dummy note
         Note note5 = new Note();
-        note5.setTitle("Notes from Tavern");
-        note5.setContent("Bartender forgot to bring out menu when I was seated");
+        note5.setTitle(getString(R.string.SampleTitle5));
+        note5.setContent(getString(R.string.SampleContent5));
 
         //pad the date with two days
         //pad the date with random number of days and minute

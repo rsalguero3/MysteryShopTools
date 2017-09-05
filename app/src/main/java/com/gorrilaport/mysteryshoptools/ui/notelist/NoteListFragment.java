@@ -187,7 +187,6 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
         }
     }
 
-
     @Override
     public void showSingleDetailUi(long noteId) {
         if (Build.VERSION.SDK_INT >= 21) {
@@ -205,6 +204,10 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
         activity.showTwoPane(note);
     }
 
+    /**
+     * Shows "no notes" in activity if showText is false
+     * @param showText
+     */
     @Override
     public void showEmptyText(boolean showText) {
         if (showText){

@@ -8,6 +8,7 @@ import com.gorrilaport.mysteryshoptools.ui.category.SelectCategoryDialogFragment
 import com.gorrilaport.mysteryshoptools.ui.category.CategoryListPresenter;
 import com.gorrilaport.mysteryshoptools.ui.notedetail.NoteDetailActivity;
 import com.gorrilaport.mysteryshoptools.ui.notedetail.NoteDetailPresenter;
+import com.gorrilaport.mysteryshoptools.ui.notedetail.NoteImageView;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListFragment;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NotesListPresenter;
 
@@ -35,6 +36,5 @@ public interface AppComponent {
         void inject(AddNoteActivity activity);
         void inject(SelectCategoryDialogFragment fragment);
         void inject(NoteEditorFragment fragment);
-
-
+        void inject(NoteImageView Activity);
 }

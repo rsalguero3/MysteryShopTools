@@ -4,6 +4,8 @@ import android.database.Cursor;
 
 import com.gorrilaport.mysteryshoptools.util.Constants;
 
+import java.util.ArrayList;
+
 public class Note {
 
     private long id;
@@ -11,14 +13,13 @@ public class Note {
     private String content;
     private long nextReminder;
     private String localAudioPath;
-    private String localImagePath;
     private String localSketchImagePath;
     private String categoryName;
     private long categoryId;
     private String noteType;
     private long dateCreated;
     private long dateModified;
-
+    private ArrayList<String> images;
 
     public Note(){}
 
@@ -29,7 +30,6 @@ public class Note {
         note.setContent(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTENT)));
         note.setNextReminder(cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_NEXT_REMINDER)));
         note.setLocalAudioPath(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_LOCAL_AUDIO_PATH)));
-        note.setLocalImagePath(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_LOCAL_IMAGE_PATH)));
         note.setLocalSketchImagePath(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_LOCAL_SKETCH_PATH)));
         note.setCategoryName(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CATEGORY_NAME)));
         note.setCategoryId(cursor.getLong(cursor.getColumnIndex(Constants.COLUMNS_CATEGORY_ID)));
@@ -96,14 +96,6 @@ public class Note {
         this.localAudioPath = localAudioPath;
     }
 
-    public String getLocalImagePath() {
-        return localImagePath;
-    }
-
-    public void setLocalImagePath(String localImagePath) {
-        this.localImagePath = localImagePath;
-    }
-
     public String getLocalSketchImagePath() {
         return localSketchImagePath;
     }
@@ -134,5 +126,13 @@ public class Note {
 
     public void setNoteType(String noteType) {
         this.noteType = noteType;
+    }
+
+    public void setImages(ArrayList<String> images) {
+        this.images = images;
+    }
+
+    public ArrayList<String> getImages(){
+        return this.images;
     }
 }

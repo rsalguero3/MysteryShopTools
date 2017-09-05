@@ -40,6 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_CATEGORY_TABLE);
         db.execSQL(CREATE_TABLE_NOTE);
+        db.execSQL(CREATE_IMAGE_TABLE);
     }
 
     @Override
@@ -56,7 +57,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
             + Constants.COLUMN_CONTENT + " text not null, "
             + Constants.COLUMN_NEXT_REMINDER + " integer, "
             + Constants.COLUMN_LOCAL_AUDIO_PATH + " text, "
-            + Constants.COLUMN_LOCAL_IMAGE_PATH + " text, "
             + Constants.COLUMN_LOCAL_SKETCH_PATH + " text, "
             + Constants.COLUMNS_CATEGORY_ID + " integer,"
             + Constants.COLUMN_CATEGORY_NAME + " text, "
@@ -72,4 +72,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                     + Constants.COLUMN_TITLE + " TEXT NOT NULL, "
                     + Constants.COLUMN_CREATED_TIME + " BIGINT, "
                     + Constants.COLUMN_MODIFIED_TIME + " BIGINT " + ")";
+
+    private static final String CREATE_IMAGE_TABLE =
+            "CREATE TABLE " + Constants.IMAGE_TABLE + "("
+                    + Constants.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + Constants.COLUMN_IMAGE_PATH + " TEXT NOT NULL,"
+                    + Constants.COLUMN_NOTE_ID + " INTEGER,"
+                    + " FOREIGN KEY(note_id) REFERENCES note(_id))";
 }

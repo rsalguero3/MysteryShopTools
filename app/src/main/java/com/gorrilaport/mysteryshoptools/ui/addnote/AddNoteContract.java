@@ -6,6 +6,7 @@ import android.content.Context;
 import com.gorrilaport.mysteryshoptools.model.Category;
 import com.gorrilaport.mysteryshoptools.model.Note;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface AddNoteContract {
@@ -24,7 +25,7 @@ public interface AddNoteContract {
     }
 
     interface Action{
-        void onAddClick(Note note);
+        void onAddClick(Note note, ArrayList<String> images);
         void checkStatus();
         void onDeleteNoteButtonClicked();
         void deleteNote();

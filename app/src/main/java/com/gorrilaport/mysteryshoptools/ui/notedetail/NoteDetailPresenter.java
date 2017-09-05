@@ -15,7 +15,6 @@ import javax.inject.Inject;
 
 public class NoteDetailPresenter implements NoteDetailContract.Action, OnDatabaseOperationCompleteListener {
 
-
     @Inject
     NoteListContract.Repository mRepository;
     private final NoteDetailContract.View mView;

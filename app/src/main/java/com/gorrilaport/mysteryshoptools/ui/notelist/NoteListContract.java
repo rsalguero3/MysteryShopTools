@@ -5,6 +5,7 @@ import android.content.Context;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnDatabaseOperationCompleteListener;
 import com.gorrilaport.mysteryshoptools.model.Note;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface NoteListContract {
@@ -34,8 +35,9 @@ public interface NoteListContract {
 
     interface Repository{
         void addAsync(Note note, OnDatabaseOperationCompleteListener listener);
-        void updateAsync(Note note, OnDatabaseOperationCompleteListener listener);
+        void updateAsync(Note note, OnDatabaseOperationCompleteListener listener, ArrayList<String> newImages);
         void deleteAsync(Note note, OnDatabaseOperationCompleteListener listener);
+        void deleteAsyncImage(String imagePath);
         List<Note> getAllNotes(String sortOption, boolean sortOrder);
         Note getNoteById(long id);
 
