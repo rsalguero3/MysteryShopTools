@@ -27,7 +27,6 @@ public class NoteImageView extends AppCompatActivity {
     @Inject
     NoteListContract.Repository mRepository;
 
-    private NoteDetailPresenter mPresenter;
     private String mImagePath;
 
     public NoteImageView(){
@@ -40,9 +39,6 @@ public class NoteImageView extends AppCompatActivity {
         setContentView(R.layout.activity_image_view);
         ButterKnife.bind(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Bundle bundle = this.getIntent().getExtras();
-        if (bundle != null)
-            this.mPresenter = bundle.getParcelable(Constants.DETAIL_PRESENTER);
 
         if (getIntent().hasExtra(Constants.IMAGE_PATH)){
             String imagePath = getIntent().getStringExtra(Constants.IMAGE_PATH);

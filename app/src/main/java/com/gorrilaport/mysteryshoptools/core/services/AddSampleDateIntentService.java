@@ -2,13 +2,11 @@ package com.gorrilaport.mysteryshoptools.core.services;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.res.Resources;
 
 import com.gorrilaport.mysteryshoptools.R;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnDatabaseOperationCompleteListener;
 import com.gorrilaport.mysteryshoptools.data.CategorySQLiteRepository;
 import com.gorrilaport.mysteryshoptools.data.NoteSQLiteRepository;
-import com.gorrilaport.mysteryshoptools.data.SampleData;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
@@ -37,6 +35,7 @@ public class AddSampleDateIntentService extends IntentService {
         Note note1 = new Note();
         note1.setTitle(getString(R.string.SampleTitle1));
         note1.setContent(getString(R.string.SampleContent1));
+        note1.setCategoryName(getString(R.string.SampleCategory3));
         Calendar calendar1 = GregorianCalendar.getInstance();
         note1.setDateModified(calendar1.getTimeInMillis());
         note1.setNoteType(Constants.NOTE_TYPE_AUDIO);
@@ -46,6 +45,7 @@ public class AddSampleDateIntentService extends IntentService {
         Note note2 = new Note();
         note2.setTitle(getString(R.string.SampleTitle2));
         note2.setContent(getString(R.string.SampleContent2));
+        note2.setCategoryName(getString(R.string.SampleCategory4));
 
         //change the date to random time
         Calendar calendar2 = GregorianCalendar.getInstance();
@@ -60,7 +60,7 @@ public class AddSampleDateIntentService extends IntentService {
         Note note3 = new Note();
         note3.setTitle(getString(R.string.SampleTitle3));
         note3.setContent(getString(R.string.SampleContent3));
-
+        note3.setCategoryName(getString(R.string.SampleCategory3));
 
         //change the date to random time
         Calendar calendar3 = GregorianCalendar.getInstance();
@@ -75,6 +75,7 @@ public class AddSampleDateIntentService extends IntentService {
         Note note4 = new Note();
         note4.setTitle(getString(R.string.SampleTitle4));
         note4.setContent(getString(R.string.SampleContent4));
+        note4.setCategoryName(getString(R.string.SampleCategory3));
 
         //pad the date with random number of days and minute
         //so all the notes do not have the same time stamp
@@ -90,6 +91,7 @@ public class AddSampleDateIntentService extends IntentService {
         Note note5 = new Note();
         note5.setTitle(getString(R.string.SampleTitle5));
         note5.setContent(getString(R.string.SampleContent5));
+        note5.setCategoryName(getString(R.string.SampleCategory3));
 
         //pad the date with two days
         //pad the date with random number of days and minute

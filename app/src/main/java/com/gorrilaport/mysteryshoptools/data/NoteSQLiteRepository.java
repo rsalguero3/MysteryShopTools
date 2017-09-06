@@ -50,7 +50,6 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
         try {
             long result = database.insertOrThrow(Constants.NOTES_TABLE, null, values);
             noteId = result;
-            //listener.onSaveOperationSucceeded(result);
         } catch (SQLiteException e){
             listener.onSaveOperationFailed(e.getLocalizedMessage());
         }
@@ -63,13 +62,14 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
                 imagesValues.put(Constants.COLUMN_NOTE_ID, noteId);
                 try {
                     long result = database.insertOrThrow(Constants.IMAGE_TABLE, null, imagesValues);
-                    //listener.onSaveOperationSucceeded(noteId);
                 } catch (SQLiteException e) {
                     listener.onSaveOperationFailed(e.getLocalizedMessage());
                 }
             }
         }
-        listener.onSaveOperationSucceeded(noteId);
+        if (noteId != null){
+            listener.onSaveOperationSucceeded(noteId);
+        }
     }
 
     @Override
@@ -83,7 +83,6 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
         values.put(Constants.COLUMN_CATEGORY_NAME, note.getCategoryName());
         values.put(Constants.COLUMNS_CATEGORY_ID, categorySQLiteRepository.createOrGetCategoryId(note.getCategoryName()));
         values.put(Constants.COLUMNS_NOTE_TYPE, note.getNoteType());
-        //values.put(Constants.COLUMN_CREATED_TIME, System.currentTimeMillis());
         values.put(Constants.COLUMN_MODIFIED_TIME, System.currentTimeMillis());
         //Now update the this row with the information supplied
 
@@ -98,7 +97,6 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
                 imagesValues.put(Constants.COLUMN_NOTE_ID, note.getId());
                 try {
                     database.insertOrThrow(Constants.IMAGE_TABLE, null, imagesValues);
-                    //listener.onSaveOperationSucceeded(noteId);
                 } catch (SQLiteException e) {
                     listener.onSaveOperationFailed(e.getLocalizedMessage());
                 }
@@ -131,9 +129,7 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
 
         //ensure database exists.
         if (database != null){
-           // int result = database.delete(Constants.IMAGE_TABLE, Constants.COLUMN_IMAGE_PATH + " = " + imagePath, null);
             int result = database.delete(Constants.IMAGE_TABLE, Constants.COLUMN_IMAGE_PATH + "='" + imagePath + "'", null);
-            System.out.println(result);
         }
     }
 

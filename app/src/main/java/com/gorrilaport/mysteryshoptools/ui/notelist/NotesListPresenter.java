@@ -71,7 +71,6 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
     @Override
     public void deleteNote(Note note) {
         mRepository.deleteAsync(note, this);
-        //loadNotes();
     }
 
     @Override

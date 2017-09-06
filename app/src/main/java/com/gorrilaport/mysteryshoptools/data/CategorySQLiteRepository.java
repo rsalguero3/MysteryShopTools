@@ -23,7 +23,6 @@ public class CategorySQLiteRepository implements CategoryListContract.Repository
     public CategorySQLiteRepository(Context context) {
         mDatabaseHelper = DatabaseHelper.newInstance(context);
         database = mDatabaseHelper.getWritableDatabase();
-
     }
 
 
@@ -40,7 +39,6 @@ public class CategorySQLiteRepository implements CategoryListContract.Repository
             listener.onSaveOperationFailed(e.getLocalizedMessage());
 
         }
-
     }
 
     @Override

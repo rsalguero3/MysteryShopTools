@@ -17,12 +17,9 @@ import butterknife.ButterKnife;
 public class CompaniesFragment extends Fragment {
 
     private View mViewRoot;
-    @BindView(R.id.a_closer_look)
-    ImageView a_closer_look_imageView;
-    @BindView(R.id.marketforce)
-    ImageView marketforce_imageView;
-    @BindView(R.id.alta)
-    ImageView alta_imageView;
+    @BindView(R.id.a_closer_look) ImageView a_closer_look_imageView;
+    @BindView(R.id.marketforce) ImageView marketforce_imageView;
+    @BindView(R.id.alta) ImageView alta_imageView;
 
     public static CompaniesFragment newInstance() {
 
@@ -66,7 +63,7 @@ public class CompaniesFragment extends Fragment {
 
     private void setupWebView(String url) {
         new FinestWebView.Builder(getContext())
-                .titleDefault("Bless This Stuff")
+                .titleDefault("Mystery Shop")
                 .webViewBuiltInZoomControls(true)
                 .webViewDisplayZoomControls(true)
                 .dividerHeight(0)

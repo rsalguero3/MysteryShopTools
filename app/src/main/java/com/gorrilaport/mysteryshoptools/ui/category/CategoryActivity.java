@@ -5,11 +5,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
-import android.widget.Toast;
 
 import com.gorrilaport.mysteryshoptools.R;
-import com.gorrilaport.mysteryshoptools.ui.addnote.NoteEditorFragment;
 
 public class CategoryActivity extends AppCompatActivity {
 

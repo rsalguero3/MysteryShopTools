@@ -118,5 +118,4 @@ public class Constants {
             Constants.COLUMN_MODIFIED_TIME
 
     };
-    public static final String DETAIL_PRESENTER = "detail_presenter";
 }

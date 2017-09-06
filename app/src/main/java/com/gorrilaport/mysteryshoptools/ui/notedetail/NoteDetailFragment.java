@@ -1,12 +1,8 @@
 package com.gorrilaport.mysteryshoptools.ui.notedetail;
 
-
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
@@ -35,12 +31,10 @@ import com.gorrilaport.mysteryshoptools.util.Constants;
 import com.gorrilaport.mysteryshoptools.util.TimeUtils;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.thefinestartist.utils.content.ContextUtil.startActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -148,11 +142,12 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
     @Override
     public void displayNote(Note note) {
         mCategory.setText(note.getCategoryName());
+        System.out.println(note.getCategoryName());
         mContent.setText(note.getContent());
         mTitle.setText(note.getTitle());
         mTimeStamp.setText("Date Created: " + TimeUtils.getReadableModifiedDate(note.getDateCreated())
                 + "\n" + "Date Modified: " + TimeUtils.getReadableModifiedDate(note.getDateModified()));
-
+            //load images into adapter
             ArrayList<String> array = note.getImages();
             mImagePathArray.clear();
             mImagePageAdapter.notifyDataSetChanged();

@@ -1,6 +1,5 @@
 package com.gorrilaport.mysteryshoptools.ui.notelist;
 
-
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -58,10 +57,8 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
     @Inject
     SharedPreferences mSharedPreference;
 
-    @BindView(R.id.note_recycler_view)
-    UltimateRecyclerView mRecyclerView;
-    @BindView(R.id.empty_text)
-    TextView mEmptyText;
+    @BindView(R.id.note_recycler_view) UltimateRecyclerView mRecyclerView;
+    @BindView(R.id.empty_text) TextView mEmptyText;
 
     private View mRootView;
     private FloatingActionButton mFab;
@@ -122,7 +119,6 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
             }
         });
         mFab = (FloatingActionButton)getActivity().findViewById(R.id.fab);
-        //mFab.attachToRecyclerView(mRecyclerView);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,9 +126,6 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
             }
         });
         mRecyclerView.setAdapter(mListAdapter);
-//        int resId = R.anim.layout_animation_fall_down;
-//        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(mRecyclerView.getContext(), resId);
-//        mRecyclerView.setLayoutAnimation(animation);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy){
@@ -274,16 +267,6 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
         TextView tv = (TextView)snackBarView.findViewById(android.support.design.R.id.snackbar_text);
         tv.setTextColor(Color.WHITE);
         snackbar.show();
-    }
-
-    private void runLayoutAnimation(final UltimateRecyclerView recyclerView) {
-        final Context context = recyclerView.getContext();
-        final LayoutAnimationController controller =
-                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
-
-        recyclerView.setLayoutAnimation(controller);
-        recyclerView.getAdapter().notifyDataSetChanged();
-        recyclerView.scheduleLayoutAnimation();
     }
 
     @Subscribe

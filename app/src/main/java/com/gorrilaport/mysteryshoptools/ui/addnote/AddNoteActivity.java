@@ -9,8 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
-import android.transition.Fade;
-import android.view.Gravity;
 import android.widget.Toast;
 
 import com.gorrilaport.mysteryshoptools.R;
@@ -61,18 +59,18 @@ public class AddNoteActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
+        NoteEditorFragment f = (NoteEditorFragment) getSupportFragmentManager().findFragmentById(R.id.container);
+        f.validateAndSaveContent();
         StyleableToast styleableToast = new StyleableToast
                 .Builder(this)
                 .duration(Toast.LENGTH_SHORT)
                 .icon(R.drawable.ic_autorenew_black_24dp)
                 .spinIcon()
-                .text("Saving your information")
+                .text(getString(R.string.styleable_toast_save))
                 .textColor(Color.WHITE)
                 .backgroundColor(Color.parseColor("#184c6d"))
                 .build();
         styleableToast.show();
-        NoteEditorFragment f = (NoteEditorFragment) getSupportFragmentManager().findFragmentById(R.id.container);
-        f.validateAndSaveContent();
         super.onBackPressed();
         if (Build.VERSION.SDK_INT >= 21){
             finishAfterTransition();

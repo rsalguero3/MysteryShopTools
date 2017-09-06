@@ -1,15 +1,12 @@
 package com.gorrilaport.mysteryshoptools.ui.notelist;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.transition.Slide;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,8 +43,7 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
     public Toolbar toolbar;
     private AccountHeader headerResult;
     private Drawer drawer;
-    @BindView(R.id.fab)
-    FloatingActionButton mfab;
+    @BindView(R.id.fab) FloatingActionButton mFab;
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -61,12 +57,6 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
         setContentView(R.layout.activity_notes);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        new SlidingRootNavBuilder(this)
-//                .withToolbarMenuToggle(toolbar)
-//                .withMenuOpened(true)
-//                .withSavedState(savedInstanceState)
-//                .withMenuLayout(R.layout.menu_left_drawer)
-//                .inject();
         setupNavigationDrawer(savedInstanceState);
         setupDefaultFragment();
         ButterKnife.bind(this);
@@ -105,15 +95,15 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
                 .withToolbar(toolbar)
                 .withActionBarDrawerToggle(true)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName("Notes").withIcon(FontAwesome.Icon.faw_sticky_note).withIdentifier(Constants.NOTE),
-                        new PrimaryDrawerItem().withName("Categories").withIcon(FontAwesome.Icon.faw_folder).withIdentifier(Constants.CATEGORY),
+                        new PrimaryDrawerItem().withName(R.string.menu_drawer_notes).withIcon(FontAwesome.Icon.faw_sticky_note).withIdentifier(Constants.NOTE),
+                        new PrimaryDrawerItem().withName(R.string.menu_drawer_categories).withIcon(FontAwesome.Icon.faw_folder).withIdentifier(Constants.CATEGORY),
                         //new PrimaryDrawerItem().withName("Camera").withIcon(FontAwesome.Icon.faw_folder).withIdentifier(Constants.CAMERA),
-                        new PrimaryDrawerItem().withName("Settings").withIcon(FontAwesome.Icon.faw_cog).withIdentifier(Constants.SETTINGS),
+                        new PrimaryDrawerItem().withName(R.string.menu_drawer_settings).withIcon(FontAwesome.Icon.faw_cog).withIdentifier(Constants.SETTINGS),
                         //new PrimaryDrawerItem().withName("Timer").withIcon(FontAwesome.Icon.faw_book).withIdentifier(Constants.TIMER)
-                        new PrimaryDrawerItem().withName("Companies").withIcon(FontAwesome.Icon.faw_industry).withIdentifier(Constants.COMPANIES),
-                        new PrimaryDrawerItem().withName("About").withIcon(FontAwesome.Icon.faw_database).withIdentifier(Constants.ABOUT)
+                        new PrimaryDrawerItem().withName(R.string.menu_drawer_companies).withIcon(FontAwesome.Icon.faw_industry).withIdentifier(Constants.COMPANIES),
+                        new PrimaryDrawerItem().withName(R.string.menu_drawer_about).withIcon(FontAwesome.Icon.faw_database).withIdentifier(Constants.ABOUT)
                 )
-                .withOnDrawerItemClickListener(new com.mikepenz.materialdrawer.Drawer.OnDrawerItemClickListener() {
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int i, IDrawerItem drawerItem) {
                         if (drawerItem != null && drawerItem instanceof Nameable){
@@ -130,7 +120,7 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
 
 
                 })
-                .withOnDrawerListener(new com.mikepenz.materialdrawer.Drawer.OnDrawerListener() {
+                .withOnDrawerListener(new Drawer.OnDrawerListener() {
                     @Override
                     public void onDrawerOpened(View view) {
                         KeyboardUtil.hideKeyboard(NoteListActivity.this);
@@ -173,14 +163,14 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
                 openFragment(CameraFragment.newInstance(), "Camera");
                 break;
             case Constants.COMPANIES:
-                mfab.hide();
+                mFab.hide();
                 openFragment(CompaniesFragment.newInstance(), "Companies");
                 break;
             case Constants.ABOUT:
                 ArrayList<Integer> licenseIds = new ArrayList<>();
                 RecyclerViewLicenseFragment f = RecyclerViewLicenseFragment.newInstance(licenseIds);
                 f.addCustomLicense(createLicenses());
-                mfab.hide();
+                mFab.hide();
                 openFragment(f, "About");
         }
     }

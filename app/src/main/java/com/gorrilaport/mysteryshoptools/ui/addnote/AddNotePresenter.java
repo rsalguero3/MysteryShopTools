@@ -72,7 +72,6 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
     @Override
     public void saveOnExit(Note note) {
         //onAddClick(note);
-
     }
 
     @Override

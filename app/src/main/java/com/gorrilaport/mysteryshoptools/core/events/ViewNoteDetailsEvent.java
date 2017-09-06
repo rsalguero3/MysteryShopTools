@@ -9,7 +9,6 @@ public class ViewNoteDetailsEvent{
         mNoteId = noteId;
     }
 
-
     public long getNoteId() {
         return mNoteId;
     }

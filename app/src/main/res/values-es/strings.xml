@@ -65,4 +65,10 @@
     <string name="SampleContent4">Pregunte acerca de Cupcakes de calabaza de vainilla</string>
     <string name="SampleTitle5">Notas de Tavern</string>
     <string name="SampleContent5">El camarero se olvidó de llevar menú cuando estaba sentado</string>
+    <string name="styleable_toast_save">Saving your information</string>
+    <string name="menu_drawer_notes">Notas</string>
+    <string name="menu_drawer_categories">Categorías</string>
+    <string name="menu_drawer_settings">Ajustes</string>
+    <string name="menu_drawer_companies">Compañías</string>
+    <string name="menu_drawer_about">About</string>
 </resources>

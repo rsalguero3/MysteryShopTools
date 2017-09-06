@@ -1,7 +1,5 @@
 package com.gorrilaport.mysteryshoptools.ui.notedetail;
 
-import android.content.Intent;
-
 import com.gorrilaport.mysteryshoptools.model.Note;
 
 public interface NoteDetailContract{

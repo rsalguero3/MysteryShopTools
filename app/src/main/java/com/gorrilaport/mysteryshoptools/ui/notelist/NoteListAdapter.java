@@ -175,19 +175,11 @@ public class NoteListAdapter extends UltimateViewAdapter {
 
     public class ViewHolder extends UltimateRecyclerviewViewHolder implements View.OnClickListener {
 
-        @BindView(R.id.text_view_note_title)
-        TextView title;
-
-        @BindView(R.id.text_view_note_date)
-        TextView noteDate;
-
-        @BindView(R.id.image_view_expand)
-        ImageView delete;
-
-        @BindView(R.id.image_view)
-        ImageView noteIcon;
-        @BindView(R.id.circle_image_view)
-        ImageView noteCircleIcon;
+        @BindView(R.id.text_view_note_title) TextView title;
+        @BindView(R.id.text_view_note_date) TextView noteDate;
+        @BindView(R.id.image_view_expand) ImageView delete;
+        @BindView(R.id.image_view) ImageView noteIcon;
+        @BindView(R.id.circle_image_view) ImageView noteCircleIcon;
 
 
         public ViewHolder(View itemView) {

@@ -47,6 +47,7 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
@@ -61,7 +62,7 @@ import com.gorrilaport.mysteryshoptools.ui.sketch.SketchActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 import com.gorrilaport.mysteryshoptools.util.FileUtils;
 import com.gorrilaport.mysteryshoptools.util.TimeUtils;
-
+import com.muddzdev.styleabletoastlibrary.StyleableToast;
 
 import java.io.File;
 import java.io.IOException;
@@ -270,7 +271,7 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         if (!TextUtils.isEmpty(note.getLocalAudioPath())) {
             mLocalAudioFilePath = note.getLocalAudioPath();
         }
-
+        //add images to the adapter
         ArrayList<String> array = note.getImages();
         mImagePathArray.clear();
         mImagePageAdapter.notifyDataSetChanged();
@@ -555,13 +556,15 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
     }
 
     private void makeToast(String message){
-        Snackbar snackbar = Snackbar.make(mRootView, message, Snackbar.LENGTH_LONG);
-
-        View snackBarView = snackbar.getView();
-        snackBarView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
-        TextView tv = (TextView)snackBarView.findViewById(android.support.design.R.id.snackbar_text);
-        tv.setTextColor(Color.WHITE);
-        snackbar.show();
+        StyleableToast st = new StyleableToast
+                .Builder(getContext())
+                .text(message)
+                .textColor(Color.WHITE)
+                .icon(android.R.drawable.ic_menu_save)
+                .backgroundColor(Color.BLUE)
+                .duration(Toast.LENGTH_SHORT)
+                .build();
+        st.show();
     }
 
     public void promptForDiscard(){
