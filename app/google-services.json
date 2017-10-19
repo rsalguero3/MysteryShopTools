@@ -1,0 +1,130 @@
+{
+  "project_info": {
+    "project_number": "358581596402",
+    "firebase_url": "https://mystery-shop-tools.firebaseio.com",
+    "project_id": "mystery-shop-tools",
+    "storage_bucket": "mystery-shop-tools.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358581596402:android:ab514de9a1ecbb0a",
+        "android_client_info": {
+          "package_name": "com.gorillaport.mysteryshoptools"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "358581596402-47869ukqq17rh3aa18rh567kgputpm3k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC49R4rAGsRSUfvM6oGhbsLkLHgFfXx3h0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358581596402:android:70b3abdc06a29d8d",
+        "android_client_info": {
+          "package_name": "com.okason.prontonotepad"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "358581596402-s5qp5k2bfsoulm4n4d9ia37ru1udh40m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.okason.prontonotepad",
+            "certificate_hash": "87c12f403d8b9367c0011934bd182285f5eef5a7"
+          }
+        },
+        {
+          "client_id": "358581596402-47869ukqq17rh3aa18rh567kgputpm3k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC49R4rAGsRSUfvM6oGhbsLkLHgFfXx3h0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "358581596402-47869ukqq17rh3aa18rh567kgputpm3k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358581596402:android:67f25518bdf130b5",
+        "android_client_info": {
+          "package_name": "com.gorrilaport.mysteryshoptools"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "358581596402-onqmr55j09inct6ik99tagpv81h93bbl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gorrilaport.mysteryshoptools",
+            "certificate_hash": "87c12f403d8b9367c0011934bd182285f5eef5a7"
+          }
+        },
+        {
+          "client_id": "358581596402-47869ukqq17rh3aa18rh567kgputpm3k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC49R4rAGsRSUfvM6oGhbsLkLHgFfXx3h0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "358581596402-47869ukqq17rh3aa18rh567kgputpm3k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
