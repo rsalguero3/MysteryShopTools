@@ -2,6 +2,7 @@ package com.gorrilaport.mysteryshoptools.ui.notelist;
 
 import android.content.Context;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnDatabaseOperationCompleteListener;
 import com.gorrilaport.mysteryshoptools.model.Note;
 
@@ -41,5 +42,10 @@ public interface NoteListContract {
         List<Note> getAllNotes(String sortOption, boolean sortOrder);
         Note getNoteById(long id);
 
+    }
+
+    interface FireBaseRepository{
+        void addNote(Note note);
+        FirebaseUser getFirebaseUser();
     }
 }

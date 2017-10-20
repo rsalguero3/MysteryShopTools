@@ -20,6 +20,7 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
 
     @Inject NoteListContract.Repository mRepository;
     @Inject SharedPreferences mSharedPreference;
+    @Inject NoteListContract.FireBaseRepository mFireBaseRepository;
 
     public NotesListPresenter(NoteListContract.View notesView){
         mView = notesView;
@@ -60,6 +61,7 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
 
     @Override
     public List<Note> getNotes(String sortColumn, boolean sortOrder) {
+        mFireBaseRepository.addNote(new Note());
         return mRepository.getAllNotes(sortColumn, sortOrder);
     }
 
