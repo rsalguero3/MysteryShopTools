@@ -119,6 +119,8 @@
     <string name="profile_picture_content_desc">User Description</string>
     <string name="idp_token">idp token</string>
     <string name="idp_secret">idp secret</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="action_sync">action sync</string>
 
 
     <string-array name="sortOptionsEntries">

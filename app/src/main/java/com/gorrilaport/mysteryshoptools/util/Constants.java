@@ -19,7 +19,6 @@ public class Constants {
     public static final String SORT_PREFERENCE = "sort_PREFERENCE";
     public static final String IMAGE_PATH = "IMAGE_PATH";
 
-
     public final static int NOTE = 1;
     public final static int CATEGORY = 2;
     public static final int CAMERA = 3;
@@ -27,7 +26,7 @@ public class Constants {
     public final static int TIMER = 5;
     public static final int COMPANIES = 6;
     public static final int ABOUT = 7;
-
+    public static final int LOGOUT = 8 ;
 
     public final static int SORT_TITLE = 1;
     public final static int SORT_CATEGORY = 2;
@@ -64,11 +63,11 @@ public class Constants {
     public static final String COLUMN_BACKUP_FILE_SIZE = "backup_file_size";
     public final static String PREFERENCE_FILE = "preference_file";
 
-
     public static final String COLUMN_IMAGE_PATH = "image_path";
     public static final String COLUMN_NOTE_ID = "note_id";
-
-
+    public static final String NOTE_CLOUD_END_POINT = "/notes";
+    public static final String CATEGORY_CLOUD_END_POINT = "/categories";
+    public static final String USERS_CLOUD_END_POINT = "/users/";
 
     public final static String SORT_DATE_CREATED = "dateCreated";
     public final static String SORT_DATE_MODIFIED = "dateModified";
@@ -118,4 +117,6 @@ public class Constants {
             Constants.COLUMN_MODIFIED_TIME
 
     };
+    public static final int DELETE_ACCOUNT = 404;
+    public static final String FIREBASE_STORAGE_BUCKET = "gs://mystery-shop-tools.appspot.com";
 }

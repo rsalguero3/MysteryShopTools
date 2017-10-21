@@ -3,7 +3,6 @@ package com.gorrilaport.mysteryshoptools.core.dagger;
 import android.content.Context;
 
 import com.gorrilaport.mysteryshoptools.data.CategorySQLiteRepository;
-import com.gorrilaport.mysteryshoptools.data.FireBaseRepository;
 import com.gorrilaport.mysteryshoptools.data.NoteSQLiteRepository;
 import com.gorrilaport.mysteryshoptools.ui.category.CategoryListContract;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListContract;
@@ -29,7 +28,7 @@ public class PersistenceModule {
 
     @Provides
     @Singleton
-    public NoteListContract.FireBaseRepository providesFireBaseRepository(Context context){
-        return new FireBaseRepository();
+    public NoteListContract.FirebaseRepository providesFireBaseRepository(Context context){
+        return new com.gorrilaport.mysteryshoptools.data.FirebaseRepository();
     }
 }

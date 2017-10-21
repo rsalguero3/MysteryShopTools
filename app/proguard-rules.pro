@@ -16,3 +16,4 @@
 #   public *;
 #}
 -dontwarn com.bumptech.glide.**
+-keepclassmembers class com.gorrilaport.mysteryshoptools.model.** { *; }

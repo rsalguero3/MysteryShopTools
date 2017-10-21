@@ -23,10 +23,8 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -52,12 +50,14 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.gorrilaport.mysteryshoptools.R;
+import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnCategorySelectedListener;
 import com.gorrilaport.mysteryshoptools.model.Category;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.category.SelectCategoryDialogFragment;
 import com.gorrilaport.mysteryshoptools.ui.notedetail.ImagePageAdapter;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity;
+import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListContract;
 import com.gorrilaport.mysteryshoptools.ui.sketch.SketchActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 import com.gorrilaport.mysteryshoptools.util.FileUtils;
@@ -69,6 +69,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -92,6 +94,9 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
     @BindView(R.id.sketch_attachment) ImageView mSketchAttachment;
     @BindView(R.id.viewPager) ViewPager viewPager;
     @BindView(R.id.scrollView) ScrollView mScrollView;
+
+    @Inject
+    NoteListContract.FirebaseRepository mFirebaseRepository;
 
     private final int EXTERNAL_PERMISSION_REQUEST = 1;
     private final int RECORD_AUDIO_PERMISSION_REQUEST = 2;
@@ -126,6 +131,7 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
                 .getDefaultSharedPreferences(getContext()).getBoolean("default_editor", false);
         Log.d(LOG_TAG, "Line Editor Enabled ?: " + showLinedEditor);
         createBottomToolbar();
+        MysteryShopTools.getInstance().getAppComponent().inject(this);
         if (getArguments() != null && getArguments().containsKey(Constants.NOTE_ID)) {
             long noteId = getArguments().getLong(Constants.NOTE_ID, 0);
             mPresenter = new AddNotePresenter(this, noteId);
@@ -526,7 +532,9 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             mContent.setError(getString(R.string.note_is_required));
             return;
         }
+        addNoteToFirebase("");
         addNoteToDatabase("");
+
     }
 
     private void addNoteToDatabase(String message) {
@@ -553,6 +561,38 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         mPresenter.onAddClick(mCurrentNote, mImagePathArrayNewImages);
         //reset the array to add only new images to database
         mImagePathArrayNewImages.clear();
+    }
+
+    private void addNoteToFirebase(String message) {
+//
+//            mCurrentNote.setCategoryName(mCurrentCategory.getCategoryName());
+//            mCurrentNote.setCategoryId(mCurrentCategory.getCategoryId());
+
+
+
+        mCurrentNote.setContent(mContent.getText().toString());
+        mCurrentNote.setTitle(mTitle.getText().toString());
+        mCurrentNote.setDateModified(System.currentTimeMillis());
+        mCurrentNote.setLocalAudioPath(mLocalAudioFilePath);
+        //mCurrentNote.setLocalImagePath(mLocalImagePath);
+        mCurrentNote.setLocalSketchImagePath(mLocalSketchPath);
+        mCurrentNote.setImages(mImagePathArrayNewImages);
+
+        if (!TextUtils.isEmpty(mLocalAudioFilePath)){
+            mCurrentNote.setNoteType(Constants.NOTE_TYPE_AUDIO);
+        }else if (!TextUtils.isEmpty(mLocalImagePath)){
+            mCurrentNote.setNoteType(Constants.NOTE_TYPE_IMAGE);
+        } else if (mReminderTime != null){
+
+        }
+        else {
+            mCurrentNote.setNoteType("text");
+        }
+
+        mFirebaseRepository.addNote(mCurrentNote);
+        mFirebaseRepository.addImages(mImagePathArrayNewImages);
+        // startActivity(new Intent(getActivity(), NoteListActivity.class));
+
     }
 
     private void makeToast(String message){

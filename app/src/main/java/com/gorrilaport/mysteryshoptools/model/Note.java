@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class Note {
 
     private long id;
+    private String firebaseId;
     private String title;
     private String content;
     private long nextReminder;
@@ -47,6 +48,10 @@ public class Note {
     public void setId(long id) {
         this.id = id;
     }
+
+    public String getFirebaseId(){ return firebaseId; }
+
+    public void setFirebaseId(String id){ this.firebaseId = id; }
 
     public String getTitle() {
         return title;

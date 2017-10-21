@@ -2,6 +2,7 @@ package com.gorrilaport.mysteryshoptools.ui.notelist;
 
 import android.content.Context;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnDatabaseOperationCompleteListener;
 import com.gorrilaport.mysteryshoptools.model.Note;
@@ -44,8 +45,10 @@ public interface NoteListContract {
 
     }
 
-    interface FireBaseRepository{
+    interface FirebaseRepository {
         void addNote(Note note);
+        void addImages(ArrayList<String> images);
         FirebaseUser getFirebaseUser();
+        FirebaseAuth getFirebaseAuth();
     }
 }
