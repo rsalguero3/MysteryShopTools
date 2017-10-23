@@ -177,8 +177,8 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_edit:
-
+            case R.id.action_sync:
+                mPresenter.syncToFirebaseButtonClicked();
                 break;
             case R.id.action_delete:
 

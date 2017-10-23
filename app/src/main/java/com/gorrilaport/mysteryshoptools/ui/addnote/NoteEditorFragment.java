@@ -589,9 +589,15 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             mCurrentNote.setNoteType("text");
         }
 
-        mFirebaseRepository.addNote(mCurrentNote);
-        mFirebaseRepository.addImages(mImagePathArrayNewImages);
-        // startActivity(new Intent(getActivity(), NoteListActivity.class));
+
+        if (mCurrentNote != null && mCurrentNote.getId() > 0){
+
+        }
+        else {
+            mFirebaseRepository.addNote(mCurrentNote);
+            mFirebaseRepository.addImages(mImagePathArrayNewImages);
+            // startActivity(new Intent(getActivity(), NoteListActivity.class));
+        }
 
     }
 

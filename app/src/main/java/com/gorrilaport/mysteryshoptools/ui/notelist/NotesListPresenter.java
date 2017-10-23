@@ -1,6 +1,7 @@
 package com.gorrilaport.mysteryshoptools.ui.notelist;
 
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.gorrilaport.mysteryshoptools.R;
@@ -62,7 +63,6 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
 
     @Override
     public List<Note> getNotes(String sortColumn, boolean sortOrder) {
-        mFirebaseRepository.addNote(new Note());
         return mRepository.getAllNotes(sortColumn, sortOrder);
     }
 
@@ -79,6 +79,16 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
     @Override
     public void setLayoutMode(boolean dualScreen) {
         isDualScreen = dualScreen;
+    }
+
+    @Override
+    public void syncToFirebaseButtonClicked() {
+        String sortColumn = mSharedPreference.getString("sort_options", mView.getContext().getString(R.string.column_title));
+        String sordOrderValue = mSharedPreference.getString("list_sort_order", "true");
+        boolean sortOrder = Boolean.valueOf(sordOrderValue);
+        List<Note> notes = mRepository.getAllNotes(sortColumn, sortOrder);
+
+        mFirebaseRepository.syncToFirebase(notes);
     }
 
     @Override

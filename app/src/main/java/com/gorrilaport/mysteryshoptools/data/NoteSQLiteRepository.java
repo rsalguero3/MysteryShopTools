@@ -73,6 +73,50 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
     }
 
     @Override
+    public Long addAsync(Note note) {
+        Long noteId = null;
+        ContentValues values = new ContentValues();
+        values.put(Constants.COLUMN_TITLE, note.getTitle());
+        values.put(Constants.COLUMN_CONTENT, note.getContent());
+        values.put(Constants.COLUMN_NEXT_REMINDER, note.getNextReminder());
+        values.put(Constants.COLUMN_LOCAL_AUDIO_PATH, note.getLocalAudioPath());
+        values.put(Constants.COLUMN_LOCAL_SKETCH_PATH, note.getLocalSketchImagePath());
+        values.put(Constants.COLUMN_CATEGORY_NAME, note.getCategoryName());
+        values.put(Constants.COLUMNS_NOTE_TYPE, note.getNoteType());
+        values.put(Constants.COLUMN_CREATED_TIME, System.currentTimeMillis());
+        values.put(Constants.COLUMN_MODIFIED_TIME, System.currentTimeMillis());
+
+        if (!TextUtils.isEmpty(note.getCategoryName())){
+            values.put(Constants.COLUMNS_CATEGORY_ID, categorySQLiteRepository.createOrGetCategoryId(note.getCategoryName()));
+        }
+
+        try {
+            long result = database.insertOrThrow(Constants.NOTES_TABLE, null, values);
+            noteId = result;
+        } catch (SQLiteException e){
+
+        }
+
+        ContentValues imagesValues = new ContentValues();
+        ArrayList<String> images = note.getImages();
+        if (!(images == null)) {
+            for (String path : images) {
+                imagesValues.put(Constants.COLUMN_IMAGE_PATH, path);
+                imagesValues.put(Constants.COLUMN_NOTE_ID, noteId);
+                try {
+                    long result = database.insertOrThrow(Constants.IMAGE_TABLE, null, imagesValues);
+                } catch (SQLiteException e) {
+
+                }
+            }
+        }
+        if (noteId != null){
+
+        }
+        return noteId;
+    }
+
+    @Override
     public void updateAsync(Note note, OnDatabaseOperationCompleteListener listener, ArrayList<String> newImages) {
         ContentValues values = new ContentValues();
         values.put(Constants.COLUMN_TITLE, note.getTitle());
