@@ -22,6 +22,7 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
     @Inject NoteListContract.Repository mNoteRepository;
     @Inject NoteListContract.Repository mRepository;
     @Inject SharedPreferences mSharedPreference;
+    @Inject NoteListContract.FirebaseRepository mFirebaseRepository;
     private boolean mEditMode = false;
     private Note mCurrentNote = null;
 
@@ -31,15 +32,28 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
         if (noteId > 0){
             mCurrentNote = mNoteRepository.getNoteById(noteId);
             mEditMode = true;
+            System.out.println(mCurrentNote.getFirebaseId());
         }
     }
 
     @Override
     public void onAddClick(Note note, ArrayList<String> images) {
+        System.out.println("onaddclick: " + note.getFirebaseId());
         if (note != null && note.getId() > 0){
+            if (mFirebaseRepository.getFirebaseUser() != null){
+                mFirebaseRepository.updateNote(note);
+            }
             mNoteRepository.updateAsync(note, this, images);
-        }else {
-            mNoteRepository.addAsync(note, this);
+        }
+        else {
+            if (mFirebaseRepository.getFirebaseUser() != null) {
+                String key = mFirebaseRepository.addNote(note);
+                note.setFirebaseId(key);
+                System.out.println("onaddclick: " + note.getFirebaseId());
+                mNoteRepository.addAsync(note, this);
+            }
+
+
         }
     }
 
@@ -111,6 +125,7 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
 
     @Override
     public void onUpdateOperationCompleted(String message) {
+        mEditMode = true;
         mView.displayMessage(message);
         checkStatus();
     }

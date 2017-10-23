@@ -532,9 +532,7 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             mContent.setError(getString(R.string.note_is_required));
             return;
         }
-        addNoteToFirebase("");
         addNoteToDatabase("");
-
     }
 
     private void addNoteToDatabase(String message) {
@@ -561,44 +559,6 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         mPresenter.onAddClick(mCurrentNote, mImagePathArrayNewImages);
         //reset the array to add only new images to database
         mImagePathArrayNewImages.clear();
-    }
-
-    private void addNoteToFirebase(String message) {
-//
-//            mCurrentNote.setCategoryName(mCurrentCategory.getCategoryName());
-//            mCurrentNote.setCategoryId(mCurrentCategory.getCategoryId());
-
-
-
-        mCurrentNote.setContent(mContent.getText().toString());
-        mCurrentNote.setTitle(mTitle.getText().toString());
-        mCurrentNote.setDateModified(System.currentTimeMillis());
-        mCurrentNote.setLocalAudioPath(mLocalAudioFilePath);
-        //mCurrentNote.setLocalImagePath(mLocalImagePath);
-        mCurrentNote.setLocalSketchImagePath(mLocalSketchPath);
-        mCurrentNote.setImages(mImagePathArrayNewImages);
-
-        if (!TextUtils.isEmpty(mLocalAudioFilePath)){
-            mCurrentNote.setNoteType(Constants.NOTE_TYPE_AUDIO);
-        }else if (!TextUtils.isEmpty(mLocalImagePath)){
-            mCurrentNote.setNoteType(Constants.NOTE_TYPE_IMAGE);
-        } else if (mReminderTime != null){
-
-        }
-        else {
-            mCurrentNote.setNoteType("text");
-        }
-
-
-        if (mCurrentNote != null && mCurrentNote.getId() > 0){
-
-        }
-        else {
-            mFirebaseRepository.addNote(mCurrentNote);
-            mFirebaseRepository.addImages(mImagePathArrayNewImages);
-            // startActivity(new Intent(getActivity(), NoteListActivity.class));
-        }
-
     }
 
     private void makeToast(String message){

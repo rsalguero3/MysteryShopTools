@@ -29,8 +29,8 @@ import android.widget.Button;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.AuthUI.IdpConfig;
+import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
-import com.firebase.ui.auth.ui.ResultCodes;
 import com.google.android.gms.common.Scopes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.gorrilaport.mysteryshoptools.R;
@@ -87,7 +87,7 @@ public class AuthUiActivity extends AppCompatActivity {
                 AuthUI.getInstance().createSignInIntentBuilder()
                         .setTheme(R.style.AppTheme)
                         .setLogo(R.drawable.alta_logo)
-                        .setProviders(getSelectedProviders())
+                        .setAvailableProviders(getSelectedProviders())
                         .setTosUrl(GOOGLE_TOS_URL)
                         .setIsSmartLockEnabled(true)
                         .build(),
@@ -98,7 +98,7 @@ public class AuthUiActivity extends AppCompatActivity {
         startActivityForResult(
                 AuthUI.getInstance().createSignInIntentBuilder()
                         .setTheme(R.style.AppTheme)
-                         .setProviders(getSelectedProviders())
+                        .setAvailableProviders(getSelectedProviders())
                         .setTosUrl(GOOGLE_TOS_URL)
                         .setIsSmartLockEnabled(false)
                         .build(),
@@ -131,7 +131,7 @@ public class AuthUiActivity extends AppCompatActivity {
             return;
         }
 
-        if (resultCode == ResultCodes.RESULT_NO_NETWORK) {
+        if (IdpResponse.fromResultIntent(data).getErrorCode() == ErrorCodes.NO_NETWORK) {
             showSnackbar(R.string.no_internet_connection);
             return;
         }

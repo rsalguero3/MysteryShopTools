@@ -41,15 +41,18 @@ public interface NoteListContract {
         void addAsync(Note note, OnDatabaseOperationCompleteListener listener);
         Long addAsync(Note note);
         void updateAsync(Note note, OnDatabaseOperationCompleteListener listener, ArrayList<String> newImages);
+        void updateAsync(Note note);
         void deleteAsync(Note note, OnDatabaseOperationCompleteListener listener);
         void deleteAsyncImage(String imagePath);
+        void deleteDatabase();
         List<Note> getAllNotes(String sortOption, boolean sortOrder);
         Note getNoteById(long id);
     }
 
     interface FirebaseRepository {
-        void addNote(Note note);
+        String addNote(Note note);
         void addImages(ArrayList<String> images);
+        void updateNote(Note note);
         void syncToFirebase(List<Note> notes);
         FirebaseUser getFirebaseUser();
         FirebaseAuth getFirebaseAuth();

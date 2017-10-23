@@ -27,6 +27,7 @@ public class Note {
     public static Note fromCursor(Cursor cursor){
         Note note = new Note();
         note.setId(cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_ID)));
+        note.setFirebaseId(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_FIREBASE_ID)));
         note.setTitle(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_TITLE)));
         note.setContent(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTENT)));
         note.setNextReminder(cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_NEXT_REMINDER)));

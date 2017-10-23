@@ -27,6 +27,7 @@ import com.gorrilaport.mysteryshoptools.util.Constants;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -42,7 +43,7 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
     private StorageReference mImagesStorageReference;
     private StorageReference mFirebaseStorageReference;
 
-    @Inject NoteSQLiteRepository noteSQLiteRepository;
+    @Inject NoteListContract.Repository noteSQLiteRepository;
 
 
     public FirebaseRepository(){
@@ -58,10 +59,11 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
     }
 
     @Override
-    public void addNote(Note note) {
+    public String addNote(Note note) {
         String key = mDatabase.push().getKey();
         note.setFirebaseId(key);
         mNoteCloudReferenece.child(key).setValue(note);
+        return key;
     }
 
     @Override
@@ -102,37 +104,38 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
                 //case: user redownloads app and wants to access notes from firebase
                 Note firebaseNote = dataSnapshot.getValue(Note.class);
                 Boolean foundNote = false;
-                if (notes.isEmpty()){
+                if (notes.isEmpty()) {
                     //re add notes from firebase into sqlite
                     long result = noteSQLiteRepository.addAsync(firebaseNote);
                     firebaseNote.setId(result);
                     dataSnapshot.getRef().child("id").setValue(result);
                 }
-
                 else {
                     ArrayList<Note> notesNotFoundInFireBase = new ArrayList<Note>();
                     ArrayList<Note> notesNotFoundInSqlite = new ArrayList<Note>();
-                    for (Note note : notes) {
+                    Iterator<Note> iter = notes.iterator();
+                    while (iter.hasNext()) {
+                        Note note = iter.next();
                         //check to see if the firebase note is the same as sqlite note
                         if (note.getFirebaseId() == firebaseNote.getFirebaseId()) {
                             foundNote = true;
-                            notes.remove(note);
+                            iter.remove();
+                            System.out.println("number of notes inside iterator loop " + notes.size());
                             if (note.getDateModified() < firebaseNote.getDateModified()) {
-
+                                noteSQLiteRepository.updateAsync(firebaseNote);
+                            }
+                            else {
+                                dataSnapshot.getRef().setValue(note);
                             }
                         }
 
                     }
-                    if (!foundNote){
-                        long result = noteSQLiteRepository.addAsync(firebaseNote);
-                        firebaseNote.setId(result);
-                        dataSnapshot.getRef().child("id").setValue(result);
-                    }
-                    if (!notes.isEmpty()){
-                        for (Note note: notes) {
-                            addNote(note);
-                        }
-                    }
+                }
+
+                if (!foundNote) {
+                    long result = noteSQLiteRepository.addAsync(firebaseNote);
+                    firebaseNote.setId(result);
+                    dataSnapshot.getRef().child("id").setValue(result);
                 }
             }
 
@@ -157,7 +160,18 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
             }
         });
 
+//        if (!notes.isEmpty()) {
+//            for (Note note : notes) {
+//                addNote(note);
+//            }
+//        }
 
+        System.out.println("number of notes in sql left over " + notes.size());
+    }
+
+    @Override
+    public void updateNote(Note note){
+        mNoteCloudReferenece.child(note.getFirebaseId()).setValue(note);
     }
 
 

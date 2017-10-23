@@ -45,6 +45,7 @@ public class Constants {
     public final static int QUERY_GET_ALL_CATEGORY = 5;
 
     public static final String COLUMN_ID = "_id";
+    public static final String COLUMN_FIREBASE_ID = "firebase_id";
     public final static String COLUMN_NAME = "name";
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_DESCRIPTION = "description";

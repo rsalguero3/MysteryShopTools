@@ -36,6 +36,10 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
     }
 
+    public void deleteDatabase(){
+        mContext.deleteDatabase(Constants.SQLITE_DATABASE);
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_CATEGORY_TABLE);
@@ -53,6 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
             + Constants.NOTES_TABLE
             + "("
             + Constants.COLUMN_ID + " integer primary key autoincrement, "
+            + Constants.COLUMN_FIREBASE_ID + " text, "
             + Constants.COLUMN_TITLE + " text not null, "
             + Constants.COLUMN_CONTENT + " text not null, "
             + Constants.COLUMN_NEXT_REMINDER + " integer, "

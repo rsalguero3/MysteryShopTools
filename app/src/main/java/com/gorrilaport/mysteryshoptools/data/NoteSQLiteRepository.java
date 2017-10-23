@@ -33,6 +33,7 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
     public void addAsync(Note note, OnDatabaseOperationCompleteListener listener) {
         Long noteId = null;
         ContentValues values = new ContentValues();
+        values.put(Constants.COLUMN_FIREBASE_ID, note.getFirebaseId());
         values.put(Constants.COLUMN_TITLE, note.getTitle());
         values.put(Constants.COLUMN_CONTENT, note.getContent());
         values.put(Constants.COLUMN_NEXT_REMINDER, note.getNextReminder());
@@ -76,6 +77,7 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
     public Long addAsync(Note note) {
         Long noteId = null;
         ContentValues values = new ContentValues();
+        values.put(Constants.COLUMN_FIREBASE_ID, note.getFirebaseId());
         values.put(Constants.COLUMN_TITLE, note.getTitle());
         values.put(Constants.COLUMN_CONTENT, note.getContent());
         values.put(Constants.COLUMN_NEXT_REMINDER, note.getNextReminder());
@@ -94,22 +96,10 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
             long result = database.insertOrThrow(Constants.NOTES_TABLE, null, values);
             noteId = result;
         } catch (SQLiteException e){
+            System.out.println("could not ad firebase note");
 
         }
 
-        ContentValues imagesValues = new ContentValues();
-        ArrayList<String> images = note.getImages();
-        if (!(images == null)) {
-            for (String path : images) {
-                imagesValues.put(Constants.COLUMN_IMAGE_PATH, path);
-                imagesValues.put(Constants.COLUMN_NOTE_ID, noteId);
-                try {
-                    long result = database.insertOrThrow(Constants.IMAGE_TABLE, null, imagesValues);
-                } catch (SQLiteException e) {
-
-                }
-            }
-        }
         if (noteId != null){
 
         }
@@ -120,6 +110,7 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
     public void updateAsync(Note note, OnDatabaseOperationCompleteListener listener, ArrayList<String> newImages) {
         ContentValues values = new ContentValues();
         values.put(Constants.COLUMN_TITLE, note.getTitle());
+        values.put(Constants.COLUMN_FIREBASE_ID, note.getFirebaseId());
         values.put(Constants.COLUMN_CONTENT, note.getContent());
         values.put(Constants.COLUMN_NEXT_REMINDER, note.getNextReminder());
         values.put(Constants.COLUMN_LOCAL_AUDIO_PATH, note.getLocalAudioPath());
@@ -151,6 +142,28 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
         }else{
             listener.onUpdateOperationFailed("Update Failed");
         }
+    }
+
+    @Override
+    public void updateAsync(Note note) {
+        ContentValues values = new ContentValues();
+        values.put(Constants.COLUMN_TITLE, note.getTitle());
+        values.put(Constants.COLUMN_FIREBASE_ID, note.getFirebaseId());
+        values.put(Constants.COLUMN_CONTENT, note.getContent());
+        values.put(Constants.COLUMN_NEXT_REMINDER, note.getNextReminder());
+        values.put(Constants.COLUMN_LOCAL_AUDIO_PATH, note.getLocalAudioPath());
+        values.put(Constants.COLUMN_LOCAL_SKETCH_PATH, note.getLocalSketchImagePath());
+        values.put(Constants.COLUMN_CATEGORY_NAME, note.getCategoryName());
+        values.put(Constants.COLUMNS_CATEGORY_ID, categorySQLiteRepository.createOrGetCategoryId(note.getCategoryName()));
+        values.put(Constants.COLUMNS_NOTE_TYPE, note.getNoteType());
+        values.put(Constants.COLUMN_MODIFIED_TIME, System.currentTimeMillis());
+        //Now update the this row with the information supplied
+
+        int result =  database.update(Constants.NOTES_TABLE, values,
+                Constants.COLUMN_ID + " = " + note.getId(), null);
+
+        System.out.println("update sql result code : " + result);
+
     }
 
     @Override
@@ -253,5 +266,10 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
         cursor.close();
         //Return result: either a valid note or null
         return  note;
+    }
+
+    @Override
+    public void deleteDatabase(){
+        databaseHelper.deleteDatabase();
     }
 }
