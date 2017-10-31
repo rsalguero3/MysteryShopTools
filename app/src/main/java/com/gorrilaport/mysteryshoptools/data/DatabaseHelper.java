@@ -37,7 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
 
     public void deleteDatabase(){
-        mContext.deleteDatabase(Constants.SQLITE_DATABASE);
+        mDatabaseInstance.deleteDatabase();
     }
 
     @Override

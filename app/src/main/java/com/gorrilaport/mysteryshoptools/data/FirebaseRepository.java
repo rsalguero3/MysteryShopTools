@@ -2,6 +2,7 @@ package com.gorrilaport.mysteryshoptools.data;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -19,10 +20,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
+import com.gorrilaport.mysteryshoptools.model.Category;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListContract;
 import com.gorrilaport.mysteryshoptools.util.Constants;
+import com.gorrilaport.mysteryshoptools.core.listeners.OnDatabaseOperationCompleteListener;
+
 
 import java.io.File;
 import java.util.ArrayList;
@@ -53,16 +58,18 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
         mFirebaseStorage = FirebaseStorage.getInstance();
         mFirebaseStorageReference = mFirebaseStorage.getReferenceFromUrl(Constants.FIREBASE_STORAGE_BUCKET);
         mNoteCloudReferenece = mDatabase.child(Constants.USERS_CLOUD_END_POINT + mFirebaseUser.getUid() + Constants.NOTE_CLOUD_END_POINT);
-
+        mCategoryCloudReferenece = mDatabase.child(Constants.USERS_CLOUD_END_POINT + mFirebaseUser.getUid() + Constants.CATEGORY_CLOUD_END_POINT);
         mImagesStorageReference = mFirebaseStorageReference.child("users/" + mFirebaseUser.getUid() + "attachments");
         MysteryShopTools.getInstance().getAppComponent().inject(this);
     }
 
     @Override
     public String addNote(Note note) {
+        //add note to firebase
         String key = mDatabase.push().getKey();
         note.setFirebaseId(key);
         mNoteCloudReferenece.child(key).setValue(note);
+
         return key;
     }
 
@@ -96,62 +103,83 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
     }
 
     @Override
-    public void syncToFirebase(final List<Note> notes) {
+    public void syncToFirebase(final List<Note> notes, final OnDatabaseOperationCompleteListener listener) {
 
-        mNoteCloudReferenece.orderByChild("firebaseId").addChildEventListener(new ChildEventListener() {
+        mNoteCloudReferenece.orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                //case: user redownloads app and wants to access notes from firebase
-                Note firebaseNote = dataSnapshot.getValue(Note.class);
-                Boolean foundNote = false;
-                if (notes.isEmpty()) {
-                    //re add notes from firebase into sqlite
-                    long result = noteSQLiteRepository.addAsync(firebaseNote);
-                    firebaseNote.setId(result);
-                    dataSnapshot.getRef().child("id").setValue(result);
-                }
-                else {
-                    ArrayList<Note> notesNotFoundInFireBase = new ArrayList<Note>();
-                    ArrayList<Note> notesNotFoundInSqlite = new ArrayList<Note>();
-                    Iterator<Note> iter = notes.iterator();
-                    while (iter.hasNext()) {
-                        Note note = iter.next();
-                        //check to see if the firebase note is the same as sqlite note
-                        if (note.getFirebaseId() == firebaseNote.getFirebaseId()) {
-                            foundNote = true;
-                            iter.remove();
-                            System.out.println("number of notes inside iterator loop " + notes.size());
-                            if (note.getDateModified() < firebaseNote.getDateModified()) {
-                                noteSQLiteRepository.updateAsync(firebaseNote);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                //if datasnapshot exists notes in firebase have been added
+                if (dataSnapshot.exists()) {
+                    //create an array holding firebase notes
+                    ArrayList<Note> firebaseNotesArray = new ArrayList<>();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Note n = snapshot.getValue(Note.class);
+                        firebaseNotesArray.add(n);
+                    }
+
+                    //sqlite notes array is empty, no need to check if notes are in firebase. Add all notes in firebase into sqlite
+                    if (notes.isEmpty()) {
+                        for (Note note : firebaseNotesArray) {
+                            //re add notes from firebase into sqlite
+                            long result = noteSQLiteRepository.addAsync(note);
+                            note.setId(result);
+                            dataSnapshot.getRef().child(note.getFirebaseId()).child("id").setValue(result);
+                        }
+                    }
+                    else {
+                        //notes in sqlite
+                        Iterator<Note> iter = notes.iterator();
+                        //iterate through sql notes and check if they exist in firebase database
+                        while (iter.hasNext()) {
+                            Note note = iter.next();
+                            //note was never added to firebase. add note to firebase
+                            if (note.getFirebaseId() == null) {
+                                String key = addNote(note);
+                                note.setFirebaseId(key);
+                                noteSQLiteRepository.updateAsync(note);
+                                iter.remove();
                             }
-                            else {
-                                dataSnapshot.getRef().setValue(note);
+                            //iterate through notes in firebase
+                            Iterator<Note> iterFirebase = firebaseNotesArray.iterator();
+                            Loop:
+                            while (iterFirebase.hasNext()) {
+                                Note firebaseNote = iterFirebase.next();
+                                if (note.getFirebaseId().equals(firebaseNote.getFirebaseId())) {
+                                    //if note is found remove from both arrays and update note if needed
+                                    iter.remove();
+                                    iterFirebase.remove();
+                                    if (note.getDateModified() < firebaseNote.getDateModified()) {
+                                        noteSQLiteRepository.updateAsync(firebaseNote);
+                                    } else {
+                                        dataSnapshot.getRef().child(firebaseNote.getFirebaseId()).setValue(note);
+                                    }
+                                    break Loop;
+                                }
                             }
                         }
 
+                        //add all notes left over in firebase array. These notes were note found in sqlite.
+                        if (!firebaseNotesArray.isEmpty()) {
+                            for (Note firebaseNote : firebaseNotesArray) {
+                                System.out.println("adding note to sql in sync firebase method");
+                                long result = noteSQLiteRepository.addAsync(firebaseNote);
+                                firebaseNote.setId(result);
+                                dataSnapshot.getRef().child(firebaseNote.getFirebaseId()).child("id").setValue(result);
+                            }
+                        }
                     }
                 }
 
-                if (!foundNote) {
-                    long result = noteSQLiteRepository.addAsync(firebaseNote);
-                    firebaseNote.setId(result);
-                    dataSnapshot.getRef().child("id").setValue(result);
+                //All notes in sqlite array not found in firebase database.
+                if (!notes.isEmpty()) {
+                    for (Note note : notes) {
+                        String key = addNote(note);
+                        note.setFirebaseId(key);
+                        noteSQLiteRepository.updateAsync(note);
+                    }
                 }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                listener.onSaveOperationSucceeded(Constants.FIREBASE_SYNC_COMPLETED);
             }
 
             @Override
@@ -159,14 +187,6 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
 
             }
         });
-
-//        if (!notes.isEmpty()) {
-//            for (Note note : notes) {
-//                addNote(note);
-//            }
-//        }
-
-        System.out.println("number of notes in sql left over " + notes.size());
     }
 
     @Override
@@ -183,4 +203,4 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
         return mFirebaseAuth;
     }
 
-}
+    }

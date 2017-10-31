@@ -31,6 +31,7 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
 
     @Override
     public void addAsync(Note note, OnDatabaseOperationCompleteListener listener) {
+        System.out.println("SQL add note called");
         Long noteId = null;
         ContentValues values = new ContentValues();
         values.put(Constants.COLUMN_FIREBASE_ID, note.getFirebaseId());
@@ -96,7 +97,7 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
             long result = database.insertOrThrow(Constants.NOTES_TABLE, null, values);
             noteId = result;
         } catch (SQLiteException e){
-            System.out.println("could not ad firebase note");
+            System.out.println("could not add firebase note");
 
         }
 

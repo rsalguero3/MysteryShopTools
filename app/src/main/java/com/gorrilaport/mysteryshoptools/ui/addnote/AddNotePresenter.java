@@ -38,12 +38,15 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
 
     @Override
     public void onAddClick(Note note, ArrayList<String> images) {
-        System.out.println("onaddclick: " + note.getFirebaseId());
+        // check to see if note is a new note and add to database. If not just update note
         if (note != null && note.getId() > 0){
+            //check if user is logged in
             if (mFirebaseRepository.getFirebaseUser() != null){
                 mFirebaseRepository.updateNote(note);
+                System.out.println("updated firebase note");
             }
             mNoteRepository.updateAsync(note, this, images);
+            System.out.println("updated sql note");
         }
         else {
             if (mFirebaseRepository.getFirebaseUser() != null) {

@@ -7,6 +7,7 @@ import com.gorrilaport.mysteryshoptools.util.Constants;
 public class Category{
 
     private long id;
+    private String firebaseId;
     private String title;
     private long dateCreated;
     private long dateModified;
@@ -36,6 +37,10 @@ public class Category{
     public void setId(long id) {
         this.id = id;
     }
+
+    public String getFirebaseId() { return firebaseId; }
+
+    public void setFirebaseId(String id) { firebaseId = id; }
 
     public String getTitle() {
         return title;

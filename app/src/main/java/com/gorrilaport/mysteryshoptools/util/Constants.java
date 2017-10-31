@@ -66,7 +66,7 @@ public class Constants {
 
     public static final String COLUMN_IMAGE_PATH = "image_path";
     public static final String COLUMN_NOTE_ID = "note_id";
-    public static final String NOTE_CLOUD_END_POINT = "/notes";
+    public static final String NOTE_CLOUD_END_POINT = "/notes/";
     public static final String CATEGORY_CLOUD_END_POINT = "/categories";
     public static final String USERS_CLOUD_END_POINT = "/users/";
 
@@ -120,4 +120,5 @@ public class Constants {
     };
     public static final int DELETE_ACCOUNT = 404;
     public static final String FIREBASE_STORAGE_BUCKET = "gs://mystery-shop-tools.appspot.com";
+    public static final long FIREBASE_SYNC_COMPLETED = 200;
 }

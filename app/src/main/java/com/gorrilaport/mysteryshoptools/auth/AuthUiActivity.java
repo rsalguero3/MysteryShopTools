@@ -35,6 +35,7 @@ import com.google.android.gms.common.Scopes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.gorrilaport.mysteryshoptools.R;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity;
+import com.idescout.sql.SqlScoutServer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +61,7 @@ public class AuthUiActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SqlScoutServer.create(this, getPackageName());
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {

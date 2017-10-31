@@ -8,6 +8,7 @@ import com.gorrilaport.mysteryshoptools.R;
 import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnDatabaseOperationCompleteListener;
 import com.gorrilaport.mysteryshoptools.model.Note;
+import com.gorrilaport.mysteryshoptools.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,8 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
     public void openNoteDetails(@NonNull long noteId) {
         if (isDualScreen) {
             mView.showDualDetailUi(mRepository.getNoteById(noteId));
-        } else {
+        }
+        else {
             mView.showSingleDetailUi(noteId);
         }
     }
@@ -88,7 +90,7 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
         boolean sortOrder = Boolean.valueOf(sordOrderValue);
         List<Note> notes = mRepository.getAllNotes(sortColumn, sortOrder);
 
-        mFirebaseRepository.syncToFirebase(notes);
+        mFirebaseRepository.syncToFirebase(notes, this);
     }
 
     @Override
@@ -98,7 +100,12 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
 
     @Override
     public void onSaveOperationSucceeded(long id) {
-        mView.showMessage("Saved");
+        if (id == Constants.FIREBASE_SYNC_COMPLETED){
+            mView.showMessage(mView.getContext().getString(R.string.firebase_sync_completed));
+        }
+        else {
+            mView.showMessage("Saved");
+        }
         loadNotes();
     }
 

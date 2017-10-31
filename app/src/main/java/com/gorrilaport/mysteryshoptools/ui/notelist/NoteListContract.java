@@ -53,7 +53,7 @@ public interface NoteListContract {
         String addNote(Note note);
         void addImages(ArrayList<String> images);
         void updateNote(Note note);
-        void syncToFirebase(List<Note> notes);
+        void syncToFirebase(List<Note> notes, OnDatabaseOperationCompleteListener listener);
         FirebaseUser getFirebaseUser();
         FirebaseAuth getFirebaseAuth();
     }
