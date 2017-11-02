@@ -17,6 +17,10 @@
             android:name=".ui.notelist.NoteListActivity"
             android:label="@string/title_activity_notes"
             android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".auth.AuthUiActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -61,15 +65,6 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity" />
-        </activity>
-        <activity
-            android:name=".ui.timer.TimerFragment"
-            android:label="@string/Timer_Fragment"
-            android:parentActivityName=".ui.notelist.NoteListActivity"
-            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity" />
