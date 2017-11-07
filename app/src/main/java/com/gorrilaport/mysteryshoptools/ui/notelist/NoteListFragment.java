@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.XmlRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -26,7 +27,9 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.gorrilaport.mysteryshoptools.R;
+import com.gorrilaport.mysteryshoptools.auth.AuthUiActivity;
 import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.core.listeners.NoteItemListener;
 import com.gorrilaport.mysteryshoptools.model.Note;
@@ -39,6 +42,8 @@ import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.lang.reflect.Type;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +51,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Optional;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,11 +65,14 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
     EventBus mBus;
     @Inject
     SharedPreferences mSharedPreference;
+    @Inject
+    NoteListContract.FirebaseRepository mFirebaseRepository;
 
     @BindView(R.id.note_recycler_view) UltimateRecyclerView mRecyclerView;
     @BindView(R.id.empty_text) TextView mEmptyText;
 
     private View mRootView;
+    private Menu mMenu;
     private FloatingActionButton mFab;
 
     public NoteListFragment() {
@@ -81,6 +90,8 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MysteryShopTools.getInstance().getAppComponent().inject(this);
+        System.out.println("SHared prefs is null: " + mSharedPreference);
         setHasOptionsMenu(true);
     }
 
@@ -90,7 +101,9 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
         // Inflate the layout for this fragment
         mRootView = inflater.inflate(R.layout.fragment_note_list, container, false);
         ButterKnife.bind(this, mRootView);
-        MysteryShopTools.getInstance().getAppComponent().inject(this);
+        System.out.println("about to call inject in fragment");
+        System.out.println("call inject in fragment");
+
 //        mBus.register(this);
 
         mPresenter = new NotesListPresenter(this);
@@ -107,7 +120,6 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
             @Override
             public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
                 mItemTouchHelper.startDrag(viewHolder);
-                System.out.println("dragging");
             }
         });
         mListAdapter.setNoteItemListener(new NoteItemListener() {
@@ -163,13 +175,21 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
 
     @Override
     public void onResume() {
+        System.out.println("on resume called");
         super.onResume();
+        getActivity().invalidateOptionsMenu();
         mPresenter.loadNotes();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_notelist, menu);
+        if (FirebaseAuth.getInstance().getCurrentUser() == null){
+            MenuItem item = menu.findItem(R.id.list_sign_in);
+            MenuItem item2 = menu.findItem(R.id.action_sync);
+            item.setVisible(true);
+            item2.setVisible(false);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -180,6 +200,12 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
             case R.id.action_sync:
                 mPresenter.syncToFirebaseButtonClicked();
                 break;
+            case R.id.list_sign_in:
+                Intent intent = new Intent(getContext(), AuthUiActivity.class);
+                intent.putExtra(Constants.SIGN_IN_INTENT, 1);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                getActivity().finish();
             case R.id.action_delete:
 
                 break;

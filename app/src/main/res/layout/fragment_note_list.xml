@@ -2,9 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_notelist_background"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingRight="@dimen/margin_padding_tiny"
-    android:paddingLeft="@dimen/margin_padding_tiny"
     tools:context=".ui.notelist.NoteListFragment">
 
     <com.marshalchen.ultimaterecyclerview.UltimateRecyclerView
@@ -13,6 +12,9 @@
         android:background="@color/transparent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingRight="@dimen/margin_padding_tiny"
+        android:paddingLeft="@dimen/margin_padding_tiny"
+        android:layoutAnimation="@anim/layout_animation_fall_down"
         app:recyclerviewEmptyView="@layout/empty_view" />
 
     <TextView

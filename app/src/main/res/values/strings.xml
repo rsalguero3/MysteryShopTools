@@ -121,6 +121,8 @@
     <string name="delete_account">Delete Account</string>
     <string name="action_sync">action sync</string>
     <string name="firebase_sync_completed">Firebase Sync Completed</string>
+    <string name="log_in_button">Log in</string>
+    <string name="skip_log_in">Skip Log in</string>
 
     <string-array name="sortOptionsEntries">
         <item>Title</item>

@@ -1,8 +1,11 @@
 package com.gorrilaport.mysteryshoptools.core;
 
+import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import com.gorrilaport.mysteryshoptools.core.dagger.AppComponent;
@@ -25,9 +28,8 @@ public class MysteryShopTools extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-       getAppComponent();
-       addDefaultData();
-
+        getAppComponent();
+        addDefaultData();
     }
 
     public AppComponent getAppComponent() {
@@ -36,8 +38,11 @@ public class MysteryShopTools extends Application {
                     .appModule(new AppModule(this))
                     .build();
         }
-
         return appComponent;
+    }
+
+    public void resetAppComponent(){
+        appComponent = null;
     }
 
 
@@ -46,17 +51,17 @@ public class MysteryShopTools extends Application {
     private void addDefaultData() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        //If first run is true show login in page, after user reenters app show notelist activity
         editor = sharedPreferences.edit();
         if (sharedPreferences.getBoolean(Constants.FIRST_RUN, true)) {
             startService(new Intent(this, AddSampleDateIntentService.class));
             editor.putBoolean(Constants.FIRST_RUN, false).commit();
         }
-
     }
 
-
-
-
-
-
-}
+    public void resetApplication(Context context){
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = sharedPreferences.edit();
+        editor.putBoolean(Constants.FIRST_RUN, true).commit();
+        }
+    }

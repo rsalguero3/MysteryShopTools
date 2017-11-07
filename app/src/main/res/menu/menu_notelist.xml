@@ -4,6 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.notedetails.NoteDetailActivity">
 
+    <item android:id="@+id/list_sign_in"
+        android:title="Sign in"
+        android:visible="false"
+        app:showAsAction="always"
+        android:icon="@drawable/common_google_signin_btn_text_dark_focused" />
+
     <item android:id="@+id/action_sync"
         android:title="@string/action_sync"
         android:icon="@android:drawable/stat_notify_sync"

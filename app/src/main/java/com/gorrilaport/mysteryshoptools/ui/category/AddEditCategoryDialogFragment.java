@@ -11,8 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.OnColorSelectedListener;
+import com.flask.colorpicker.builder.ColorPickerClickListener;
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.gorrilaport.mysteryshoptools.R;
@@ -84,6 +89,13 @@ public class AddEditCategoryDialogFragment extends DialogFragment {
             LayoutInflater inflater = getActivity().getLayoutInflater();
 
             View convertView = inflater.inflate(R.layout.fragment_add_edit_category_dialog, null);
+            final ImageView colorView = convertView.findViewById(R.id.color_view);
+            convertView.findViewById(R.id.category_color_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setupColorChooser(colorView);
+                }
+            });
             addCategoryDialog.setView(convertView);
 
             getCurrentCategory();
@@ -178,5 +190,35 @@ public class AddEditCategoryDialogFragment extends DialogFragment {
 
     }
 
+
+    private void setupColorChooser(final ImageView view){
+        ColorPickerDialogBuilder
+                .with(getActivity())
+                .setTitle("Choose color")
+                .initialColor(R.color.white)
+                .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                .density(12)
+                .setOnColorSelectedListener(new OnColorSelectedListener() {
+                    @Override
+                    public void onColorSelected(int selectedColor) {
+                        System.out.println("onColorSelected: 0x" + Integer.toHexString(selectedColor));
+                    }
+                })
+                .setPositiveButton("ok", new ColorPickerClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
+                        view.setBackgroundColor(selectedColor);
+                        System.out.println("color changed");
+                        //changeBackgroundColor(selectedColor);
+                    }
+                })
+                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .build()
+                .show();
+    }
 
 }

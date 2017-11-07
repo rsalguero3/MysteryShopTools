@@ -1,5 +1,6 @@
 package com.gorrilaport.mysteryshoptools.core.dagger;
 
+import com.gorrilaport.mysteryshoptools.auth.AuthUiActivity;
 import com.gorrilaport.mysteryshoptools.data.FirebaseRepository;
 import com.gorrilaport.mysteryshoptools.ui.addnote.AddNoteActivity;
 import com.gorrilaport.mysteryshoptools.ui.addnote.AddNotePresenter;
@@ -41,4 +42,5 @@ public interface AppComponent {
         void inject(NoteImageView Activity);
         void inject(NoteListActivity Activity);
         void inject(FirebaseRepository firebaseRepository);
+        void inject(AuthUiActivity activity);
 }

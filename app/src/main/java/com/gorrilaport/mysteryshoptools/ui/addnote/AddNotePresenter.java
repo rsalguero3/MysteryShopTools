@@ -32,7 +32,6 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
         if (noteId > 0){
             mCurrentNote = mNoteRepository.getNoteById(noteId);
             mEditMode = true;
-            System.out.println(mCurrentNote.getFirebaseId());
         }
     }
 
@@ -43,20 +42,18 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
             //check if user is logged in
             if (mFirebaseRepository.getFirebaseUser() != null){
                 mFirebaseRepository.updateNote(note);
-                System.out.println("updated firebase note");
             }
             mNoteRepository.updateAsync(note, this, images);
-            System.out.println("updated sql note");
         }
         else {
             if (mFirebaseRepository.getFirebaseUser() != null) {
                 String key = mFirebaseRepository.addNote(note);
                 note.setFirebaseId(key);
-                System.out.println("onaddclick: " + note.getFirebaseId());
                 mNoteRepository.addAsync(note, this);
             }
-
-
+            else {
+                mNoteRepository.addAsync(note, this);
+            }
         }
     }
 
@@ -109,7 +106,6 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
     @Override
     public void onSaveOperationSucceeded(long id) {
         mCurrentNote = mNoteRepository.getNoteById(id);
-        System.out.println(mCurrentNote.getId());
         mView.displayMessage("Saved");
         mEditMode = true;
         checkStatus();

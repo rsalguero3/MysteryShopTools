@@ -37,7 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
 
     public void deleteDatabase(){
-        mDatabaseInstance.deleteDatabase();
+        mContext.deleteDatabase(Constants.SQLITE_DATABASE);
     }
 
     @Override
@@ -76,7 +76,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                     + Constants.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + Constants.COLUMN_TITLE + " TEXT NOT NULL, "
                     + Constants.COLUMN_CREATED_TIME + " BIGINT, "
-                    + Constants.COLUMN_MODIFIED_TIME + " BIGINT " + ")";
+                    + Constants.COLUMN_MODIFIED_TIME + " BIGINT, "
+                    + Constants.COLUMN_COLOR + " TEXT" + ")";
 
     private static final String CREATE_IMAGE_TABLE =
             "CREATE TABLE " + Constants.IMAGE_TABLE + "("

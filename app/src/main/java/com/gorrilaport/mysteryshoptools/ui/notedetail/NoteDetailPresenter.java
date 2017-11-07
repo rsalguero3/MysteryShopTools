@@ -17,6 +17,8 @@ public class NoteDetailPresenter implements NoteDetailContract.Action, OnDatabas
 
     @Inject
     NoteListContract.Repository mRepository;
+    @Inject
+    NoteListContract.FirebaseRepository mFirebaseRepository;
     private final NoteDetailContract.View mView;
     private long noteId;
     private final static String LOG_TAG = "NoteDetailPresenter";
@@ -69,7 +71,11 @@ public class NoteDetailPresenter implements NoteDetailContract.Action, OnDatabas
 
     @Override
     public void deleteNote() {
-        mRepository.deleteAsync(mRepository.getNoteById(noteId), this);
+        Note note = mRepository.getNoteById(noteId);
+        if (mFirebaseRepository.getFirebaseUser() != null){
+            mFirebaseRepository.deleteNote(note);
+        }
+        mRepository.deleteAsync(note, this);
     }
 
     @Override

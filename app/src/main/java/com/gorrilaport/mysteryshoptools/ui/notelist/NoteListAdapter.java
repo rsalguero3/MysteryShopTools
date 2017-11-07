@@ -5,6 +5,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,6 +34,7 @@ public class NoteListAdapter extends UltimateViewAdapter {
     private final Context mContext;
     private NoteItemListener mItemListener;
     private View noteView;
+    private int lastPosition = -1;
 
 
     public NoteListAdapter(List<Note> notes, Context mContext) {
@@ -77,7 +81,7 @@ public class NoteListAdapter extends UltimateViewAdapter {
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder( RecyclerView.ViewHolder holder, int position) {
         final Note note = mNotes.get(position);
 
         ((ViewHolder) holder).title.setText(note.getTitle());
@@ -123,6 +127,20 @@ public class NoteListAdapter extends UltimateViewAdapter {
             e.printStackTrace();
         }
 
+        //setAnimation(holder.itemView, position);
+
+
+    }
+
+    private void setAnimation(View viewToAnimate, int position)
+    {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition)
+        {
+            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.item_animation_fall_down);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
     }
 
     @Override
@@ -134,6 +152,7 @@ public class NoteListAdapter extends UltimateViewAdapter {
     public void onBindHeaderViewHolder(RecyclerView.ViewHolder holder, int position) {
 
     }
+
 
     @Override
     public int getItemCount() {

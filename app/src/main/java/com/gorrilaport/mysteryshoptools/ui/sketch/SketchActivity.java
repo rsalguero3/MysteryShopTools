@@ -64,13 +64,11 @@ public class SketchActivity extends Activity {
 
         //sketchDirectory = new File(Environment.getExternalStorageDirectory(), Constants.ATTACHMENTS_FOLDER);
         sketchDirectory = new File(getFilesDir(), Constants.ATTACHMENTS_FOLDER);
-        System.out.println(sketchDirectory.getAbsolutePath());
         if (!sketchDirectory.exists()) {
             sketchDirectory.mkdirs();
-            System.out.println(sketchDirectory.exists());
         }
         if(sketchDirectory.exists()){
-            System.out.println("sketck dir exists");
+
         }
         customView.setDrawingCacheEnabled(true);
 
@@ -91,15 +89,11 @@ public class SketchActivity extends Activity {
 
         } catch (FileNotFoundException e) {
             Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-            System.out.println(sketchDirectory.getAbsolutePath());
-            System.out.println(sketchFile.getAbsolutePath());
             setResult(RESULT_CANCELED);
             finish();
 
         } catch (IOException e) {
             Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-            System.out.println(sketchDirectory.getAbsolutePath());
-            System.out.println(sketchFile.getAbsolutePath());
             setResult(RESULT_CANCELED);
             finish();
         }

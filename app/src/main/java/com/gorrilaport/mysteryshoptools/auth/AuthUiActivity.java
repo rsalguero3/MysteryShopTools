@@ -16,7 +16,10 @@ package com.gorrilaport.mysteryshoptools.auth;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
@@ -25,7 +28,12 @@ import android.support.annotation.StyleRes;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.AuthUI.IdpConfig;
@@ -34,7 +42,9 @@ import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.common.Scopes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.gorrilaport.mysteryshoptools.R;
+import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity;
+import com.gorrilaport.mysteryshoptools.util.Constants;
 import com.idescout.sql.SqlScoutServer;
 
 import java.util.ArrayList;
@@ -57,38 +67,57 @@ public class AuthUiActivity extends AppCompatActivity {
     @BindView(android.R.id.content)
     View mRootView;
 
+    @BindView(R.id.authUiLinearlayout)
+    LinearLayout linearLayout;
+
+    @BindView(R.id.link_login)
+    TextView mLoginTextView;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SqlScoutServer.create(this, getPackageName());
+        //Force layout to take full screen
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
-        auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() != null) {
-                    startDefaultActivity();
-                }
-                else {
-                    showSnackbar(R.string.sign_out);
-                }
-            }
-        });
+        MysteryShopTools.getInstance().getAppComponent().inject(this);
 
+        //First time run is false show Notelist Activity
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        System.out.println(sharedPreferences.getBoolean(Constants.FIRST_RUN, false));
+        if (!sharedPreferences.getBoolean(Constants.FIRST_RUN, false)
+                && !getIntent().hasExtra(Constants.SIGN_IN_INTENT)) {
+            startDefaultActivity();
+        }
 
         setContentView(R.layout.auth_ui_layout);
         ButterKnife.bind(this);
+        mLoginTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDefaultActivity();
+            }
+        });
+        mSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showSignInScreen();
+            }
+        });
 
-        showSignInScreen();
+        //Background gradient animation
+        AnimationDrawable animationDrawable =(AnimationDrawable)linearLayout.getBackground();
+        animationDrawable.setEnterFadeDuration(5000);
+        animationDrawable.setExitFadeDuration(2000);
+        animationDrawable.start();
     }
 
-    @OnClick(R.id.sign_in)
     public void signIn(View view) {
         startActivityForResult(
                 AuthUI.getInstance().createSignInIntentBuilder()
-                        .setTheme(R.style.AppTheme)
-                        .setLogo(R.drawable.alta_logo)
+                        .setTheme(R.style.FullscreenTheme)
                         .setAvailableProviders(getSelectedProviders())
                         .setTosUrl(GOOGLE_TOS_URL)
                         .setIsSmartLockEnabled(true)
@@ -99,7 +128,7 @@ public class AuthUiActivity extends AppCompatActivity {
     private void showSignInScreen() {
         startActivityForResult(
                 AuthUI.getInstance().createSignInIntentBuilder()
-                        .setTheme(R.style.AppTheme)
+                        .setTheme(R.style.FullscreenTheme)
                         .setAvailableProviders(getSelectedProviders())
                         .setTosUrl(GOOGLE_TOS_URL)
                         .setIsSmartLockEnabled(false)
@@ -123,6 +152,9 @@ public class AuthUiActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             Intent in = new Intent(this, NoteListActivity.class);
             in.putExtra(EXTRA_IDP_RESPONSE, IdpResponse.fromResultIntent(data));
+            in.putExtra(Constants.LOGED_IN, 200 );
+            in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(in);
             finish();
             return;

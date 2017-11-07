@@ -174,9 +174,9 @@ public class AddSampleDateIntentService extends IntentService {
         }
         //When the data is added, restart the Notelist
         //Activity. The default data will be displayed
-        Intent restartIntent = new Intent(this, NoteListActivity.class);
-        restartIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        this.startActivity(restartIntent);
+//        Intent restartIntent = new Intent(this, NoteListActivity.class);
+//        restartIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        this.startActivity(restartIntent);
 
 
     }

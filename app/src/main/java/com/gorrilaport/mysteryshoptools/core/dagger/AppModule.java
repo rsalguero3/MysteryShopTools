@@ -28,6 +28,6 @@ public class AppModule {
 
     @Provides @Singleton
     SharedPreferences providesSharedPreference(Context context){
-        return PreferenceManager.getDefaultSharedPreferences(context);
+        return PreferenceManager.getDefaultSharedPreferences(app.getApplicationContext());
     }
 }

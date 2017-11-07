@@ -31,7 +31,6 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
 
     @Override
     public void addAsync(Note note, OnDatabaseOperationCompleteListener listener) {
-        System.out.println("SQL add note called");
         Long noteId = null;
         ContentValues values = new ContentValues();
         values.put(Constants.COLUMN_FIREBASE_ID, note.getFirebaseId());
@@ -97,7 +96,7 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
             long result = database.insertOrThrow(Constants.NOTES_TABLE, null, values);
             noteId = result;
         } catch (SQLiteException e){
-            System.out.println("could not add firebase note");
+
 
         }
 
@@ -162,9 +161,6 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
 
         int result =  database.update(Constants.NOTES_TABLE, values,
                 Constants.COLUMN_ID + " = " + note.getId(), null);
-
-        System.out.println("update sql result code : " + result);
-
     }
 
     @Override
@@ -272,5 +268,10 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
     @Override
     public void deleteDatabase(){
         databaseHelper.deleteDatabase();
+    }
+
+    @Override
+    public SQLiteDatabase getDatabase(){
+        return database;
     }
 }

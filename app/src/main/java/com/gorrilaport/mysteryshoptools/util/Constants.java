@@ -121,4 +121,7 @@ public class Constants {
     public static final int DELETE_ACCOUNT = 404;
     public static final String FIREBASE_STORAGE_BUCKET = "gs://mystery-shop-tools.appspot.com";
     public static final long FIREBASE_SYNC_COMPLETED = 200;
+    public static final String FIREBASE_ID = "FIREBASE_ID";
+    public static final String SIGN_IN_INTENT = "SIGN_IN_INTENT";
+    public static final String LOGED_IN = "LOGED_IN" ;
 }

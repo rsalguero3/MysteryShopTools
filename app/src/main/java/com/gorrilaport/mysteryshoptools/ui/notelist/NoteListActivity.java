@@ -1,5 +1,6 @@
 package com.gorrilaport.mysteryshoptools.ui.notelist;
 
+import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -30,6 +31,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.gorrilaport.mysteryshoptools.auth.AuthUiActivity;
 import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
+import com.gorrilaport.mysteryshoptools.data.FirebaseRepository;
 import com.gorrilaport.mysteryshoptools.ui.camera.CameraFragment;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -80,31 +82,27 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
     private boolean mTwoPane;
 
     public NoteListActivity() {
-        MysteryShopTools.getInstance().getAppComponent().inject(this);}
+
+        }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MysteryShopTools.getInstance().getAppComponent().inject(this);
+        if(getIntent() != null && getIntent().hasExtra(Constants.LOGED_IN)){
+            ((FirebaseRepository) mFirebaseRepository).updateUserInfo();
+        }
         setContentView(R.layout.activity_notes);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setupNavigationDrawer(savedInstanceState);
 
-
-
-        if(mFirebaseRepository.getFirebaseUser() == null){
-            //Not signed in, launch the sign in activity
-            startActivity(new Intent(this, AuthUiActivity.class));
-            finish();
-            return;
-        }
-        else {
+        if(mFirebaseRepository.getFirebaseUser() != null){
             mFirebaseUser = mFirebaseRepository.getFirebaseUser();
             mUsername = mFirebaseUser.getDisplayName();
             //mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
             mEmailAddress = mFirebaseUser.getEmail();
         }
-
+        setupNavigationDrawer(savedInstanceState);
         setupDefaultFragment();
         ButterKnife.bind(this);
     }
@@ -136,7 +134,7 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
 
         IProfile profile = new ProfileDrawerItem()
                 .withName(mUsername)
-                .withEmail("someemail@gymmail.com")
+                .withEmail("email@email.com")
                 .withIcon(mPhotoUrl)
                 .withIdentifier(102);
 
@@ -159,8 +157,7 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
                         new PrimaryDrawerItem().withName(R.string.menu_drawer_settings).withIcon(FontAwesome.Icon.faw_cog).withIdentifier(Constants.SETTINGS),
                         //new PrimaryDrawerItem().withName("Timer").withIcon(FontAwesome.Icon.faw_book).withIdentifier(Constants.TIMER)
                         new PrimaryDrawerItem().withName(R.string.menu_drawer_companies).withIcon(FontAwesome.Icon.faw_industry).withIdentifier(Constants.COMPANIES),
-                        new PrimaryDrawerItem().withName(R.string.menu_drawer_about).withIcon(FontAwesome.Icon.faw_database).withIdentifier(Constants.ABOUT),
-                        new PrimaryDrawerItem().withName("Logout").withIcon(GoogleMaterial.Icon.gmd_lock).withIdentifier(Constants.LOGOUT)
+                        new PrimaryDrawerItem().withName(R.string.menu_drawer_about).withIcon(FontAwesome.Icon.faw_database).withIdentifier(Constants.ABOUT)
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -198,7 +195,7 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
                 .withFireOnInitialOnClick(true)
                 .withSavedInstance(savedInstanceState)
                 .build();
-        drawer.addStickyFooterItem(new PrimaryDrawerItem().withName(R.string.delete_account).withIcon(GoogleMaterial.Icon.gmd_delete).withIdentifier(Constants.DELETE_ACCOUNT));
+        resetMenuDrawer();
     }
 
     /**
@@ -262,13 +259,9 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             mRepository.deleteDatabase();
+                            MysteryShopTools.getInstance().resetApplication(getApplicationContext());
                             startActivity(new Intent(NoteListActivity.this, AuthUiActivity.class));
-                            if (Build.VERSION.SDK_INT >= 21){
-                                finishAfterTransition();
-                            }
-                            else {
-                                finish();
-                            }
+                            finish();
                         } else {
                             showSnackbar(R.string.sign_out_failed);
                         }
@@ -283,6 +276,7 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
+                            MysteryShopTools.getInstance().resetApplication(getApplicationContext());
                             startActivity(new Intent(NoteListActivity.this, AuthUiActivity.class));
                             finish();
                         } else {
@@ -327,6 +321,19 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
     @Override
     public void onDestroyActionMode(ActionMode actionMode) {
 
+    }
+
+    public void resetMenuDrawer(){
+        //remove log out button and delete account button if user is not logged in
+        if(mFirebaseUser == null){
+            drawer.removeItem(Constants.LOGOUT);
+            drawer.removeAllStickyFooterItems();
+        }
+        //user is logged in, add log out and delete account buttons
+        else if (drawer.getDrawerItem(Constants.LOGOUT) == null){
+            drawer.addItem(new PrimaryDrawerItem().withName("Logout").withIcon(GoogleMaterial.Icon.gmd_lock).withIdentifier(Constants.LOGOUT));
+            drawer.addStickyFooterItem(new PrimaryDrawerItem().withName(R.string.delete_account).withIcon(GoogleMaterial.Icon.gmd_delete).withIdentifier(Constants.DELETE_ACCOUNT));
+        }
     }
 
     /**

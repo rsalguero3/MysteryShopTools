@@ -100,7 +100,7 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
     @Override
     public void onStart() {
         super.onStart();
-        mPresenter.showNoteDetails();
+
     }
 
     @Override
@@ -109,6 +109,7 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         getActivity().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
+        mPresenter.showNoteDetails();
     }
 
 
@@ -142,7 +143,6 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
     @Override
     public void displayNote(Note note) {
         mCategory.setText(note.getCategoryName());
-        System.out.println(note.getCategoryName());
         mContent.setText(note.getContent());
         mTitle.setText(note.getTitle());
         mTimeStamp.setText("Date Created: " + TimeUtils.getReadableModifiedDate(note.getDateCreated())
@@ -151,7 +151,7 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
             ArrayList<String> array = note.getImages();
             mImagePathArray.clear();
             mImagePageAdapter.notifyDataSetChanged();
-            if (!(array == null)) {
+            if (array != null) {
                 for (int i = 0; i < array.size(); i++) {
                     String path = array.get(i);
                     mImagePathArray.add(path);

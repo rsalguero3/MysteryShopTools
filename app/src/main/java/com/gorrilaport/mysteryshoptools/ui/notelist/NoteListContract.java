@@ -2,6 +2,7 @@ package com.gorrilaport.mysteryshoptools.ui.notelist;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -47,12 +48,15 @@ public interface NoteListContract {
         void deleteDatabase();
         List<Note> getAllNotes(String sortOption, boolean sortOrder);
         Note getNoteById(long id);
+        SQLiteDatabase getDatabase();
     }
 
     interface FirebaseRepository {
         String addNote(Note note);
-        void addImages(ArrayList<String> images);
+        void addImages(Note note);
         void updateNote(Note note);
+        void deleteNote(Note note);
+        void deleteImage(String path);
         void syncToFirebase(List<Note> notes, OnDatabaseOperationCompleteListener listener);
         FirebaseUser getFirebaseUser();
         FirebaseAuth getFirebaseAuth();

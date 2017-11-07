@@ -7,6 +7,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.OnSingleFlingListener;
@@ -26,6 +28,8 @@ public class NoteImageView extends AppCompatActivity {
     @BindView(R.id.photoView) PhotoView mPhotoView;
     @Inject
     NoteListContract.Repository mRepository;
+    @Inject
+    NoteListContract.FirebaseRepository mFirebaseRepository;
 
     private String mImagePath;
 
@@ -61,6 +65,9 @@ public class NoteImageView extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_delete:
+                if(mFirebaseRepository.getFirebaseUser() != null){
+                    mFirebaseRepository.deleteImage(mImagePath);
+                }
                 mRepository.deleteAsyncImage(mImagePath);
                 onBackPressed();
             case android.R.id.home:

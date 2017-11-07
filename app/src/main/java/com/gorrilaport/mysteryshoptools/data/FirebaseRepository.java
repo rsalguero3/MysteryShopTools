@@ -2,27 +2,22 @@ package com.gorrilaport.mysteryshoptools.data;
 
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.google.gson.Gson;
 import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
-import com.gorrilaport.mysteryshoptools.model.Category;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListContract;
 import com.gorrilaport.mysteryshoptools.util.Constants;
@@ -52,15 +47,21 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
 
 
     public FirebaseRepository(){
+        updateUserInfo();
+    }
+
+    public void updateUserInfo(){
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
-        mFirebaseStorage = FirebaseStorage.getInstance();
-        mFirebaseStorageReference = mFirebaseStorage.getReferenceFromUrl(Constants.FIREBASE_STORAGE_BUCKET);
-        mNoteCloudReferenece = mDatabase.child(Constants.USERS_CLOUD_END_POINT + mFirebaseUser.getUid() + Constants.NOTE_CLOUD_END_POINT);
-        mCategoryCloudReferenece = mDatabase.child(Constants.USERS_CLOUD_END_POINT + mFirebaseUser.getUid() + Constants.CATEGORY_CLOUD_END_POINT);
-        mImagesStorageReference = mFirebaseStorageReference.child("users/" + mFirebaseUser.getUid() + "attachments");
-        MysteryShopTools.getInstance().getAppComponent().inject(this);
+        if(mFirebaseUser != null) {
+            mFirebaseStorage = FirebaseStorage.getInstance();
+            mFirebaseStorageReference = mFirebaseStorage.getReferenceFromUrl(Constants.FIREBASE_STORAGE_BUCKET);
+            mNoteCloudReferenece = mDatabase.child(Constants.USERS_CLOUD_END_POINT + mFirebaseUser.getUid() + Constants.NOTE_CLOUD_END_POINT);
+            mCategoryCloudReferenece = mDatabase.child(Constants.USERS_CLOUD_END_POINT + mFirebaseUser.getUid() + Constants.CATEGORY_CLOUD_END_POINT);
+            mImagesStorageReference = mFirebaseStorageReference.child("users/" + mFirebaseUser.getUid() + Constants.NOTE_CLOUD_END_POINT);
+            MysteryShopTools.getInstance().getAppComponent().inject(this);
+        }
     }
 
     @Override
@@ -69,36 +70,38 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
         String key = mDatabase.push().getKey();
         note.setFirebaseId(key);
         mNoteCloudReferenece.child(key).setValue(note);
+        addImages(note);
 
         return key;
     }
 
     @Override
-    public void addImages(ArrayList<String> images) {
+    public void addImages(Note note) {
             StorageMetadata metadata = new StorageMetadata.Builder()
                     .setContentType(".jpeg")
                     .build();
+            if (note.getImages() != null) {
+                ArrayList<String> images = note.getImages();
+                for (String filePath : images) {
+                    Uri fileToUpload = Uri.fromFile(new File(filePath));
 
-            for (String filePath : images) {
-                Uri fileToUpload = Uri.fromFile(new File(filePath));
+                    final String fileName = fileToUpload.getLastPathSegment();
 
-                final String fileName = fileToUpload.getLastPathSegment();
+                    StorageReference imageRef = mImagesStorageReference.child(note.getFirebaseId()).child(fileName);
 
-                StorageReference imageRef = mImagesStorageReference.child(fileName);
-
-                UploadTask uploadTask = imageRef.putFile(fileToUpload, metadata);
-                uploadTask.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        //makeToast("Unable to upload file to cloud" + e.getLocalizedMessage());
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        //makeToast("File uploaded successfully");
-                    }
-                });
-
+                    UploadTask uploadTask = imageRef.putFile(fileToUpload, metadata);
+                    uploadTask.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            //makeToast("Unable to upload file to cloud" + e.getLocalizedMessage());
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            //makeToast("File uploaded successfully");
+                        }
+                    });
+                }
             }
     }
 
@@ -162,7 +165,6 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
                         //add all notes left over in firebase array. These notes were note found in sqlite.
                         if (!firebaseNotesArray.isEmpty()) {
                             for (Note firebaseNote : firebaseNotesArray) {
-                                System.out.println("adding note to sql in sync firebase method");
                                 long result = noteSQLiteRepository.addAsync(firebaseNote);
                                 firebaseNote.setId(result);
                                 dataSnapshot.getRef().child(firebaseNote.getFirebaseId()).child("id").setValue(result);
@@ -192,8 +194,35 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
     @Override
     public void updateNote(Note note){
         mNoteCloudReferenece.child(note.getFirebaseId()).setValue(note);
+        addImages(note);
     }
 
+    @Override
+    public void deleteImage(String path){
+        //Query image table and find the row with the same path name under image_path column
+        Uri file = Uri.fromFile(new File(path));
+        final String fileName = file.getLastPathSegment();
+        String query = "SELECT " + "*" + " FROM " + Constants.IMAGE_TABLE + " WHERE "
+                + Constants.COLUMN_IMAGE_PATH + " = '" + path + "'";
+        Cursor cursor = noteSQLiteRepository.getDatabase().rawQuery(query, null);
+
+        if (cursor.moveToFirst()){
+            //find the note that us associated with the image
+            Note note = noteSQLiteRepository.getNoteById(cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_NOTE_ID)));
+            mImagesStorageReference.child(note.getFirebaseId()).child(fileName).delete();
+
+        }
+        cursor.close();
+    }
+
+    @Override
+    public void deleteNote(Note note){
+        ArrayList<String> images = note.getImages();
+        mNoteCloudReferenece.child(note.getFirebaseId()).removeValue();
+        for (String path : images){
+            deleteImage(path);
+        }
+    }
 
     public FirebaseUser getFirebaseUser() {
         return mFirebaseUser;
