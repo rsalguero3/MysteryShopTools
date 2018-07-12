@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -32,6 +34,7 @@ public class AddEditCategoryDialogFragment extends DialogFragment {
     private EditText mCategoryEditText;
     private Category mCategory;
     private boolean mInEditMode = false;
+    private ImageView mColorView;
     private OnCategoryAddedListener mListener;
 
     public AddEditCategoryDialogFragment() {
@@ -89,23 +92,26 @@ public class AddEditCategoryDialogFragment extends DialogFragment {
             LayoutInflater inflater = getActivity().getLayoutInflater();
 
             View convertView = inflater.inflate(R.layout.fragment_add_edit_category_dialog, null);
-            final ImageView colorView = convertView.findViewById(R.id.color_view);
+            mColorView = convertView.findViewById(R.id.color_view);
             convertView.findViewById(R.id.category_color_button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    setupColorChooser(colorView);
+                    setupColorChooser(mColorView);
                 }
             });
             addCategoryDialog.setView(convertView);
 
             getCurrentCategory();
+            if(mInEditMode == false){
+                mColorView.setBackgroundColor(-1);
+            }
 
-            View titleView = (View)inflater.inflate(R.layout.dialog_title, null);
-            TextView titleText = (TextView)titleView.findViewById(R.id.text_view_dialog_title);
+            View titleView = inflater.inflate(R.layout.dialog_title, null);
+            TextView titleText = titleView.findViewById(R.id.text_view_dialog_title);
             titleText.setText(mInEditMode == true ? getString(R.string.edit_category) : getString(R.string.add_category));
             addCategoryDialog.setCustomTitle(titleView);
 
-            mCategoryEditText = (EditText)convertView.findViewById(R.id.edit_text_add_category);
+            mCategoryEditText = convertView.findViewById(R.id.edit_text_add_category);
 
 
             addCategoryDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -118,8 +124,6 @@ public class AddEditCategoryDialogFragment extends DialogFragment {
             addCategoryDialog.setPositiveButton(mInEditMode == true ? "Update" : "Add", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-
-
                 }
             });
 
@@ -138,6 +142,7 @@ public class AddEditCategoryDialogFragment extends DialogFragment {
 
     private void populateFields(Category category) {
         mCategoryEditText.setText(category.getTitle());
+        mColorView.setBackgroundColor(category.getColor());
     }
 
     private boolean requiredFieldCompleted(){
@@ -180,11 +185,13 @@ public class AddEditCategoryDialogFragment extends DialogFragment {
         if (mInEditMode){
             if (mCategory != null){
                 mCategory.setTitle(mCategoryEditText.getText().toString().trim());
+                mCategory.setColor((((ColorDrawable) mColorView.getBackground()).getColor()));
                 mListener.onCategoryAdded(mCategory);
             }
         }else {
             Category addedCategory = new Category();
             addedCategory.setTitle(mCategoryEditText.getText().toString().trim());
+            addedCategory.setColor(((ColorDrawable) mColorView.getBackground()).getColor());
             mListener.onCategoryAdded(addedCategory);
         }
 
@@ -196,8 +203,9 @@ public class AddEditCategoryDialogFragment extends DialogFragment {
                 .with(getActivity())
                 .setTitle("Choose color")
                 .initialColor(R.color.white)
-                .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
-                .density(12)
+                .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
+                .density(8)
+                .noSliders()
                 .setOnColorSelectedListener(new OnColorSelectedListener() {
                     @Override
                     public void onColorSelected(int selectedColor) {
@@ -209,7 +217,6 @@ public class AddEditCategoryDialogFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
                         view.setBackgroundColor(selectedColor);
                         System.out.println("color changed");
-                        //changeBackgroundColor(selectedColor);
                     }
                 })
                 .setNegativeButton("cancel", new DialogInterface.OnClickListener() {

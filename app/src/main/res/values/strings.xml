@@ -7,18 +7,18 @@
     <string name="title_activity_category" translatable="false">CategoryActivity</string>
     <string name="dialog_title">Title</string>
     <string name="hint_enter_category">Enter Category</string>
-    <string name="edit_category" translatable="false">Edit Category</string>
+    <string name="edit_category">Edit Category</string>
     <string name="add_category">Add Category</string>
     <string name="name_is_required">Name is Required</string>
     <string name="no_category_found">No Category Found</string>
-    <string name="delete_Category" translatable="false">Delete Category</string>
+    <string name="delete_Category">Delete Category</string>
     <string name="action_delete">Delete</string>
     <string name="action_yes">Yes</string>
     <string name="action_cancel">Cancel</string>
     <string name="no_notes_found">No Note found</string>
     <string name="title_activity_add_note">Add Note</string>
     <string name="title">Title</string>
-    <string name="date_last_modified" translatable="false">Date Last Modified</string>
+    <string name="date_last_modified">Date Last Modified</string>
     <string name="color">Color</string>
     <string name="sort_by_category" translatable="false">Category</string>
     <string name="sort_title" translatable="false">Sort By</string>
@@ -123,6 +123,17 @@
     <string name="firebase_sync_completed">Firebase Sync Completed</string>
     <string name="log_in_button">Log in</string>
     <string name="skip_log_in">Skip Log in</string>
+    <string name="settings_note_editor_summary">Toggle to use Lined Editor or Plain Editor</string>
+    <string name="settings_node_editor_title">Note Editor</string>
+    <string name="settings_delete_title">Delete</string>
+    <string name="settings_delete_summary">Toggle to prompt for Confirm delete</string>
+    <string name="settings_sort_options_title">Sort Options</string>
+    <string name="settings_sort_options_dialog_title">Select Sort Option</string>
+    <string name="settings_sort_order_options_title">Sort Order</string>
+    <string name="settings_sort_order_options_dialog_title">Select Sort Order</string>
+    <string name="note_detail_date_created">Date Created:</string>
+    <string name="note_detail_date_modified">Date Modified:</string>
+    <string name="note_list_presenter_save_completed">Saved</string>
 
     <string-array name="sortOptionsEntries">
         <item>Title</item>

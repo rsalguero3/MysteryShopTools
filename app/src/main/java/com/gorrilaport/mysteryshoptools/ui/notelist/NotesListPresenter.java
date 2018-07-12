@@ -32,7 +32,6 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
 
     @Override
     public void loadNotes() {
-        System.out.println("about to call load notes shared prefs");
         String sortColumn = mSharedPreference.getString("sort_options", mView.getContext().getString(R.string.column_title));
         String sordOrderValue = mSharedPreference.getString("list_sort_order", "true");
         boolean sortOrder = Boolean.valueOf(sordOrderValue);
@@ -76,10 +75,24 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
 
     @Override
     public void deleteNote(Note note) {
+        List<String> images = new ArrayList<>();
+        images = note.getImages();
+
         if (mFirebaseRepository.getFirebaseUser() != null){
             mFirebaseRepository.deleteNote(note);
+            if (images != null){
+                for (String path : images){
+                    mFirebaseRepository.deleteImage(path);
+                }
+            }
         }
         mRepository.deleteAsync(note, this);
+        //Delete all images associated with note
+        if (images != null){
+            for (String path: images){
+                mRepository.deleteAsyncImage(path);
+            }
+        }
     }
 
     @Override
@@ -108,7 +121,7 @@ public class NotesListPresenter implements NoteListContract.Actions, OnDatabaseO
             mView.showMessage(mView.getContext().getString(R.string.firebase_sync_completed));
         }
         else {
-            mView.showMessage("Saved");
+            mView.showMessage(mView.getContext().getString(R.string.note_list_presenter_save_completed));
         }
         loadNotes();
     }

@@ -27,11 +27,12 @@ public class CategorySQLiteRepository implements CategoryListContract.Repository
 
 
     @Override
-    public void addAsync(String name, OnDatabaseOperationCompleteListener listener) {
+    public void addAsync(Category category, OnDatabaseOperationCompleteListener listener) {
         ContentValues values = new ContentValues();
-        values.put(Constants.COLUMN_TITLE, name);
+        values.put(Constants.COLUMN_TITLE, category.getTitle());
         values.put(Constants.COLUMN_CREATED_TIME, System.currentTimeMillis());
         values.put(Constants.COLUMN_MODIFIED_TIME, System.currentTimeMillis());
+        values.put(Constants.COLUMN_COLOR, category.getColor());
         try {
             long result = database.insertOrThrow(Constants.CATEGORY_TABLE, null, values);
             listener.onSaveOperationSucceeded(result);
@@ -47,9 +48,11 @@ public class CategorySQLiteRepository implements CategoryListContract.Repository
         values.put(Constants.COLUMN_TITLE, category.getTitle());
         values.put(Constants.COLUMN_CREATED_TIME, System.currentTimeMillis());
         values.put(Constants.COLUMN_MODIFIED_TIME, System.currentTimeMillis());
+        values.put(Constants.COLUMN_COLOR, category.getColor());
 
         try {
-            long result = database.insertOrThrow(Constants.CATEGORY_TABLE, null, values);
+            long result = database.update(Constants.CATEGORY_TABLE, values,
+                    Constants.COLUMN_ID + " = " + category.getId(), null);
             listener.onSaveOperationSucceeded(result);
         } catch (SQLiteException e){
             listener.onSaveOperationFailed(e.getLocalizedMessage());
@@ -116,24 +119,28 @@ public class CategorySQLiteRepository implements CategoryListContract.Repository
     private Category addCategory(final String categoryName) {
         Category category = new Category();
         category.setTitle(categoryName);
-        saveCategory(category);
+        long id = saveCategory(category);
+        category.setId(id);
         return category;
     }
 
-    private void saveCategory(Category category) {
+    private long saveCategory(Category category) {
 
         ContentValues values = new ContentValues();
-        values.put(Constants.COLUMN_NAME, category.getTitle());
+        values.put(Constants.COLUMN_TITLE, category.getTitle());
+        values.put(Constants.COLUMN_CREATED_TIME, System.currentTimeMillis());
+        values.put(Constants.COLUMN_MODIFIED_TIME, System.currentTimeMillis());
         try {
-            database.insertOrThrow(Constants.CATEGORY_TABLE, null, values);
+            long result = database.insertOrThrow(Constants.CATEGORY_TABLE, null, values);
+            return result;
         } catch (SQLException e) {
-
+            return 0;
 
         }
 
     }
-
-    private Category getCategory(final String categoryName) {
+    @Override
+    public Category getCategory(final String categoryName) {
 
         Category category = null;
         Cursor cursor = database.rawQuery("SELECT * FROM " + Constants.CATEGORY_TABLE + " " +

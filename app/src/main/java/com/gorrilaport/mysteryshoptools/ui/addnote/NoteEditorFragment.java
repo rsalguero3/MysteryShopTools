@@ -23,8 +23,10 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v13.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -41,8 +43,11 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -54,6 +59,7 @@ import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnCategorySelectedListener;
 import com.gorrilaport.mysteryshoptools.model.Category;
 import com.gorrilaport.mysteryshoptools.model.Note;
+import com.gorrilaport.mysteryshoptools.ui.category.CategoryListContract;
 import com.gorrilaport.mysteryshoptools.ui.category.SelectCategoryDialogFragment;
 import com.gorrilaport.mysteryshoptools.ui.notedetail.ImagePageAdapter;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity;
@@ -75,6 +81,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import nl.changer.audiowife.AudioWife;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -94,9 +101,18 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
     @BindView(R.id.sketch_attachment) ImageView mSketchAttachment;
     @BindView(R.id.viewPager) ViewPager viewPager;
     @BindView(R.id.scrollView) ScrollView mScrollView;
+    @BindView(R.id.play) View mPlayMedia;
+    @BindView(R.id.pause) View mPauseMedia;
+    @BindView(R.id.media_seekbar) SeekBar mMediaSeekBar;
+    @BindView(R.id.run_time) TextView mRunTime;
+    @BindView(R.id.total_time) TextView mTotalTime;
+    @BindView(R.id.audio_player) LinearLayout mAudioPlayer;
+    @BindView(R.id.audio_delete_button) ImageButton mAudioDeleteButton;
 
     @Inject
     NoteListContract.FirebaseRepository mFirebaseRepository;
+    @Inject
+    CategoryListContract.Repository mCategoryRepository;
 
     private final int EXTERNAL_PERMISSION_REQUEST = 1;
     private final int RECORD_AUDIO_PERMISSION_REQUEST = 2;
@@ -106,7 +122,7 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
     private MediaRecorder mRecorder = null;
     private MediaPlayer mPlayer = null;
 
-    private String mLocalAudioFilePath = null;
+    public  String mLocalAudioFilePath = null;
     private String mLocalImagePath = null;
     private String mLocalSketchPath = null;
     private Calendar mReminderTime;
@@ -129,7 +145,6 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         setHasOptionsMenu(true);
         showLinedEditor = PreferenceManager
                 .getDefaultSharedPreferences(getContext()).getBoolean("default_editor", false);
-        Log.d(LOG_TAG, "Line Editor Enabled ?: " + showLinedEditor);
         createBottomToolbar();
         MysteryShopTools.getInstance().getAppComponent().inject(this);
         if (getArguments() != null && getArguments().containsKey(Constants.NOTE_ID)) {
@@ -247,9 +262,7 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
                         getActivity().onBackPressed();
                 }
                 else {
-                    if (Build.VERSION.SDK_INT >= 21){
-                        getActivity().onBackPressed();
-                    }
+                    getActivity().onBackPressed();
                 }
                 break;
         }
@@ -296,12 +309,32 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         else {
             mSketchAttachment.setVisibility(View.GONE);
         }
+
+        setAudioPlayer(note.getLocalAudioPath());
     }
 
 
     @Override
     public void setCurrentNote(Note note) {
         this.mCurrentNote = note;
+        setAudioPlayer(mCurrentNote.getLocalAudioPath());
+    }
+
+    public void setAudioPlayer(String audioPath){
+        if (audioPath != null) {
+            mAudioPlayer.setVisibility(View.VISIBLE);
+            Uri file = Uri.fromFile(new File(audioPath));
+            AudioWife.getInstance()
+                    .init(getActivity(), file)
+                    .setPlayView(mPlayMedia)
+                    .setPauseView(mPauseMedia)
+                    .setSeekBar(mMediaSeekBar)
+                    .setRuntimeView(mRunTime)
+                    .setTotalTimeView(mTotalTime);
+            mAudioDeleteButton.setOnClickListener(this.onDeleteAudioClickListener());
+        } else {
+            mAudioPlayer.setVisibility(View.GONE);
+        }
     }
 
 
@@ -439,7 +472,6 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             mRecorder.prepare();
             mRecorder.start();
         } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
             makeToast("Unable to record " + e.getLocalizedMessage());
         }
     }
@@ -450,7 +482,7 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             mRecorder.release();
             mRecorder = null;
         }
-
+        setAudioPlayer(mLocalAudioFilePath);
         makeToast("Recording added");
     }
 
@@ -519,6 +551,7 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         String category = mCategory.getText().toString();
         if (TextUtils.isEmpty(category)){
             mCategory.setText(Constants.DEFAULT_CATEGORY);
+            mCategoryRepository.createOrGetCategoryId(Constants.DEFAULT_CATEGORY);
         }
 
         String title = mTitle.getText().toString();
@@ -544,6 +577,7 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         mCurrentNote.setLocalSketchImagePath(mLocalSketchPath);
         mCurrentNote.setCategoryName(mCategory.getText().toString());
         mCurrentNote.setImages(mImagePathArrayNewImages);
+        mCurrentNote.setColor(mCategoryRepository.getCategory(mCurrentNote.getCategoryName()).getColor());
 
         if (!TextUtils.isEmpty(mLocalAudioFilePath)){
             mCurrentNote.setNoteType(Constants.NOTE_TYPE_AUDIO);
@@ -623,6 +657,14 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
             }
         }
         else { //permission is automatically granted on sdk<23 upon installation
+            if (ContextCompat.checkSelfPermission(getActivity(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.READ_CONTACTS},
+                        EXTERNAL_PERMISSION_REQUEST);
+
+            }
             Log.v(LOG_TAG,"Permission is granted  API < 23");
             return true;
         }
@@ -860,6 +902,16 @@ public class NoteEditorFragment extends Fragment implements AddNoteContract.View
         // Save a file: path for use with ACTION_VIEW intents
         mLocalImagePath = image.getAbsolutePath();
         return image;
+    }
+
+    private View.OnClickListener onDeleteAudioClickListener() {
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.deleteAudio();
+            }
+        };
+        return listener;
     }
 
     private void createBottomToolbar(){

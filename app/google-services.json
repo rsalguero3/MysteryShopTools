@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "358581596402",
-    "firebase_url": "https://mystery-shop-tools.firebaseio.com",
-    "project_id": "mystery-shop-tools",
-    "storage_bucket": "mystery-shop-tools.appspot.com"
+    "project_number": "85061136881",
+    "firebase_url": "https://mysteryshoptools-f90a7.firebaseio.com",
+    "project_id": "mysteryshoptools-f90a7",
+    "storage_bucket": "mysteryshoptools-f90a7.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:358581596402:android:67f25518bdf130b5",
+        "mobilesdk_app_id": "1:85061136881:android:67f25518bdf130b5",
         "android_client_info": {
           "package_name": "com.gorrilaport.mysteryshoptools"
         }
       },
       "oauth_client": [
         {
-          "client_id": "358581596402-onqmr55j09inct6ik99tagpv81h93bbl.apps.googleusercontent.com",
+          "client_id": "85061136881-1daco70eo3mkckhks16uu3t11r76a9l1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.gorrilaport.mysteryshoptools",
@@ -23,13 +23,13 @@
           }
         },
         {
-          "client_id": "358581596402-47869ukqq17rh3aa18rh567kgputpm3k.apps.googleusercontent.com",
+          "client_id": "85061136881-a5bphbp324uu456io63lsa3o9i4fvrr2.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC49R4rAGsRSUfvM6oGhbsLkLHgFfXx3h0"
+          "current_key": "AIzaSyBvB47SWLPx7hy1ZOZQze9EJyw1W-MgABo"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "358581596402-47869ukqq17rh3aa18rh567kgputpm3k.apps.googleusercontent.com",
+              "client_id": "85061136881-a5bphbp324uu456io63lsa3o9i4fvrr2.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

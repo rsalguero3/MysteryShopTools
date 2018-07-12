@@ -71,4 +71,30 @@
     <string name="menu_drawer_settings">Ajustes</string>
     <string name="menu_drawer_companies">Compañías</string>
     <string name="menu_drawer_about">About</string>
+    <string name="edit_category" translatable="false">Editar Categoría</string>
+    <string name="delete_Category" translatable="false">Borrar Categoría</string>
+    <string name="date_last_modified">"Fecha de última Modificación "</string>
+    <string name="settings_sort_order_options_title">Orden de Clasificación</string>
+    <string name="settings_sort_options_dialog_title">Seleccione la opción Ordenar</string>
+    <string name="settings_sort_options_title">Opciones de Clasificación</string>
+    <string name="settings_delete_summary">Alternar para solicitar Confirmar Eliminación</string>
+    <string name="settings_note_editor_summary">"Alternar para usar el Editor alineado o el Editor sencillo "</string>
+    <string name="skip_log_in">Omitir el Inicio de Sesión</string>
+    <string name="log_in_button">"Iniciar Sesión "</string>
+    <string name="firebase_sync_completed">"Sincronización de Firebase Completada "</string>
+    <string name="delete_account_label">"Borrar Cuenta "</string>
+    <string name="sign_out">Desconectar</string>
+    <string name="signed_in_header">Bienvenido</string>
+    <string name="delete_account_failed">eliminación de cuenta fallida</string>
+    <string name="sign_out_failed">no se pudo cerrar sesión</string>
+    <string name="unknown_sign_in_response">signo desconocido en respuesta</string>
+    <string name="no_internet_connection">"sin conexión a Internet "</string>
+    <string name="sign_in_cancelled">"iniciar sesión cancelado "</string>
+    <string name="unknown_response">respuesta desconocida</string>
+    <string name="sign_in">registrarse</string>
+    <string name="settings_delete_title">Borrar</string>
+    <string name="settings_node_editor_title">"Editor de Notas "</string>
+    <string name="note_detail_date_created">"Fecha de creacion: "</string>
+    <string name="note_detail_date_modified">"Fecha modificada: "</string>
+    <string name="settings_sort_order_options_dialog_title">"Seleccionar Orden de Clasificación "</string>
 </resources>

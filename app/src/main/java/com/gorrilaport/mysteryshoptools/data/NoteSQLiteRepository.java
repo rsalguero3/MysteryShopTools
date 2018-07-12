@@ -3,17 +3,25 @@ package com.gorrilaport.mysteryshoptools.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnDatabaseOperationCompleteListener;
+import com.gorrilaport.mysteryshoptools.model.Category;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListContract;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
+
 
 public class NoteSQLiteRepository implements NoteListContract.Repository{
 
@@ -23,10 +31,13 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
     private DatabaseHelper databaseHelper;
     private SQLiteDatabase database;
 
+    @Inject NoteListContract.FirebaseRepository firebaseRepository;
+
     public NoteSQLiteRepository(Context context) {
         categorySQLiteRepository = new CategorySQLiteRepository(context);
         databaseHelper = DatabaseHelper.newInstance(context);
         database = databaseHelper.getWritableDatabase();
+        MysteryShopTools.getInstance().getAppComponent().inject(this);
     }
 
     @Override
@@ -43,6 +54,7 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
         values.put(Constants.COLUMNS_NOTE_TYPE, note.getNoteType());
         values.put(Constants.COLUMN_CREATED_TIME, System.currentTimeMillis());
         values.put(Constants.COLUMN_MODIFIED_TIME, System.currentTimeMillis());
+        values.put(Constants.COLUMN_COLOR, note.getColor());
 
         if (!TextUtils.isEmpty(note.getCategoryName())){
             values.put(Constants.COLUMNS_CATEGORY_ID, categorySQLiteRepository.createOrGetCategoryId(note.getCategoryName()));
@@ -98,6 +110,20 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
         } catch (SQLiteException e){
 
 
+        }
+
+        ContentValues imagesValues = new ContentValues();
+        ArrayList<String> images = note.getImages();
+        if (!(images == null)) {
+            for (String path : images) {
+                imagesValues.put(Constants.COLUMN_IMAGE_PATH, path);
+                imagesValues.put(Constants.COLUMN_NOTE_ID, noteId);
+                try {
+                    long result = database.insertOrThrow(Constants.IMAGE_TABLE, null, imagesValues);
+                } catch (SQLiteException e) {
+
+                }
+            }
         }
 
         if (noteId != null){
@@ -176,6 +202,14 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
                 listener.onDeleteOperationCompleted("Unable to Delete Note");
             }
         }
+        if(note.getImages() != null){
+            for(String image : note.getImages()){
+                deleteAsyncImage(image);
+            }
+        }
+        if(note.getLocalAudioPath() != null){
+            deleteAsyncAudio(note.getLocalAudioPath());
+        }
     }
 
     @Override
@@ -184,9 +218,69 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
         //ensure database exists.
         if (database != null){
             int result = database.delete(Constants.IMAGE_TABLE, Constants.COLUMN_IMAGE_PATH + "='" + imagePath + "'", null);
+            File file = new File(imagePath);
+            file.delete();
         }
     }
 
+    @Override
+    public void deleteAsyncAudio(String audioPath, OnDatabaseOperationCompleteListener listener) {
+
+        //ensure database exists.
+        if (database != null){
+            ContentValues values = new ContentValues();
+            values.putNull(Constants.COLUMN_LOCAL_AUDIO_PATH);
+            int result = database.update(Constants.NOTES_TABLE, values, Constants.COLUMN_LOCAL_AUDIO_PATH + " = '" + audioPath + "'", null);
+            File file = new File(audioPath);
+            file.delete();
+
+            if (result == 1){
+                listener.onUpdateOperationCompleted("Deleted Audio");
+            }else{
+                listener.onUpdateOperationFailed("Delete Failed");
+            }
+        }
+    }
+
+    @Override
+    public void deleteAsyncAudio(String audioPath) {
+
+        //ensure database exists.
+        if (database != null){
+            ContentValues values = new ContentValues();
+            values.putNull(Constants.COLUMN_LOCAL_AUDIO_PATH);
+            int result = database.update(Constants.NOTES_TABLE, values, Constants.COLUMN_LOCAL_AUDIO_PATH + " = '" + audioPath + "'", null);
+            File file = new File(audioPath);
+            file.delete();
+        }
+    }
+
+    @Override
+    public void deleteAllNotesFromCategory(String category) {
+        if(database != null){
+
+            database.delete(Constants.NOTES_TABLE, Constants.COLUMN_CATEGORY_NAME + "='" + category + "'", null);
+        }
+
+    }
+
+    @Override
+    public void updateNotesFromCategory(Category category){
+        String query = "SELECT * FROM " + Constants.NOTES_TABLE + " WHERE " + Constants.COLUMN_CATEGORY_NAME
+                + " ='" + category + "'";
+        if(database != null){
+            Cursor cursor = database.rawQuery(query, null);
+            if(cursor.moveToFirst()){
+                while(!cursor.isAfterLast()){
+                    Note note = Note.fromCursor(cursor);
+                    note.setCategoryName(category.getTitle());
+                    note.setColor(category.getColor());
+                    updateAsync(note);
+                }
+            }
+            cursor.close();
+        }
+    }
 
     @Override
     public List<Note> getAllNotes(String sortOption, boolean sortOrder) {
@@ -207,6 +301,7 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
 
             //get a cursor for all notes in the database
             Cursor cursor = database.rawQuery(selectQuery, null);
+            Log.v("Cursor Object", DatabaseUtils.dumpCursorToString(cursor));
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     //get each note in the cursor
@@ -267,7 +362,14 @@ public class NoteSQLiteRepository implements NoteListContract.Repository{
 
     @Override
     public void deleteDatabase(){
-        databaseHelper.deleteDatabase();
+        List<Note> notes = getAllNotes("title", true);
+        if(firebaseRepository.getFirebaseUser() != null){
+            for(Note note: notes){
+                System.out.println(note.getTitle());
+                firebaseRepository.deleteNote(note);
+            }
+        }
+        //databaseHelper.deleteDatabase();
     }
 
     @Override

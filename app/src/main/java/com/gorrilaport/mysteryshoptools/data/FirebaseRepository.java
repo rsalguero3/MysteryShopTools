@@ -1,7 +1,9 @@
 package com.gorrilaport.mysteryshoptools.data;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -19,6 +21,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.model.Note;
+import com.gorrilaport.mysteryshoptools.ui.category.CategoryListContract;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListContract;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnDatabaseOperationCompleteListener;
@@ -26,7 +29,6 @@ import com.gorrilaport.mysteryshoptools.core.listeners.OnDatabaseOperationComple
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,8 +44,11 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
     private DatabaseReference mCategoryCloudReferenece;
     private StorageReference mImagesStorageReference;
     private StorageReference mFirebaseStorageReference;
+    private StorageReference mAudioStorageReference;
 
     @Inject NoteListContract.Repository noteSQLiteRepository;
+    @Inject CategoryListContract.Repository categoryRepository;
+    @Inject Context mContext;
 
 
     public FirebaseRepository(){
@@ -59,7 +64,8 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
             mFirebaseStorageReference = mFirebaseStorage.getReferenceFromUrl(Constants.FIREBASE_STORAGE_BUCKET);
             mNoteCloudReferenece = mDatabase.child(Constants.USERS_CLOUD_END_POINT + mFirebaseUser.getUid() + Constants.NOTE_CLOUD_END_POINT);
             mCategoryCloudReferenece = mDatabase.child(Constants.USERS_CLOUD_END_POINT + mFirebaseUser.getUid() + Constants.CATEGORY_CLOUD_END_POINT);
-            mImagesStorageReference = mFirebaseStorageReference.child("users/" + mFirebaseUser.getUid() + Constants.NOTE_CLOUD_END_POINT);
+            mImagesStorageReference = mFirebaseStorageReference.child("users/" + mFirebaseUser.getUid() + Constants.NOTE_CLOUD_IMAGE_END_POINT + Constants.NOTE_CLOUD_END_POINT);
+            mAudioStorageReference = mFirebaseStorageReference.child("users/" + mFirebaseUser.getUid() + Constants.NOTE_CLOUD_AUDIO_END_POINT + Constants.NOTE_CLOUD_END_POINT);
             MysteryShopTools.getInstance().getAppComponent().inject(this);
         }
     }
@@ -74,6 +80,31 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
 
         return key;
     }
+
+    @Override
+    public void addAudio(Note note) {
+        if (note.getLocalAudioPath() != null) {
+            StorageMetadata metadata = new StorageMetadata.Builder()
+                    .setContentType("audio/mpeg")
+                    .build();
+            String filePath = note.getLocalAudioPath();
+            Uri fileToUpload = Uri.fromFile(new File(filePath));
+            final String fileName = fileToUpload.getLastPathSegment();
+            StorageReference audioRef = mAudioStorageReference.child(note.getFirebaseId()).child(fileName);
+            UploadTask uploadTask = audioRef.putFile(fileToUpload, metadata);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //makeToast("Unable to upload file to cloud" + e.getLocalizedMessage());
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        //makeToast("File uploaded successfully");
+                    }
+                });
+            }
+        }
 
     @Override
     public void addImages(Note note) {
@@ -105,6 +136,30 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
             }
     }
 
+    public void downloadImages(Note note){
+        if (note.getImages() != null) {
+            ArrayList<String> images = note.getImages();
+            for (String filePath : images) {
+                Uri fileToDownload = Uri.fromFile(new File(filePath));
+
+                final String fileName = fileToDownload.getLastPathSegment();
+                try {
+                    File localFile = new File(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/" + fileName);
+                    StorageReference imageRef = mImagesStorageReference.child(note.getFirebaseId()).child(fileName);
+
+                    imageRef.getFile(localFile).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                        }
+                    });
+                }
+                catch (Exception e){
+                    System.out.println(e);
+                }
+            }
+        }
+    }
+
     @Override
     public void syncToFirebase(final List<Note> notes, final OnDatabaseOperationCompleteListener listener) {
 
@@ -125,9 +180,11 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
                     if (notes.isEmpty()) {
                         for (Note note : firebaseNotesArray) {
                             //re add notes from firebase into sqlite
+                            categoryRepository.createOrGetCategoryId(note.getCategoryName());
                             long result = noteSQLiteRepository.addAsync(note);
                             note.setId(result);
                             dataSnapshot.getRef().child(note.getFirebaseId()).child("id").setValue(result);
+                            downloadImages(note);
                         }
                     }
                     else {
@@ -141,6 +198,10 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
                                 String key = addNote(note);
                                 note.setFirebaseId(key);
                                 noteSQLiteRepository.updateAsync(note);
+                                if(note.getImages() != null){
+                                    addImages(note);
+                                    addAudio(note);
+                                }
                                 iter.remove();
                             }
                             //iterate through notes in firebase
@@ -165,9 +226,11 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
                         //add all notes left over in firebase array. These notes were note found in sqlite.
                         if (!firebaseNotesArray.isEmpty()) {
                             for (Note firebaseNote : firebaseNotesArray) {
+                                categoryRepository.createOrGetCategoryId(firebaseNote.getCategoryName());
                                 long result = noteSQLiteRepository.addAsync(firebaseNote);
                                 firebaseNote.setId(result);
                                 dataSnapshot.getRef().child(firebaseNote.getFirebaseId()).child("id").setValue(result);
+                                downloadImages(firebaseNote);
                             }
                         }
                     }
@@ -179,6 +242,8 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
                         String key = addNote(note);
                         note.setFirebaseId(key);
                         noteSQLiteRepository.updateAsync(note);
+                        addImages(note);
+                        addAudio(note);
                     }
                 }
                 listener.onSaveOperationSucceeded(Constants.FIREBASE_SYNC_COMPLETED);
@@ -195,6 +260,7 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
     public void updateNote(Note note){
         mNoteCloudReferenece.child(note.getFirebaseId()).setValue(note);
         addImages(note);
+        addAudio(note);
     }
 
     @Override
@@ -216,12 +282,47 @@ public class FirebaseRepository implements NoteListContract.FirebaseRepository {
     }
 
     @Override
+    public void deleteAudio(Note note) {
+        String path = note.getLocalAudioPath();
+        Uri file = Uri.fromFile(new File(path));
+        final String fileName = file.getLastPathSegment();
+        mAudioStorageReference.child(note.getFirebaseId()).child(fileName).delete();
+    }
+
+    @Override
     public void deleteNote(Note note){
+        System.out.println("firebase delete called");
         ArrayList<String> images = note.getImages();
+        System.out.println(mNoteCloudReferenece);
         mNoteCloudReferenece.child(note.getFirebaseId()).removeValue();
-        for (String path : images){
-            deleteImage(path);
+        if (images != null && !images.isEmpty()) {
+            for (String path : images) {
+                deleteImage(path);
+            }
         }
+        if (note.getLocalAudioPath() != null){
+            deleteAudio(note);
+        }
+    }
+
+    @Override
+    public void deleteAllNotesFromCategory(String category){
+        mNoteCloudReferenece.orderByChild("categoryName").equalTo(category).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    for (DataSnapshot snapshot: dataSnapshot.getChildren()){
+                        Note n = snapshot.getValue(Note.class);
+                        deleteNote(n);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public FirebaseUser getFirebaseUser() {

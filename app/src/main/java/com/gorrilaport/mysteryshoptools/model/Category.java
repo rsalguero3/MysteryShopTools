@@ -11,7 +11,7 @@ public class Category{
     private String title;
     private long dateCreated;
     private long dateModified;
-    private String color;
+    private int color;
 
     public Category() {
     }
@@ -27,7 +27,7 @@ public class Category{
         Category category = new Category(id, name);
         category.setDateCreated(cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_CREATED_TIME)));
         category.setDateModified(cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_MODIFIED_TIME)));
-        category.setColor(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_COLOR)));
+        category.setColor(cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_COLOR)));
         return category;
     }
 
@@ -44,11 +44,11 @@ public class Category{
 
     public void setFirebaseId(String id) { firebaseId = id; }
 
-    public String getColor() {
+    public int getColor() {
         return color;
     }
 
-    public void setColor(String color) {
+    public void setColor(int color) {
         this.color = color;
     }
 

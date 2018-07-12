@@ -7,6 +7,7 @@ import com.gorrilaport.mysteryshoptools.R;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnDatabaseOperationCompleteListener;
 import com.gorrilaport.mysteryshoptools.data.CategorySQLiteRepository;
 import com.gorrilaport.mysteryshoptools.data.NoteSQLiteRepository;
+import com.gorrilaport.mysteryshoptools.model.Category;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
@@ -25,7 +26,6 @@ public class AddSampleDateIntentService extends IntentService {
 
     public AddSampleDateIntentService() {
         super("AddSampleDateIntentService");
-
     }
 
     public List<Note> getSampleNotes(){
@@ -149,18 +149,37 @@ public class AddSampleDateIntentService extends IntentService {
         NoteSQLiteRepository noteSQLiteRepository = new NoteSQLiteRepository(getApplicationContext());
 
 
-        List<String> categories = new ArrayList<>();
-        categories.add(getString(R.string.SampleCategory1));
-        categories.add(getString(R.string.SampleCategory2));
-        categories.add(getString(R.string.SampleCategory3));
-        categories.add(getString(R.string.SampleCategory4));
-        categories.add(getString(R.string.SampleCategory5));
-        categories.add(getString(R.string.SampleCategory6));
-        categories.add(getString(R.string.SampleCategory7));
+        List<Category> categories = new ArrayList<>();
+        Category a = new Category();
+        a.setTitle(getString(R.string.SampleCategory1));
+        a.setColor(-1);
+        categories.add(a);
+        Category b = new Category();
+        b.setTitle(getString(R.string.SampleCategory2));
+        b.setColor(-1);
+        categories.add(b);
+        Category c = new Category();
+        c.setTitle(getString(R.string.SampleCategory3));
+        c.setColor(-1);
+        categories.add(c);
+        Category d = new Category();
+        d.setTitle(getString(R.string.SampleCategory4));
+        d.setColor(-1);
+        categories.add(d);
+        Category e = new Category();
+        e.setTitle(getString(R.string.SampleCategory5));
+        e.setColor(-1);
+        categories.add(e);
+        Category f = new Category();
+        f.setTitle(getString(R.string.SampleCategory6));
+        f.setColor(-1);
+        categories.add(f);
+        Category g = new Category();
+        g.setTitle(getString(R.string.SampleCategory7));
+        //g.setColor(-1);
+        categories.add(g);
 
-
-
-        for (String cat : categories) {
+        for (Category cat : categories) {
               categoryRepository.addAsync(cat, mListener);
         }
 

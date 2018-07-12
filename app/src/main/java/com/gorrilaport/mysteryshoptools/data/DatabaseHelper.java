@@ -3,13 +3,13 @@ package com.gorrilaport.mysteryshoptools.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Color;
 
 import com.gorrilaport.mysteryshoptools.util.Constants;
 
 public class DatabaseHelper extends SQLiteOpenHelper{
 
-    private static final int DATABASE_VERSION = 1;
-    public static final String LOG_CAT = DatabaseHelper.class.getSimpleName();
+    private static final int DATABASE_VERSION = 2;
 
     private static DatabaseHelper mDatabaseInstance = null;
     private Context mContext;
@@ -49,25 +49,37 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onCreate(db);
+        if (oldVersion < 2) {
+            db.execSQL("ALTER TABLE " + Constants.CATEGORY_TABLE + " ADD COLUMN "
+                    + Constants.COLUMN_COLOR + " INTEGER DEFAULT -1"
+            );
+            db.execSQL("ALTER TABLE " + Constants.NOTES_TABLE + " ADD COLUMN "
+                    + Constants.COLUMN_FIREBASE_ID+ " TEXT DEFAULT NULL"
+
+            );
+            db.execSQL("ALTER TABLE " + Constants.NOTES_TABLE + " ADD COLUMN "
+                    + Constants.COLUMN_COLOR + " INTEGER DEFAULT -1"
+            );
+        }
     }
 
 
     private static final String CREATE_TABLE_NOTE = "create table "
             + Constants.NOTES_TABLE
             + "("
-            + Constants.COLUMN_ID + " integer primary key autoincrement, "
-            + Constants.COLUMN_FIREBASE_ID + " text, "
-            + Constants.COLUMN_TITLE + " text not null, "
-            + Constants.COLUMN_CONTENT + " text not null, "
-            + Constants.COLUMN_NEXT_REMINDER + " integer, "
-            + Constants.COLUMN_LOCAL_AUDIO_PATH + " text, "
-            + Constants.COLUMN_LOCAL_SKETCH_PATH + " text, "
-            + Constants.COLUMNS_CATEGORY_ID + " integer,"
-            + Constants.COLUMN_CATEGORY_NAME + " text, "
-            + Constants.COLUMN_MODIFIED_TIME + " BIGINT not null, "
-            + Constants.COLUMN_CREATED_TIME + " BIGINT not null, "
-            + Constants.COLUMNS_NOTE_TYPE + " text, "
+            + Constants.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + Constants.COLUMN_FIREBASE_ID + " TEXT DEFAULT NULL, "
+            + Constants.COLUMN_TITLE + " TEXT NOT NULL, "
+            + Constants.COLUMN_CONTENT + " TEXT NOT NULL, "
+            + Constants.COLUMN_NEXT_REMINDER + " INTEGER, "
+            + Constants.COLUMN_LOCAL_AUDIO_PATH + " TEXT, "
+            + Constants.COLUMN_LOCAL_SKETCH_PATH + " TEXT, "
+            + Constants.COLUMNS_CATEGORY_ID + " INTEGER,"
+            + Constants.COLUMN_COLOR + " INTEGER DEFAULT -1, "
+            + Constants.COLUMN_CATEGORY_NAME + " TEXT, "
+            + Constants.COLUMN_MODIFIED_TIME + " BIGINT NOT NULL, "
+            + Constants.COLUMN_CREATED_TIME + " BIGINT NOT NULL, "
+            + Constants.COLUMNS_NOTE_TYPE + " TEXT, "
             + "FOREIGN KEY(category_id) REFERENCES category(_id)" + ")";
 
     //String to create a category table
@@ -77,7 +89,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                     + Constants.COLUMN_TITLE + " TEXT NOT NULL, "
                     + Constants.COLUMN_CREATED_TIME + " BIGINT, "
                     + Constants.COLUMN_MODIFIED_TIME + " BIGINT, "
-                    + Constants.COLUMN_COLOR + " TEXT" + ")";
+                    + Constants.COLUMN_COLOR + " INTEGER DEFAULT -1" + ")";
 
     private static final String CREATE_IMAGE_TABLE =
             "CREATE TABLE " + Constants.IMAGE_TABLE + "("

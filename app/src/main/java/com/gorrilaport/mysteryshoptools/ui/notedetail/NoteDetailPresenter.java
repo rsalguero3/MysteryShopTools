@@ -6,7 +6,9 @@ import android.util.Log;
 
 import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnDatabaseOperationCompleteListener;
+import com.gorrilaport.mysteryshoptools.model.Category;
 import com.gorrilaport.mysteryshoptools.model.Note;
+import com.gorrilaport.mysteryshoptools.ui.category.CategoryListContract;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListContract;
 
 import java.io.IOException;
@@ -15,6 +17,8 @@ import javax.inject.Inject;
 
 public class NoteDetailPresenter implements NoteDetailContract.Action, OnDatabaseOperationCompleteListener {
 
+    @Inject
+    CategoryListContract.Repository mCategoryRepository;
     @Inject
     NoteListContract.Repository mRepository;
     @Inject
@@ -37,7 +41,8 @@ public class NoteDetailPresenter implements NoteDetailContract.Action, OnDatabas
     @Override
     public void showNoteDetails() {
         Note selectedNote = mRepository.getNoteById(noteId);
-        mView.displayNote(selectedNote);
+        Category category = mCategoryRepository.getCategoryById(selectedNote.getCategoryId());
+        mView.displayNote(selectedNote, category);
     }
 
     @Override
@@ -79,6 +84,12 @@ public class NoteDetailPresenter implements NoteDetailContract.Action, OnDatabas
     }
 
     @Override
+    public void deleteAudio() {
+        Note note = mRepository.getNoteById(this.noteId);
+        mRepository.deleteAsyncAudio(note.getLocalAudioPath(), this);
+    }
+
+    @Override
     public Note getCurrentNote() {
         return mRepository.getNoteById(noteId);
     }
@@ -110,8 +121,11 @@ public class NoteDetailPresenter implements NoteDetailContract.Action, OnDatabas
     @Override
     public void onUpdateOperationCompleted(String message) {
         mView.showMessage(message);
+        if(message.equals("Deleted Audio")){
+            ((NoteDetailFragment) mView).hideAudioPlayer();
+            System.out.println("message does equals");
+        }
         showNoteDetails();
-
     }
 
     @Override

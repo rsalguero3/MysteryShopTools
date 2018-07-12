@@ -10,6 +10,7 @@ import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.category.CategoryListContract;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListContract;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,9 +42,13 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
         if (note != null && note.getId() > 0){
             //check if user is logged in
             if (mFirebaseRepository.getFirebaseUser() != null){
-                mFirebaseRepository.updateNote(note);
+                mNoteRepository.updateAsync(note, this, images);
+                mFirebaseRepository.updateNote(mNoteRepository.getNoteById(note.getId()));
             }
-            mNoteRepository.updateAsync(note, this, images);
+            else {
+                mNoteRepository.updateAsync(note, this, images);
+            }
+
         }
         else {
             if (mFirebaseRepository.getFirebaseUser() != null) {
@@ -81,6 +86,19 @@ public class AddNotePresenter implements AddNoteContract.Action, OnDatabaseOpera
         if (mCurrentNote != null && mCurrentNote.getId() > 0) {
             mNoteRepository.deleteAsync(mCurrentNote, this);
         }
+    }
+
+    @Override
+    public void deleteAudio() {
+        if(mCurrentNote != null){
+            Note note = mRepository.getNoteById(mCurrentNote.getId());
+            mRepository.deleteAsyncAudio(note.getLocalAudioPath(), this);
+        }
+        else {
+            File file = new File(((NoteEditorFragment) mView).mLocalAudioFilePath);
+            file.delete();
+        }
+        ((NoteEditorFragment) mView).setAudioPlayer(null);
     }
 
     @Override

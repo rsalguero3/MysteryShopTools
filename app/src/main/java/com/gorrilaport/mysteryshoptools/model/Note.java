@@ -17,6 +17,7 @@ public class Note {
     private String localSketchImagePath;
     private String categoryName;
     private long categoryId;
+    private int color;
     private String noteType;
     private long dateCreated;
     private long dateModified;
@@ -38,6 +39,7 @@ public class Note {
         note.setNoteType(cursor.getString(cursor.getColumnIndex(Constants.COLUMNS_NOTE_TYPE)));
         note.setDateCreated(cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_CREATED_TIME)));
         note.setDateModified(cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_MODIFIED_TIME)));
+        note.setColor(cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_COLOR)));
         return note;
     }
 
@@ -125,6 +127,10 @@ public class Note {
     public void setCategoryId(long categoryId) {
         this.categoryId = categoryId;
     }
+
+    public int getColor(){ return this.color;}
+
+    public void setColor(int color){ this.color = color;}
 
     public String getNoteType() {
         return noteType;

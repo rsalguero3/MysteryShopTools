@@ -29,6 +29,7 @@ public interface AddNoteContract {
         void checkStatus();
         void onDeleteNoteButtonClicked();
         void deleteNote();
+        void deleteAudio();
         void saveOnExit(Note note);
         void onSelectCategory();
     }

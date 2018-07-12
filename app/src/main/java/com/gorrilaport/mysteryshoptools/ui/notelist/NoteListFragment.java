@@ -41,6 +41,7 @@ import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.Type;
 import java.sql.Types;
@@ -91,7 +92,6 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MysteryShopTools.getInstance().getAppComponent().inject(this);
-        System.out.println("SHared prefs is null: " + mSharedPreference);
         setHasOptionsMenu(true);
     }
 
@@ -101,11 +101,7 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
         // Inflate the layout for this fragment
         mRootView = inflater.inflate(R.layout.fragment_note_list, container, false);
         ButterKnife.bind(this, mRootView);
-        System.out.println("about to call inject in fragment");
-        System.out.println("call inject in fragment");
-
 //        mBus.register(this);
-
         mPresenter = new NotesListPresenter(this);
         mListAdapter = new NoteListAdapter(new ArrayList<Note>(), getContext());
         mRecyclerView.setHasFixedSize(true);
@@ -175,10 +171,17 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
 
     @Override
     public void onResume() {
-        System.out.println("on resume called");
         super.onResume();
         getActivity().invalidateOptionsMenu();
-        mPresenter.loadNotes();
+        Boolean firstSignIn = mSharedPreference.getBoolean("first time", true);
+        System.out.println("boolean: " + firstSignIn);
+        if (mFirebaseRepository.getFirebaseUser() != null && firstSignIn) {
+            mPresenter.syncToFirebaseButtonClicked();
+            mSharedPreference.edit().putBoolean("first time", false).commit();
+        }
+        else {
+            mPresenter.loadNotes();
+        }
     }
 
     @Override
@@ -221,24 +224,14 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
 
     @Override
     public void showAddNote() {
-        if (Build.VERSION.SDK_INT >= 21) {
-            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle();
-            startActivity(new Intent(getActivity(), AddNoteActivity.class), bundle);
-        }
-        else {
-            startActivity(new Intent(getActivity(), AddNoteActivity.class));
-        }
+        Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle();
+        startActivity(new Intent(getActivity(), AddNoteActivity.class), bundle);
     }
 
     @Override
     public void showSingleDetailUi(long noteId) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle();
-            startActivity(NoteDetailActivity.getStartIntent(getContext(), noteId), bundle);
-        }
-        else {
-            startActivity(NoteDetailActivity.getStartIntent(getContext(), noteId));
-        }
+        Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle();
+        startActivity(NoteDetailActivity.getStartIntent(getContext(), noteId), bundle);
     }
 
     @Override
@@ -314,7 +307,7 @@ public class NoteListFragment extends Fragment implements NoteListContract.View 
         Snackbar snackbar = Snackbar.make(mRootView, message, Snackbar.LENGTH_LONG);
         View snackBarView = snackbar.getView();
         snackBarView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
-        TextView tv = (TextView)snackBarView.findViewById(android.support.design.R.id.snackbar_text);
+        TextView tv = snackBarView.findViewById(android.support.design.R.id.snackbar_text);
         tv.setTextColor(Color.WHITE);
         snackbar.show();
     }

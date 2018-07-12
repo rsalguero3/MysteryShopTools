@@ -1,18 +1,24 @@
 package com.gorrilaport.mysteryshoptools.core;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.multidex.MultiDex;
 
+import com.beardedhen.androidbootstrap.TypefaceProvider;
+import com.crashlytics.android.Crashlytics;
 import com.gorrilaport.mysteryshoptools.core.dagger.AppComponent;
 import com.gorrilaport.mysteryshoptools.core.dagger.AppModule;
 import com.gorrilaport.mysteryshoptools.core.dagger.DaggerAppComponent;
 import com.gorrilaport.mysteryshoptools.core.services.AddSampleDateIntentService;
 import com.gorrilaport.mysteryshoptools.util.Constants;
+import com.gorrilaport.mysteryshoptools.util.TypefaceUtil;
+import com.squareup.leakcanary.LeakCanary;
+import com.thefinestartist.Base;
+
+import io.fabric.sdk.android.Fabric;
 
 public class MysteryShopTools extends Application {
     private static MysteryShopTools instance = new MysteryShopTools();
@@ -28,8 +34,19 @@ public class MysteryShopTools extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Base.initialize(this);
+        Fabric.with(this, new Crashlytics());
+        TypefaceProvider.registerDefaultIconSets();
+        LeakCanary.install(this);
         getAppComponent();
         addDefaultData();
+        TypefaceUtil.overrideFont(getApplicationContext(), "SERIF", "fonts/Raleway-Medium.ttf");
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     public AppComponent getAppComponent() {
@@ -41,7 +58,7 @@ public class MysteryShopTools extends Application {
         return appComponent;
     }
 
-    public void resetAppComponent(){
+    public void rebuildAppComponent() {
         appComponent = null;
     }
 
@@ -55,13 +72,12 @@ public class MysteryShopTools extends Application {
         editor = sharedPreferences.edit();
         if (sharedPreferences.getBoolean(Constants.FIRST_RUN, true)) {
             startService(new Intent(this, AddSampleDateIntentService.class));
-            editor.putBoolean(Constants.FIRST_RUN, false).commit();
         }
     }
 
-    public void resetApplication(Context context){
+    public void resetApplication(Context context) {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = sharedPreferences.edit();
         editor.putBoolean(Constants.FIRST_RUN, true).commit();
-        }
     }
+}

@@ -141,6 +141,12 @@ public class CategoryListFragment extends Fragment implements
         String serializedCategory = gson.toJson(category);
 
         addCategoryDialog = AddEditCategoryDialogFragment.newInstance(serializedCategory);
+        addCategoryDialog.setListener(new OnCategoryAddedListener() {
+            @Override
+            public void onCategoryAdded(Category category) {
+                mPresenter.addNewCategory(category);
+            }
+        });
         addCategoryDialog.show(getActivity().getFragmentManager(), "Dialog");
     }
 

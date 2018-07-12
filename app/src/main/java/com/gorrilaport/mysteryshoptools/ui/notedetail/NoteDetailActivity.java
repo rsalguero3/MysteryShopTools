@@ -1,6 +1,7 @@
 package com.gorrilaport.mysteryshoptools.ui.notedetail;
 
 import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -30,9 +31,7 @@ public class NoteDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_detail);
-        if (Build.VERSION.SDK_INT >= 21){
-            setupWindowAnimations();
-        }
+        setupWindowAnimations();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -49,13 +48,8 @@ public class NoteDetailActivity extends AppCompatActivity {
                 public void onEditNote(Note clickedNote) {
                     Intent editNoteIntent = new Intent(NoteDetailActivity.this, AddNoteActivity.class);
                     editNoteIntent.putExtra(Constants.NOTE_ID, clickedNote.getId());
-                    startActivity(editNoteIntent);
-                    if (Build.VERSION.SDK_INT >= 21){
-                        finishAfterTransition();
-                    }
-                    else {
-                        finish();
-                    }
+                    startActivity(editNoteIntent, getBundle());
+                    finishAfterTransition();
                 }
             });
             openFragment(fragment, title);
@@ -63,6 +57,10 @@ public class NoteDetailActivity extends AppCompatActivity {
             finish();
         }
 
+    }
+
+    public Bundle getBundle(){
+        return ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
     }
 
     private void openFragment(Fragment fragment, String screenTitle){
@@ -90,17 +88,14 @@ public class NoteDetailActivity extends AppCompatActivity {
         else {
             finish();
         }
-
     }
 
-    @TargetApi(21)
     private void setupWindowAnimations() {
         Fade fade = new Fade();
         fade.setDuration(500);
         Slide slide = new Slide();
         slide.setDuration(500);
-        getWindow().setEnterTransition(fade);
-        getWindow().setReturnTransition(slide);
-
+        getWindow().setEnterTransition(slide);
+        getWindow().setReturnTransition(fade);
     }
 }

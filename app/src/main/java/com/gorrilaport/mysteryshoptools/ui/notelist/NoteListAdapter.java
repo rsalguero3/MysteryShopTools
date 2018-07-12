@@ -1,6 +1,7 @@
 package com.gorrilaport.mysteryshoptools.ui.notelist;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,14 +10,18 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.bumptech.glide.Glide;
 import com.gorrilaport.mysteryshoptools.R;
+import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.core.listeners.NoteItemListener;
+import com.gorrilaport.mysteryshoptools.model.Category;
 import com.gorrilaport.mysteryshoptools.model.Note;
+import com.gorrilaport.mysteryshoptools.ui.category.CategoryListContract;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 import com.gorrilaport.mysteryshoptools.util.TimeUtils;
 import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
@@ -26,8 +31,12 @@ import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+
 
 public class NoteListAdapter extends UltimateViewAdapter {
     private List<Note> mNotes;
@@ -35,11 +44,13 @@ public class NoteListAdapter extends UltimateViewAdapter {
     private NoteItemListener mItemListener;
     private View noteView;
     private int lastPosition = -1;
+    @Inject CategoryListContract.Repository mCategoryRepository;
 
 
     public NoteListAdapter(List<Note> notes, Context mContext) {
         mNotes = notes;
         this.mContext = mContext;
+        MysteryShopTools.getInstance().getAppComponent().inject(this);
     }
 
     public void remove(int position) {
@@ -127,7 +138,13 @@ public class NoteListAdapter extends UltimateViewAdapter {
             e.printStackTrace();
         }
 
-        //setAnimation(holder.itemView, position);
+        Category category = mCategoryRepository.getCategoryById(note.getCategoryId());
+
+        if(category != null) {
+            ((ViewHolder) holder).linearLayout.setBackgroundColor(category.getColor());
+        }
+
+        setAnimation(holder.itemView, position);
 
 
     }
@@ -199,6 +216,7 @@ public class NoteListAdapter extends UltimateViewAdapter {
         @BindView(R.id.image_view_expand) ImageView delete;
         @BindView(R.id.image_view) ImageView noteIcon;
         @BindView(R.id.circle_image_view) ImageView noteCircleIcon;
+        @BindView(R.id.itemView_linearLayout) LinearLayout linearLayout;
 
 
         public ViewHolder(View itemView) {

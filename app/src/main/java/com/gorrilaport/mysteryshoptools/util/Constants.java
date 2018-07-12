@@ -67,8 +67,11 @@ public class Constants {
     public static final String COLUMN_IMAGE_PATH = "image_path";
     public static final String COLUMN_NOTE_ID = "note_id";
     public static final String NOTE_CLOUD_END_POINT = "/notes/";
+    public static final String NOTE_CLOUD_IMAGE_END_POINT = "/images";
     public static final String CATEGORY_CLOUD_END_POINT = "/categories";
     public static final String USERS_CLOUD_END_POINT = "/users/";
+    public static final String NOTE_CLOUD_AUDIO_END_POINT = "/audio";
+
 
     public final static String SORT_DATE_CREATED = "dateCreated";
     public final static String SORT_DATE_MODIFIED = "dateModified";
@@ -119,9 +122,11 @@ public class Constants {
 
     };
     public static final int DELETE_ACCOUNT = 404;
-    public static final String FIREBASE_STORAGE_BUCKET = "gs://mystery-shop-tools.appspot.com";
+    public static final String FIREBASE_STORAGE_BUCKET = "gs://mysteryshoptools-f90a7.appspot.com";
     public static final long FIREBASE_SYNC_COMPLETED = 200;
     public static final String FIREBASE_ID = "FIREBASE_ID";
     public static final String SIGN_IN_INTENT = "SIGN_IN_INTENT";
     public static final String LOGED_IN = "LOGED_IN" ;
+    public static final int ADDED_NOTE = 600;
+
 }

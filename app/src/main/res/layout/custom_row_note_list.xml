@@ -12,23 +12,24 @@
     card_view:cardUseCompatPadding="true">
 
     <LinearLayout
+        android:id="@+id/itemView_linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/Color_Blue">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/circle_image_view"
             android:layout_width="@dimen/profile_image_size"
             android:layout_height="@dimen/profile_image_size"
-            android:layout_centerVertical="true"
             android:layout_margin="@dimen/margin_padding_small"
+            android:elevation="14dp"
             android:src="@drawable/person_icon" />
 
         <ImageView
             android:id="@+id/image_view"
             android:layout_width="@dimen/profile_image_size"
             android:layout_height="@dimen/profile_image_size"
-            android:layout_centerVertical="true"
             android:src="@drawable/person_icon"
             android:layout_margin="@dimen/margin_padding_small"
             android:visibility="gone" />
@@ -38,7 +39,6 @@
             android:id="@+id/linear_layout_content"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_margin="@dimen/margin_padding_small"
             android:layout_weight="1"
             android:orientation="vertical"
@@ -48,8 +48,9 @@
                 android:id="@+id/text_view_note_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textSize="@dimen/text_size_xxnormal"/>
+                android:fontFamily="cursive"
+                android:textSize="@dimen/text_size_xxnormal"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/text_view_note_date"
@@ -62,7 +63,6 @@
             android:id="@+id/linear_layout_expand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_margin="@dimen/margin_padding_small"
             android:orientation="vertical"
             android:paddingTop="@dimen/margin_padding_normal">
@@ -71,7 +71,6 @@
                 android:id="@+id/image_view_expand"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:layout_margin="@dimen/margin_padding_small"
                 android:src="@drawable/delete_button"
                 android:visibility="visible" />

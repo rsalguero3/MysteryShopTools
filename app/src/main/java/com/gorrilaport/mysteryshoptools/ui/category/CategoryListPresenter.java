@@ -7,6 +7,7 @@ import com.gorrilaport.mysteryshoptools.R;
 import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnDatabaseOperationCompleteListener;
 import com.gorrilaport.mysteryshoptools.model.Category;
+import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListContract;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,8 +19,10 @@ public class CategoryListPresenter implements
         CategoryListContract.Action, OnDatabaseOperationCompleteListener {
 
     @Inject CategoryListContract.Repository mRepository;
+    @Inject NoteListContract.Repository mNoteRepository;
+    @Inject SharedPreferences mSharedPreference;
     @Inject
-    SharedPreferences mSharedPreference;
+    NoteListContract.FirebaseRepository mFirebaseRepository;
 
     private final CategoryListContract.View mView;
 
@@ -52,8 +55,9 @@ public class CategoryListPresenter implements
 
         if (category.getId() > 0){
             mRepository.updateAsync(category, this);
+            mNoteRepository.updateNotesFromCategory(category);
         }else {
-            mRepository.addAsync(category.getTitle(), this);
+            mRepository.addAsync(category, this);
         }
 
     }
@@ -104,7 +108,12 @@ public class CategoryListPresenter implements
 
     @Override
     public void deleteCategory(Category category) {
+        if (mFirebaseRepository.getFirebaseUser() != null){
+            mFirebaseRepository.deleteAllNotesFromCategory(category.getTitle());
+        }
         mRepository.deleteAsync(category, this);
+        mNoteRepository.deleteAllNotesFromCategory(category.getTitle());
+        loadCategories();
     }
 
 

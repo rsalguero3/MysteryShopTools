@@ -1,9 +1,8 @@
 package com.gorrilaport.mysteryshoptools.ui.notelist;
 
-import android.app.Application;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
@@ -16,9 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.ActionMode;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 
 import com.artitk.licensefragment.model.License;
@@ -26,9 +28,15 @@ import com.artitk.licensefragment.model.LicenseType;
 import com.artitk.licensefragment.support.v4.RecyclerViewLicenseFragment;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthCredential;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
 import com.gorrilaport.mysteryshoptools.auth.AuthUiActivity;
 import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.data.FirebaseRepository;
@@ -53,6 +61,7 @@ import com.gorrilaport.mysteryshoptools.ui.settings.SettingsActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -60,7 +69,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class NoteListActivity extends AppCompatActivity implements ActionMode.Callback {
-    public Toolbar toolbar;
+    public  Toolbar toolbar;
     private AccountHeader headerResult;
     private Drawer drawer;
     private String mUsername;
@@ -239,10 +248,10 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
     private void deleteAccountClicked() {
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setMessage("Are you sure you want to delete this account?")
-                .setPositiveButton("Yes, nuke it!", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        deleteAccount();
+                        promptToDeleteAccount();
                     }
                 })
                 .setNegativeButton("No", null)
@@ -259,7 +268,6 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             mRepository.deleteDatabase();
-                            MysteryShopTools.getInstance().resetApplication(getApplicationContext());
                             startActivity(new Intent(NoteListActivity.this, AuthUiActivity.class));
                             finish();
                         } else {
@@ -270,25 +278,99 @@ public class NoteListActivity extends AppCompatActivity implements ActionMode.Ca
 
     }
 
-    private void deleteAccount() {
-        FirebaseAuth.getInstance().getCurrentUser().delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            MysteryShopTools.getInstance().resetApplication(getApplicationContext());
-                            startActivity(new Intent(NoteListActivity.this, AuthUiActivity.class));
-                            finish();
-                        } else {
-                            showSnackbar(R.string.delete_account_failed);
-                        }
-                    }
-                });
+    private void promptToDeleteAccount() {
+        List<? extends UserInfo> userInfo = FirebaseAuth.getInstance().getCurrentUser().getProviderData();
+        for (UserInfo info : userInfo){
+            switch (info.getProviderId()){
+                case "google.com":
+                    createDialog("Delete Account","Enter Password: ", 1);
+                    break;
+                case "password":
+                    createDialog("Delete Account", "Enter Password: ", 2);
+                    break;
+            }
+        }
+    }
+
+    private void deleteAccount(String password, int action){
+        String username = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        final Activity activity = this;
+        if (action == 1){
+            AuthCredential credential = GoogleAuthProvider.getCredential(username, password);
+            FirebaseAuth.getInstance().getCurrentUser().reauthenticate(credential).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    mRepository.deleteDatabase();
+                    FirebaseAuth.getInstance().getCurrentUser().delete()
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        startActivity(new Intent(NoteListActivity.this, AuthUiActivity.class));
+                                        finish();
+                                    } else {
+                                        showSnackbar(R.string.delete_account_failed);
+                                    }
+                                }
+                            });
+                }
+            });
+        }
+        else {
+            AuthCredential credential = EmailAuthProvider.getCredential(username, password);
+            FirebaseAuth.getInstance().getCurrentUser().reauthenticate(credential).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    mRepository.deleteDatabase();
+                    FirebaseAuth.getInstance().getCurrentUser().delete()
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        startActivity(new Intent(NoteListActivity.this, AuthUiActivity.class));
+                                        finish();
+                                    } else {
+                                        showSnackbar(R.string.delete_account_failed);
+                                    }
+                                }
+                            });
+                }
+            });
+        }
+
+    }
+
+    public void reinject(){
+        MysteryShopTools.getInstance().getAppComponent().inject(this);
     }
 
     public void showTwoPane(Note note){
         findViewById(R.id.note_detail_container).setVisibility(View.VISIBLE);
         openDetailFragment(NoteDetailFragment.newInstance(note.getId()), note.getTitle());
+    }
+
+    private void createDialog(String title, String message, final int action){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View titleView = (View)inflater.inflate(R.layout.dialog_ask_password, null);
+        final EditText passwordText = titleView.findViewById(R.id.dialog_password_input);
+        alertDialog.setTitle(title);
+        alertDialog.setView(titleView);
+
+        //alertDialog.setMessage(message);
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                    deleteAccount(passwordText.getText().toString(), action);
+            }
+        });
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alertDialog.show();
     }
 
     @Override

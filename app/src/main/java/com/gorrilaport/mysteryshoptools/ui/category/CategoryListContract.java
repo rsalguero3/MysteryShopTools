@@ -34,7 +34,7 @@ public interface CategoryListContract {
 
 
     interface Repository {
-        void addAsync(String name, OnDatabaseOperationCompleteListener listener);
+        void addAsync(Category category, OnDatabaseOperationCompleteListener listener);
         void updateAsync(Category category, OnDatabaseOperationCompleteListener listener);
         void deleteAsync(Category category, OnDatabaseOperationCompleteListener listener);
         List<Category> getAllCategories(String sortOption, boolean sortOrder);
@@ -42,6 +42,7 @@ public interface CategoryListContract {
         long createOrGetCategoryId(String categoryName);
         void removeAll();
         Category getCategoryById(long id);
+        Category getCategory(final String category);
     }
 
 }

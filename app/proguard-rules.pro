@@ -17,3 +17,8 @@
 #}
 -dontwarn com.bumptech.glide.**
 -keepclassmembers class com.gorrilaport.mysteryshoptools.model.** { *; }
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }

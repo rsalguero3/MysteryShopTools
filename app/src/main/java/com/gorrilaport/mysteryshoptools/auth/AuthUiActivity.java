@@ -17,22 +17,19 @@ package com.gorrilaport.mysteryshoptools.auth;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.MainThread;
-import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
-import android.support.annotation.StyleRes;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
@@ -45,16 +42,17 @@ import com.gorrilaport.mysteryshoptools.R;
 import com.gorrilaport.mysteryshoptools.core.MysteryShopTools;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
-import com.idescout.sql.SqlScoutServer;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import static com.firebase.ui.auth.ui.ExtraConstants.EXTRA_IDP_RESPONSE;
+import static com.thefinestartist.Base.getContext;
 
 public class AuthUiActivity extends AppCompatActivity {
     private static final String GOOGLE_TOS_URL = "https://www.google.com/policies/terms/";
@@ -73,6 +71,8 @@ public class AuthUiActivity extends AppCompatActivity {
     @BindView(R.id.link_login)
     TextView mLoginTextView;
 
+    @Inject SharedPreferences sharedPreferences;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,12 +85,12 @@ public class AuthUiActivity extends AppCompatActivity {
         MysteryShopTools.getInstance().getAppComponent().inject(this);
 
         //First time run is false show Notelist Activity
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        System.out.println(sharedPreferences.getBoolean(Constants.FIRST_RUN, false));
-        if (!sharedPreferences.getBoolean(Constants.FIRST_RUN, false)
-                && !getIntent().hasExtra(Constants.SIGN_IN_INTENT)) {
+        if (!sharedPreferences.getBoolean(Constants.FIRST_RUN, true)
+                && (!getIntent().hasExtra(Constants.SIGN_IN_INTENT) || (auth.getCurrentUser() != null))) {
             startDefaultActivity();
         }
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(Constants.FIRST_RUN, false).commit();
 
         setContentView(R.layout.auth_ui_layout);
         ButterKnife.bind(this);
@@ -190,10 +190,13 @@ public class AuthUiActivity extends AppCompatActivity {
 
     @MainThread
     private void showSnackbar(@StringRes int errorMessageRes) {
-        Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_LONG).show();
+        Snackbar snackbar = Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_LONG);
+        View snackBarView = snackbar.getView();
+        snackBarView.setBackgroundColor(ContextCompat.getColor(this.getApplicationContext(), R.color.primary));
+        TextView tv = snackBarView.findViewById(android.support.design.R.id.snackbar_text);
+        tv.setTextColor(Color.WHITE);
+        snackbar.show();
     }
-
-
 
     @MainThread
     private List<String> getGooglePermissions() {

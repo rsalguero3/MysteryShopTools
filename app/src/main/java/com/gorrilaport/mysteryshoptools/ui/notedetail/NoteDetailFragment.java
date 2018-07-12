@@ -1,10 +1,15 @@
 package com.gorrilaport.mysteryshoptools.ui.notedetail;
 
+import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -19,21 +24,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.gorrilaport.mysteryshoptools.R;
 import com.gorrilaport.mysteryshoptools.core.listeners.OnEditNoteButtonClickedListener;
+import com.gorrilaport.mysteryshoptools.model.Category;
 import com.gorrilaport.mysteryshoptools.model.Note;
 import com.gorrilaport.mysteryshoptools.ui.notelist.NoteListActivity;
 import com.gorrilaport.mysteryshoptools.util.Constants;
 import com.gorrilaport.mysteryshoptools.util.TimeUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import nl.changer.audiowife.AudioWife;
 
 
 /**
@@ -42,12 +54,35 @@ import butterknife.ButterKnife;
 public class NoteDetailFragment extends Fragment implements NoteDetailContract.View {
 
     private View mRootView;
-    @BindView(R.id.edit_text_title) EditText mTitle;
-    @BindView(R.id.edit_text_note) EditText mContent;
-    @BindView(R.id.edit_text_category) EditText mCategory;
-    @BindView(R.id.sketch_attachment) ImageView mSketchAttachment;
-    @BindView(R.id.time_stamp) TextView mTimeStamp;
-    @BindView(R.id.viewPager) ViewPager mViewPager;
+    @BindView(R.id.edit_text_title)
+    EditText mTitle;
+    @BindView(R.id.edit_text_note)
+    EditText mContent;
+    @BindView(R.id.edit_text_category)
+    EditText mCategory;
+    @BindView(R.id.sketch_attachment)
+    ImageView mSketchAttachment;
+    @BindView(R.id.time_stamp)
+    TextView mTimeStamp;
+    @BindView(R.id.viewPager)
+    ViewPager mViewPager;
+    @Nullable
+    @BindView(R.id.note_detail_fragment_root_view)
+    RelativeLayout mRelativeLayoutRoot;
+    @BindView(R.id.play)
+    View mPlayMedia;
+    @BindView(R.id.pause)
+    View mPauseMedia;
+    @BindView(R.id.media_seekbar)
+    SeekBar mMediaSeekBar;
+    @BindView(R.id.run_time)
+    TextView mRunTime;
+    @BindView(R.id.total_time)
+    TextView mTotalTime;
+    @BindView(R.id.audio_player)
+    LinearLayout mAudioPlayer;
+    @BindView(R.id.audio_delete_button)
+    ImageButton mAudioDeleteButton;
 
     private ImagePageAdapter mImagePageAdapter;
     private ArrayList<String> mImagePathArray = new ArrayList<>();
@@ -60,7 +95,7 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         // Required empty public constructor
     }
 
-    public static NoteDetailFragment newInstance(long noteId){
+    public static NoteDetailFragment newInstance(long noteId) {
         NoteDetailFragment fragment = new NoteDetailFragment();
         Bundle args = new Bundle();
         args.putLong(Constants.NOTE_ID, noteId);
@@ -84,9 +119,9 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        if (showLinedEditor){
+        if (showLinedEditor) {
             mRootView = inflater.inflate(R.layout.fragment_lined_editor, container, false);
-        }else {
+        } else {
             mRootView = inflater.inflate(R.layout.fragment_plain_editor, container, false);
         }
 
@@ -110,6 +145,7 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
         mPresenter.showNoteDetails();
+        mViewPager.getAdapter().notifyDataSetChanged();
     }
 
 
@@ -122,7 +158,7 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id){
+        switch (id) {
             case R.id.action_edit:
                 mListener.onEditNote(mPresenter.getCurrentNote());
                 break;
@@ -141,27 +177,51 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
 
 
     @Override
-    public void displayNote(Note note) {
+    public void displayNote(Note note, Category category) {
+        if (mRelativeLayoutRoot != null) {
+            mRootView.setBackgroundColor(category.getColor());
+        }
         mCategory.setText(note.getCategoryName());
         mContent.setText(note.getContent());
         mTitle.setText(note.getTitle());
-        mTimeStamp.setText("Date Created: " + TimeUtils.getReadableModifiedDate(note.getDateCreated())
-                + "\n" + "Date Modified: " + TimeUtils.getReadableModifiedDate(note.getDateModified()));
-            //load images into adapter
-            ArrayList<String> array = note.getImages();
-            mImagePathArray.clear();
-            mImagePageAdapter.notifyDataSetChanged();
-            if (array != null) {
-                for (int i = 0; i < array.size(); i++) {
-                    String path = array.get(i);
-                    mImagePathArray.add(path);
-                    mImagePageAdapter.notifyDataSetChanged();
-                }
+        System.out.println("time stapmp: " + note.getDateModified());
+        mTimeStamp.setText(getString(R.string.note_detail_date_created) + TimeUtils.getReadableModifiedDate(note.getDateCreated())
+                + "\n" + getString(R.string.note_detail_date_modified) + TimeUtils.getReadableModifiedDate(note.getDateModified()));
+        //load images into adapter
+        ArrayList<String> array = note.getImages();
+        mImagePathArray.clear();
+        mImagePageAdapter.notifyDataSetChanged();
+        if (array != null) {
+            for (int i = 0; i < array.size(); i++) {
+                String path = array.get(i);
+                mImagePathArray.add(path);
+                mImagePageAdapter.notifyDataSetChanged();
             }
+        }
 
-            if (!TextUtils.isEmpty(note.getLocalSketchImagePath())) {
-                populateSketch(note.getLocalSketchImagePath());
-            }
+        if (!TextUtils.isEmpty(note.getLocalSketchImagePath())) {
+            populateSketch(note.getLocalSketchImagePath());
+        }
+
+        if (note.getLocalAudioPath() != null) {
+            mAudioPlayer.setVisibility(View.VISIBLE);
+            String path = note.getLocalAudioPath();
+            Uri file = Uri.fromFile(new File(path));
+            AudioWife.getInstance()
+                    .init(getActivity(), file)
+                    .setPlayView(mPlayMedia)
+                    .setPauseView(mPauseMedia)
+                    .setSeekBar(mMediaSeekBar)
+                    .setRuntimeView(mRunTime)
+                    .setTotalTimeView(mTotalTime);
+            mAudioDeleteButton.setVisibility(View.GONE);
+        } else {
+            mAudioPlayer.setVisibility(View.GONE);
+        }
+    }
+
+    public void hideAudioPlayer(){
+        mAudioPlayer.setVisibility(View.GONE);
     }
 
     @Override
@@ -182,6 +242,7 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         sharingIntent.putExtra(Intent.EXTRA_TEXT, mContent.getText().toString());
         startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.share_using)));
     }
+
     @Override
     public void displayPreviousActivity() {
         getActivity().onBackPressed();
@@ -208,14 +269,14 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
         startActivity(new Intent(getActivity(), NoteListActivity.class));
     }
 
-    public void promptForDelete(Note note){
+    public void promptForDelete(Note note) {
         final String titleOfNoteTobeDeleted = note.getTitle();
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
         //alertDialog.setTitle("Delete " + titleOfNoteTobeDeleted + " ?");
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View titleView = (View)inflater.inflate(R.layout.dialog_title, null);
-        TextView titleText = (TextView)titleView.findViewById(R.id.text_view_dialog_title);
+        View titleView = (View) inflater.inflate(R.layout.dialog_title, null);
+        TextView titleText = (TextView) titleView.findViewById(R.id.text_view_dialog_title);
         titleText.setText("Delete " + titleOfNoteTobeDeleted + " ?");
         alertDialog.setCustomTitle(titleView);
 
@@ -241,14 +302,17 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
     public void displayFullImage(String imagePath) {
         Intent intent = new Intent(getActivity(), NoteImageView.class);
         intent.putExtra(Constants.IMAGE_PATH, imagePath);
-        startActivity(intent);
+        ActivityOptions options = ActivityOptions
+                .makeSceneTransitionAnimation(getActivity(), mViewPager, "image_view");
+        startActivity(intent, options.toBundle());
     }
 
-    private void makeToast(String message){
+
+    private void makeToast(String message) {
         Snackbar snackbar = Snackbar.make(mRootView, message, Snackbar.LENGTH_LONG);
         View snackBarView = snackbar.getView();
         snackBarView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
-        TextView tv = (TextView)snackBarView.findViewById(android.support.design.R.id.snackbar_text);
+        TextView tv = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
         tv.setTextColor(Color.WHITE);
         snackbar.show();
     }
@@ -266,12 +330,11 @@ public class NoteDetailFragment extends Fragment implements NoteDetailContract.V
 
     private View.OnClickListener onClickListener() {
         View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mListener.onEditNote(mPresenter.getCurrentNote());
-        }
-    };
+            @Override
+            public void onClick(View v) {
+                mListener.onEditNote(mPresenter.getCurrentNote());
+            }
+        };
         return listener;
-}
-
+    }
 }

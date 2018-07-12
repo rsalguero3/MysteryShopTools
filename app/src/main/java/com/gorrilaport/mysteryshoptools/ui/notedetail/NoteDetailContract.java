@@ -1,12 +1,13 @@
 package com.gorrilaport.mysteryshoptools.ui.notedetail;
 
+import com.gorrilaport.mysteryshoptools.model.Category;
 import com.gorrilaport.mysteryshoptools.model.Note;
 
 public interface NoteDetailContract{
 
 
    interface View{
-      void displayNote(Note note);
+      void displayNote(Note note, Category category);
       void showEditNoteScreen(long noteId);
       void showDeleteConfirmation(Note note);
       void displayShareIntent();
@@ -26,6 +27,7 @@ public interface NoteDetailContract{
       void onShareButtonClicked();
       void onPlayAudioButtonClicked();
       void deleteNote();
+      void deleteAudio();
       Note getCurrentNote();
 
    }
